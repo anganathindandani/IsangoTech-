@@ -7,7 +7,7 @@ One system with two faces: a public website that wins clients, and a private tea
 | `brand/` | Logo files, colours and usage rules | Done |
 | `supabase/` | Database, security rules, website intake functions | Phase 1 done and tested |
 | `website/` | Astro site for `isangotech.co.za` | Phase 1 pages built |
-| `portal/` | Flutter Web app for `portal.isangotech.co.za` | Not started |
+| `portal/` | Flutter Web app for `portal.isangotech.co.za` | Phase 1 screens built and tested |
 
 ## Database (`supabase/`)
 
@@ -29,7 +29,7 @@ PGHOST=localhost PGUSER=postgres supabase/tests/run.sh       # database
 cd supabase/functions && deno task test                      # edge functions
 ```
 
-CI runs both, plus the website build, on every push to `main` and on pull requests.
+CI runs both, plus the website build and the portal's checks, on every push to `main` and on pull requests.
 
 ## Website (`website/`)
 
@@ -55,6 +55,10 @@ PUBLIC_TURNSTILE_SITE_KEY=<from Cloudflare Turnstile> npm run build
 
 Without `PUBLIC_SUPABASE_FUNCTIONS_URL`, the form is replaced by a message pointing people to WhatsApp. The privacy policy and terms show a "Draft" notice until `legalReviewed` is set to `true` in `src/site.ts`.
 
+## Portal (`portal/`)
+
+Flutter Web app for staff. See [`portal/README.md`](portal/README.md) for what each screen does and how to run, test and build it.
+
 ## Going live: one-time setup
 
 1. **Create the Supabase project** in the London (`eu-west-2`) or Frankfurt (`eu-central-1`) region.
@@ -71,7 +75,8 @@ Without `PUBLIC_SUPABASE_FUNCTIONS_URL`, the form is replaced by a message point
    insert into public.team_members (id, full_name, role, email)
    select id, 'Your Name', 'admin', email from auth.users where email = 'you@isangotech.co.za';
    ```
-   Then sign in to the portal and enrol your authenticator app. Nothing is visible until you do.
+   Then sign in to the portal and set up your authenticator app. Nothing is visible until you do.
+7. **Fill in Settings in the portal:** your bank details for invoices, and check the approval amount and retention periods.
 
 ## Settings to confirm
 
@@ -86,5 +91,6 @@ These are starting values in the `settings` table. An admin can change them at a
 | `booking_min_notice_hours` / `booking_window_days` | 24 / 60 |
 | `next_stage_review_months` | 3 |
 | `vat_registered` | false |
+| `invoice_payment_details` | Empty. Add your bank details so they print on invoices |
 
 The price list is empty. Packages are added in the portal once names and prices are decided. `supabase/seed.sql` holds placeholder packages for local development only.
