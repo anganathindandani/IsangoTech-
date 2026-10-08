@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IsangoTech Logo</title>
+<link rel="icon" href="logo/isangotech-app-icon.svg">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=Outfit:wght@600&display=swap" rel="stylesheet">
+<style>
+  :root { --indigo:#1B2A4A; --ochre:#E07A1F; --turq:#2BA8A0; --turq-text:#1D7A74; --terracotta:#B5523B; --sand:#F5EBDD; }
+  body { margin:0; background:var(--sand); color:var(--indigo); font:16px/1.5 "DM Sans", system-ui, sans-serif; }
+  main { max-width:1000px; margin:0 auto; padding:48px 16px; }
+  h1 { font:600 40px/1.1 Outfit, sans-serif; margin:0 0 8px; }
+  h2 { font:600 14px/1 "DM Sans", sans-serif; letter-spacing:.12em; text-transform:uppercase; color:var(--terracotta); margin:40px 0 12px; }
+  .tile { border-radius:16px; padding:48px; display:flex; align-items:center; justify-content:center; gap:48px; flex-wrap:wrap; }
+  .light { background:#fff; } .dark { background:var(--indigo); } .sand { background:var(--sand); border:1px solid #1B2A4A22; }
+  .tile img.logo { width:min(100%, 560px); }
+  .row { display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:16px; }
+  .sizes { display:flex; align-items:end; gap:24px; flex-wrap:wrap; }
+  p.note { color:#1B2A4Acc; max-width:60ch; }
+</style>
+</head>
+<body>
+<main>
+  <h1>IsangoTech logo: the "I" as a doorway</h1>
+  <p class="note">The first letter is a door swinging open, with warm ochre light behind it. The wordmark is set in Outfit (weight 650, between SemiBold and Bold) and converted to outlines, so the files don't need the font installed.</p>
+
+  <h2>Primary, on white</h2>
+  <div class="tile light"><img class="logo" src="logo/isangotech-logo.svg" alt="IsangoTech"></div>
+
+  <h2>Reversed, on Deep Indigo</h2>
+  <div class="tile dark"><img class="logo" src="logo/isangotech-logo-reversed.svg" alt="IsangoTech"></div>
+
+  <h2>One colour</h2>
+  <div class="row">
+    <div class="tile sand"><img class="logo" src="logo/isangotech-logo-mono-indigo.svg" alt="IsangoTech"></div>
+    <div class="tile dark"><img class="logo" src="logo/isangotech-logo-mono-white.svg" alt="IsangoTech"></div>
+  </div>
+
+  <h2>Mark and app icon</h2>
+  <div class="tile light sizes">
+    <img src="logo/isangotech-mark.svg" alt="" style="height:120px">
+    <img src="logo/isangotech-app-icon.svg" alt="" style="width:128px">
+    <img src="logo/isangotech-app-icon.svg" alt="" style="width:64px">
+    <img src="logo/isangotech-app-icon.svg" alt="" style="width:32px">
+    <img src="logo/isangotech-app-icon.svg" alt="" style="width:16px">
+  </div>
+
+  <h2>Small sizes</h2>
+  <div class="tile light sizes">
+    <img src="logo/isangotech-logo.svg" alt="" style="width:240px">
+    <img src="logo/isangotech-logo.svg" alt="" style="width:160px">
+    <img src="logo/isangotech-logo.svg" alt="" style="width:120px">
+  </div>
+</main>
+</body>
+</html>
