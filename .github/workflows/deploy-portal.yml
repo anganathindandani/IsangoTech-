@@ -1,0 +1,60 @@
+name: Deploy portal
+
+# Builds the Flutter portal and publishes it to Cloudflare Workers whenever
+# main changes. Does nothing until these are set in the GitHub repository
+# (Settings → Secrets and variables → Actions):
+#   secrets:   CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID
+#   variables: SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY
+
+on:
+  push:
+    branches: [main]
+    paths: ["portal/**", ".github/workflows/deploy-portal.yml"]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-portal
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: portal
+    steps:
+      - name: Check deployment settings
+        id: ready
+        env:
+          TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          URL: ${{ vars.SUPABASE_URL }}
+          KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+        working-directory: .
+        run: |
+          if [ -n "$TOKEN" ] && [ -n "$ACCOUNT" ] && [ -n "$URL" ] && [ -n "$KEY" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::Portal deploy skipped: add the Cloudflare secrets and Supabase variables to enable it."
+          fi
+      - uses: actions/checkout@v4
+        if: steps.ready.outputs.ready == 'true'
+      - uses: subosito/flutter-action@v2
+        if: steps.ready.outputs.ready == 'true'
+        with:
+          channel: stable
+          cache: true
+      - name: Build
+        if: steps.ready.outputs.ready == 'true'
+        run: |
+          flutter pub get
+          flutter build web --release --no-web-resources-cdn \
+            --dart-define=SUPABASE_URL=${{ vars.SUPABASE_URL }} \
+            --dart-define=SUPABASE_PUBLISHABLE_KEY=${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+      - name: Deploy to Cloudflare
+        if: steps.ready.outputs.ready == 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: portal

@@ -1,0 +1,10 @@
+// Cloudflare Workers settings: serve the built Flutter web app (build/web/).
+// Unknown paths fall back to index.html so links like /leads/... work after a refresh.
+{
+  "name": "isangotech-portal",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./build/web",
+    "not_found_handling": "single-page-application"
+  }
+}
