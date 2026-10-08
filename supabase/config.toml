@@ -1,0 +1,27 @@
+# Supabase CLI settings for local development (`supabase start`). The hosted
+# project's auth settings are set in the dashboard; see the root README.
+project_id = "isangotech"
+
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql"]
+
+[auth]
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["https://portal.isangotech.co.za"]
+# Staff are invited by the admin. Nobody can sign themselves up.
+enable_signup = false
+minimum_password_length = 12
+password_requirements = "lower_upper_letters_digits"
+
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
+
+# Called by the public website, so no Supabase login is required. Spam is
+# stopped by Cloudflare Turnstile and a honeypot inside the function.
+[functions.submit-enquiry]
+verify_jwt = false
+
+[functions.enquiry-options]
+verify_jwt = false

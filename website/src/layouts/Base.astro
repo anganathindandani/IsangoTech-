@@ -1,0 +1,122 @@
+---
+import "../styles/global.css";
+import { site } from "../site";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description = site.description } = Astro.props;
+const pageTitle = title ? `${title} · ${site.name}` : `${site.name} · ${site.tagline}`;
+const whatsappLink = site.whatsappNumber ? `https://wa.me/${site.whatsappNumber}` : null;
+const year = new Date().getFullYear();
+---
+
+<!doctype html>
+<html lang="en-ZA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#1B2A4A" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=Outfit:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a href="/" aria-label={`${site.name} home`}>
+          <img src="/brand/isangotech-logo.svg" alt={site.name} width="180" height="39" />
+        </a>
+        <a class="button" href="/get-started">Get started</a>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <img src="/brand/isangotech-logo-reversed.svg" alt={site.name} width="160" height="34" loading="lazy" />
+        <nav aria-label="Legal">
+          <a href="/privacy">Privacy policy</a>
+          <a href="/terms">Terms</a>
+        </nav>
+        <p>
+          © {year}
+          {site.name}{site.companyRegistrationNumber && ` · Reg. ${site.companyRegistrationNumber}`} · {
+            site.areaServed
+          }
+        </p>
+      </div>
+    </footer>
+
+    {
+      whatsappLink && (
+        <a class="whatsapp" href={whatsappLink} aria-label="Chat with us on WhatsApp">
+          WhatsApp us
+        </a>
+      )
+    }
+  </body>
+</html>
+
+<style>
+  .site-header {
+    background: var(--white);
+    border-bottom: 1px solid rgb(27 42 74 / 0.08);
+  }
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 4rem;
+  }
+  .header-inner img {
+    display: block;
+    width: 150px;
+    height: auto;
+  }
+  .site-footer {
+    background: var(--indigo);
+    color: var(--sand);
+    padding-block: 2.5rem;
+    margin-top: 4rem;
+  }
+  .footer-inner {
+    display: grid;
+    gap: 1rem;
+  }
+  .site-footer a {
+    color: var(--sand);
+    margin-right: 1rem;
+  }
+  .site-footer p {
+    margin: 0;
+    font-size: 0.875rem;
+    opacity: 0.8;
+  }
+  .whatsapp {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    padding: 0.75rem 1.1rem;
+    border-radius: 999px;
+    background: var(--turquoise-text);
+    color: var(--white);
+    font-weight: 500;
+    text-decoration: none;
+    box-shadow: 0 4px 16px rgb(27 42 74 / 0.25);
+  }
+</style>

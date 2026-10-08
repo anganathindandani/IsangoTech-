@@ -1,0 +1,8 @@
+{
+  "tasks": {
+    "check": "deno check submit-enquiry/index.ts enquiry-options/index.ts",
+    "test": "deno test --allow-env=ALLOWED_ORIGINS submit-enquiry/"
+  },
+  "fmt": { "lineWidth": 120 },
+  "lint": { "rules": { "exclude": ["no-non-null-assertion", "no-import-prefix"] } }
+}

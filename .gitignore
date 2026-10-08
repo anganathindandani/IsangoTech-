@@ -1,0 +1,16 @@
+# Dependencies and build output
+node_modules/
+dist/
+.astro/
+
+# Supabase local state and secrets
+supabase/.temp/
+supabase/.branches/
+.env
+.env.*
+!.env.example
+
+# OS and editor files
+.DS_Store
+.idea/
+.vscode/

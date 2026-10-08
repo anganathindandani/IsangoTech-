@@ -1,0 +1,25 @@
+---
+import Base from "../layouts/Base.astro";
+import { site } from "../site";
+---
+
+<Base>
+  <section class="hero container">
+    <h1>{site.tagline}</h1>
+    <p>
+      We build websites, booking and enquiry tools, staff portals and AI automation for small businesses in East London
+      and beyond, so you get found, never miss a customer, and spend less time on admin.
+    </p>
+    <a class="button" href="/get-started">Get started</a>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    padding-block: 4rem;
+    max-width: 48rem;
+  }
+  .hero p {
+    font-size: 1.125rem;
+  }
+</style>
