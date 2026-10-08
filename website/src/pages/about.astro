@@ -1,0 +1,138 @@
+---
+import Base from "../layouts/Base.astro";
+import CallToAction from "../components/CallToAction.astro";
+import Beadwork from "../components/Beadwork.astro";
+import { site } from "../site";
+
+const values = [
+  { name: "Results over hype", text: "We measure our work by time saved and customers won, not by buzzwords." },
+  { name: "Honesty", text: "If you don't need something yet, we'll tell you. Clear prices, no surprises." },
+  { name: "Responsibility", text: "We look after your data and your customers' data as carefully as our own." },
+  { name: "Partnership", text: "We grow with you, one stage at a time, and stay around after go-live." },
+];
+---
+
+<Base title="About" description="The story behind IsangoTech: a gateway to smarter business for small businesses in East London and beyond.">
+  <section class="hero">
+    <div class="container">
+      <h1>About IsangoTech</h1>
+      <p class="lead">
+        <em>Isango</em> means gate. We named the business for what we want to be for small businesses: the way through
+        to smarter, simpler ways of working.
+      </p>
+    </div>
+  </section>
+  <Beadwork />
+
+  <section class="container story">
+    <h2>Why we exist</h2>
+    <p>
+      Small businesses are the heart of East London and the Eastern Cape, but most software is built for big companies
+      with big budgets. Owners end up running their business from WhatsApp threads, notebooks and spreadsheets, and
+      losing customers and hours along the way.
+    </p>
+    <p>
+      We build the tools that close that gap: a website that gets you found, simple systems that catch every enquiry,
+      a portal that runs your day, and automation that takes the repetitive work off your plate. We start where your
+      business is today and grow with you.
+    </p>
+
+    <div class="pair">
+      <div>
+        <h2>Our vision</h2>
+        <p>Every small business in South Africa running on tools that work as hard as its owner does.</p>
+      </div>
+      <div>
+        <h2>Our mission</h2>
+        <p>
+          Help small businesses get found, capture customers, run their operations and automate repetitive work, in
+          plain language and at a fair price.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="container" aria-labelledby="values-heading">
+    <h2 id="values-heading">What we stand for</h2>
+    <ul class="values">
+      {
+        values.map((v) => (
+          <li>
+            <h3>{v.name}</h3>
+            <p>{v.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  {
+    site.founder.name && (
+      <section class="container founder" aria-labelledby="founder-heading">
+        <h2 id="founder-heading">Meet the founder</h2>
+        <h3>
+          {site.founder.name}, {site.founder.role}
+        </h3>
+        <p>{site.founder.bio}</p>
+      </section>
+    )
+  }
+
+  <section class="container roots">
+    <h2>Proudly African, rooted in East London</h2>
+    <p>
+      We started in East London and we're building for the Eastern Cape and the rest of South Africa. We work in person
+      when it helps and online when it's quicker, and we understand the businesses we serve because they're our
+      neighbours.
+    </p>
+  </section>
+
+  <CallToAction />
+</Base>
+
+<style>
+  .hero {
+    background: var(--white);
+    padding-block: 3rem 2.5rem;
+  }
+  .lead {
+    max-width: 40rem;
+    font-size: 1.2rem;
+    margin: 0;
+  }
+  .story,
+  .roots,
+  .founder {
+    padding-block: 2.5rem 0;
+  }
+  .story > *,
+  .roots > *,
+  .founder > * {
+    max-width: 48rem;
+  }
+  .pair {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    margin-top: 2rem;
+  }
+  .values {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  }
+  .values li {
+    padding: 1.25rem;
+    background: var(--white);
+    border-radius: var(--radius);
+  }
+  .values h3 {
+    font-size: 1.15rem;
+    color: var(--turquoise-text);
+  }
+  .values p {
+    margin: 0;
+  }
+</style>

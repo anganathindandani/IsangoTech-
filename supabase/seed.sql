@@ -15,5 +15,8 @@ select
   (d + time '10:30') at time zone 'Africa/Johannesburg',
   case when extract(isodow from d) in (2, 4) then 'online' else 'in_person' end,
   case when extract(isodow from d) in (2, 4) then null else 'Client premises, East London' end
-from generate_series(current_date + 2, current_date + 15, interval '1 day') as d
+from (
+  select g::date as d
+  from generate_series(current_date + 2, current_date + 15, interval '1 day') as g
+) as days
 where extract(isodow from d) between 1 and 5;

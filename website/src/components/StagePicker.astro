@@ -1,0 +1,76 @@
+---
+// "Where is your business now?" Each stage links to Get started with the stage filled in.
+import { stages } from "../data/stages";
+---
+
+<section class="picker" aria-labelledby="picker-heading">
+  <div class="container">
+    <h2 id="picker-heading">Where is your business now?</h2>
+    <p class="lead">Pick the one that sounds most like you. We'll start there, and show you what comes next.</p>
+    <ol class="stages">
+      {
+        stages.map((s) => (
+          <li>
+            <a href={`/get-started?stage=${s.number}`} class="stage">
+              <span class="num">Stage {s.number}</span>
+              <span class="name">{s.name}</span>
+              <span class="quote">"{s.whereYouAre}"</span>
+              <span class="go">Start here →</span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .picker {
+    padding-block: 3.5rem;
+  }
+  .lead {
+    max-width: 40rem;
+    margin-top: 0;
+  }
+  .stages {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0 0;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  }
+  .stage {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    height: 100%;
+    padding: 1.25rem;
+    border-radius: var(--radius);
+    background: var(--white);
+    border: 2px solid transparent;
+    color: var(--indigo);
+    text-decoration: none;
+  }
+  .stage:hover,
+  .stage:focus-visible {
+    border-color: var(--turquoise);
+  }
+  .num {
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+  }
+  .name {
+    font: 700 1.35rem/1.2 var(--font-heading);
+  }
+  .quote {
+    flex: 1;
+  }
+  .go {
+    font-weight: 500;
+    color: var(--turquoise-text);
+  }
+</style>

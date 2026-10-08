@@ -1,0 +1,122 @@
+---
+import Base from "../layouts/Base.astro";
+import { site } from "../site";
+
+const whatsappLink = site.whatsappNumber ? `https://wa.me/${site.whatsappNumber}` : null;
+const mapQuery = encodeURIComponent("East London, Eastern Cape, South Africa");
+---
+
+<Base title="Contact" description="WhatsApp, phone or email IsangoTech. Based in East London, working across South Africa.">
+  <section class="container intro">
+    <h1>Contact us</h1>
+    <p>The quickest way to reach us is WhatsApp. You can also call, email, or <a href="/get-started">fill in the Get started form</a>.</p>
+  </section>
+
+  <section class="container grid">
+    <ul class="ways">
+      {
+        whatsappLink && (
+          <li>
+            <h2>WhatsApp</h2>
+            <a class="button" href={whatsappLink}>
+              Chat with us
+            </a>
+          </li>
+        )
+      }
+      {
+        site.phone && (
+          <li>
+            <h2>Phone</h2>
+            <a href={`tel:${site.phone.replace(/\s/g, "")}`}>{site.phone}</a>
+          </li>
+        )
+      }
+      {
+        site.email && (
+          <li>
+            <h2>Email</h2>
+            <a href={`mailto:${site.email}`}>{site.email}</a>
+          </li>
+        )
+      }
+      <li>
+        <h2>Where we work</h2>
+        <p>{site.areaServed}. We meet in person in and around East London, and online anywhere.</p>
+        {site.googleBusinessProfileUrl && <a href={site.googleBusinessProfileUrl}>Find us on Google</a>}
+      </li>
+    </ul>
+    <div class="map" id="map">
+      <p>The map loads from Google, which may set cookies.</p>
+      <button class="button" type="button" id="show-map" data-src={`https://www.google.com/maps?q=${mapQuery}&output=embed`}>
+        Show map
+      </button>
+      <a href={`https://www.google.com/maps/search/?api=1&query=${mapQuery}`}>Open in Google Maps</a>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const button = document.getElementById("show-map") as HTMLButtonElement;
+  button.addEventListener("click", () => {
+    const iframe = document.createElement("iframe");
+    iframe.title = "Map of East London, Eastern Cape";
+    iframe.src = button.dataset.src!;
+    iframe.referrerPolicy = "no-referrer-when-downgrade";
+    (document.getElementById("map") as HTMLElement).replaceChildren(iframe);
+  });
+</script>
+
+<style>
+  .intro {
+    padding-block: 3rem 1.5rem;
+  }
+  .intro > * {
+    max-width: 44rem;
+  }
+  .grid {
+    display: grid;
+    gap: 1.5rem;
+  }
+  @media (min-width: 52rem) {
+    .grid {
+      grid-template-columns: 1fr 1.2fr;
+    }
+  }
+  .ways {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 1rem;
+    align-content: start;
+  }
+  .ways li {
+    padding: 1.25rem;
+    background: var(--white);
+    border-radius: var(--radius);
+  }
+  .ways h2 {
+    font-size: 1.15rem;
+  }
+  .ways p {
+    margin: 0 0 0.5rem;
+  }
+  .map {
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 0.75rem;
+    min-height: 20rem;
+    padding: 1.5rem;
+    text-align: center;
+    border-radius: var(--radius);
+    background: var(--white) url("/brand/beadwork.svg") repeat-x left bottom / 28px 28px;
+  }
+  .map :global(iframe) {
+    width: 100%;
+    height: 100%;
+    min-height: 20rem;
+    border: 0;
+  }
+</style>

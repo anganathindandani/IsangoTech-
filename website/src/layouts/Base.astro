@@ -1,6 +1,11 @@
 ---
+import "@fontsource/outfit/latin-600.css";
+import "@fontsource/outfit/latin-700.css";
+import "@fontsource/dm-sans/latin-400.css";
+import "@fontsource/dm-sans/latin-500.css";
 import "../styles/global.css";
-import { site } from "../site";
+import Beadwork from "../components/Beadwork.astro";
+import { nav, site } from "../site";
 
 interface Props {
   title?: string;
@@ -10,6 +15,14 @@ interface Props {
 const { title, description = site.description } = Astro.props;
 const pageTitle = title ? `${title} · ${site.name}` : `${site.name} · ${site.tagline}`;
 const whatsappLink = site.whatsappNumber ? `https://wa.me/${site.whatsappNumber}` : null;
+const current = Astro.url.pathname.replace(/\/$/, "") || "/";
+const isCurrent = (href: string) => current === href || current.startsWith(`${href}/`);
+const socialLinks = [
+  { href: site.social.facebook, label: "Facebook" },
+  { href: site.social.instagram, label: "Instagram" },
+  { href: site.social.linkedin, label: "LinkedIn" },
+  { href: site.googleBusinessProfileUrl, label: "Google" },
+].filter((l) => l.href);
 const year = new Date().getFullYear();
 ---
 
@@ -21,42 +34,74 @@ const year = new Date().getFullYear();
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="theme-color" content="#1B2A4A" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=Outfit:wght@600;700&display=swap"
-      rel="stylesheet"
-    />
   </head>
   <body>
+    <a class="skip" href="#main">Skip to content</a>
     <header class="site-header">
       <div class="container header-inner">
-        <a href="/" aria-label={`${site.name} home`}>
-          <img src="/brand/isangotech-logo.svg" alt={site.name} width="180" height="39" />
+        <a href="/" class="logo" aria-label={`${site.name} home`}>
+          <img src="/brand/isangotech-logo.svg" alt={site.name} width="150" height="32" />
         </a>
-        <a class="button" href="/get-started">Get started</a>
+        <nav class="desktop-nav" aria-label="Main">
+          {
+            nav.map((item) => (
+              <a href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>
+                {item.label}
+              </a>
+            ))
+          }
+        </nav>
+        <a class="button header-cta" href="/get-started">Get started</a>
+        <details class="mobile-nav">
+          <summary aria-label="Menu">Menu</summary>
+          <nav aria-label="Main">
+            {
+              nav.map((item) => (
+                <a href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>
+                  {item.label}
+                </a>
+              ))
+            }
+            <a href="/get-started">Get started</a>
+          </nav>
+        </details>
       </div>
     </header>
 
-    <main>
+    <main id="main">
       <slot />
     </main>
 
     <footer class="site-footer">
+      <Beadwork size={28} />
       <div class="container footer-inner">
-        <img src="/brand/isangotech-logo-reversed.svg" alt={site.name} width="160" height="34" loading="lazy" />
-        <nav aria-label="Legal">
+        <div>
+          <img src="/brand/isangotech-logo-reversed.svg" alt={site.name} width="160" height="34" loading="lazy" />
+          <p class="tagline">{site.tagline}</p>
+        </div>
+        <nav aria-label="Footer">
+          {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+          <a href="/get-started">Get started</a>
+        </nav>
+        <div class="contact">
+          {whatsappLink && <a href={whatsappLink}>WhatsApp</a>}
+          {site.phone && <a href={`tel:${site.phone.replace(/\s/g, "")}`}>{site.phone}</a>}
+          {site.email && <a href={`mailto:${site.email}`}>{site.email}</a>}
+          {socialLinks.map((l) => <a href={l.href}>{l.label}</a>)}
+        </div>
+        <p class="legal">
           <a href="/privacy">Privacy policy</a>
           <a href="/terms">Terms</a>
-        </nav>
-        <p>
-          © {year}
-          {site.name}{site.companyRegistrationNumber && ` · Reg. ${site.companyRegistrationNumber}`} · {
-            site.areaServed
-          }
+          <span>
+            © {year}
+            {site.name}{site.companyRegistrationNumber && ` · Reg. no. ${site.companyRegistrationNumber}`}
+          </span>
         </p>
       </div>
     </footer>
@@ -72,45 +117,134 @@ const year = new Date().getFullYear();
 </html>
 
 <style>
+  .skip {
+    position: absolute;
+    left: -999px;
+  }
+  .skip:focus {
+    left: 1rem;
+    top: 1rem;
+    z-index: 10;
+    background: var(--white);
+    padding: 0.5rem 1rem;
+  }
   .site-header {
     background: var(--white);
     border-bottom: 1px solid rgb(27 42 74 / 0.08);
+    position: relative;
   }
   .header-inner {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
+    gap: 1.5rem;
     min-height: 4rem;
   }
-  .header-inner img {
+  .logo {
+    margin-right: auto;
+  }
+  .logo img {
     display: block;
     width: 150px;
     height: auto;
   }
+  .desktop-nav {
+    display: none;
+    gap: 1.5rem;
+  }
+  .desktop-nav a,
+  .mobile-nav a {
+    color: var(--indigo);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .desktop-nav a[aria-current="page"],
+  .mobile-nav a[aria-current="page"] {
+    color: var(--turquoise-text);
+    text-decoration: underline;
+    text-underline-offset: 6px;
+  }
+  .header-cta {
+    display: none;
+  }
+  .mobile-nav summary {
+    cursor: pointer;
+    list-style: none;
+    font-weight: 500;
+    padding: 0.5rem 0.75rem;
+    border: 2px solid var(--indigo);
+    border-radius: 999px;
+  }
+  .mobile-nav summary::-webkit-details-marker {
+    display: none;
+  }
+  .mobile-nav nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 5;
+    display: grid;
+    background: var(--white);
+    border-bottom: 1px solid rgb(27 42 74 / 0.12);
+    box-shadow: 0 12px 24px rgb(27 42 74 / 0.12);
+  }
+  .mobile-nav nav a {
+    padding: 1rem var(--gutter);
+    border-top: 1px solid rgb(27 42 74 / 0.08);
+  }
+  @media (min-width: 60rem) {
+    .desktop-nav,
+    .header-cta {
+      display: flex;
+    }
+    .mobile-nav {
+      display: none;
+    }
+  }
+
   .site-footer {
     background: var(--indigo);
     color: var(--sand);
-    padding-block: 2.5rem;
-    margin-top: 4rem;
   }
   .footer-inner {
     display: grid;
-    gap: 1rem;
+    gap: 1.5rem;
+    padding-block: 2.5rem;
+  }
+  @media (min-width: 48rem) {
+    .footer-inner {
+      grid-template-columns: 1.4fr 1fr 1fr;
+    }
+    .legal {
+      grid-column: 1 / -1;
+    }
+  }
+  .tagline {
+    margin: 0.5rem 0 0;
+    color: var(--ochre);
+  }
+  .site-footer nav,
+  .contact {
+    display: grid;
+    gap: 0.4rem;
+    align-content: start;
   }
   .site-footer a {
     color: var(--sand);
-    margin-right: 1rem;
   }
-  .site-footer p {
+  .legal {
     margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
     font-size: 0.875rem;
-    opacity: 0.8;
+    opacity: 0.85;
   }
   .whatsapp {
     position: fixed;
     right: 1rem;
     bottom: 1rem;
+    z-index: 5;
     padding: 0.75rem 1.1rem;
     border-radius: 999px;
     background: var(--turquoise-text);

@@ -1,0 +1,146 @@
+---
+import Base from "../layouts/Base.astro";
+import CallToAction from "../components/CallToAction.astro";
+import { formatPrice, packages } from "../data/packages";
+import { stageByNumber } from "../data/stages";
+import { site } from "../site";
+
+const staged = packages.filter((p) => p.stage !== null);
+const everyStage = packages.filter((p) => p.stage === null);
+---
+
+<Base title="Services and pricing" description="IsangoTech packages laid out by growth stage, with starting prices and what comes next.">
+  <section class="container intro">
+    <h1>Services and pricing</h1>
+    <p>
+      Our packages follow the growth path. Find the stage your business is at, start there, and see what comes next.
+      Every price is a starting price. We confirm the final price in a written quote before any work starts.
+    </p>
+  </section>
+
+  <section class="container" aria-label="Packages by growth stage">
+    <ol class="packages">
+      {
+        staged.map((p) => {
+          const stage = stageByNumber(p.stage!);
+          return (
+            <li class="package">
+              <p class="stage">
+                Stage {p.stage} · {stage?.name}
+              </p>
+              <h2>{p.name}</h2>
+              <p class="price">{formatPrice(p)}</p>
+              <p>{p.summary}</p>
+              <ul>
+                {p.includes.map((i) => (
+                  <li>{i}</li>
+                ))}
+              </ul>
+              <a class="button" href={`/get-started?stage=${p.stage}`}>
+                Get started
+              </a>
+              {p.nextStep && (
+                <p class="next">
+                  <strong>Next step:</strong> {p.nextStep}
+                </p>
+              )}
+            </li>
+          );
+        })
+      }
+    </ol>
+  </section>
+
+  <section class="container" aria-label="Available at every stage">
+    {
+      everyStage.map((p) => (
+        <div class="package care">
+          <p class="stage">Every stage</p>
+          <h2>{p.name}</h2>
+          <p class="price">{formatPrice(p)}</p>
+          <p>{p.summary}</p>
+          <ul>
+            {p.includes.map((i) => (
+              <li>{i}</li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+    <p class="note">
+      Prices are in South African rand.
+      {
+        site.vatRegistered
+          ? "Prices include VAT."
+          : "IsangoTech is not yet a registered VAT vendor, so no VAT is charged."
+      }
+    </p>
+  </section>
+
+  <CallToAction heading="Not sure which one fits?" text="Tell us a bit about your business and we'll recommend where to start. No pressure, no jargon." />
+</Base>
+
+<style>
+  .intro {
+    padding-block: 3rem 1.5rem;
+  }
+  .intro > * {
+    max-width: 48rem;
+  }
+  .packages {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  }
+  .package {
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    background: var(--white);
+    border-radius: var(--radius);
+  }
+  .package h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+  }
+  .package ul {
+    padding-left: 1.2rem;
+    flex: 1;
+  }
+  .package .button {
+    align-self: flex-start;
+  }
+  .stage {
+    margin: 0 0 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+  }
+  .price {
+    margin: 0 0 0.75rem;
+    font: 600 1.15rem/1.3 var(--font-heading);
+    color: var(--turquoise-text);
+  }
+  .next {
+    margin: 1rem 0 0;
+    padding-top: 1rem;
+    border-top: 1px solid rgb(27 42 74 / 0.1);
+    font-size: 0.95rem;
+  }
+  .care {
+    margin-top: 1rem;
+    border-left: 6px solid var(--ochre);
+  }
+  .care ul {
+    flex: none;
+  }
+  .note {
+    font-size: 0.9rem;
+    opacity: 0.85;
+  }
+</style>

@@ -1,0 +1,105 @@
+---
+import Base from "../../layouts/Base.astro";
+import CallToAction from "../../components/CallToAction.astro";
+import { allSolutions, type Industry } from "../../data/industries";
+import { stages } from "../../data/stages";
+
+export function getStaticPaths() {
+  return allSolutions.map((industry) => ({ params: { slug: industry.slug }, props: { industry } }));
+}
+
+interface Props {
+  industry: Industry;
+}
+
+const { industry } = Astro.props;
+---
+
+<Base title={industry.name} description={`${industry.tagline} How IsangoTech helps ${industry.name.toLowerCase()}, stage by stage.`}>
+  <section class="hero">
+    <div class="container">
+      <p class="crumb"><a href="/solutions">Solutions</a></p>
+      <h1>{industry.name}</h1>
+      <p class="tagline">{industry.tagline}</p>
+    </div>
+  </section>
+
+  <section class="container pains" aria-labelledby="pains-heading">
+    <h2 id="pains-heading">Sound familiar?</h2>
+    <ul>{industry.pains.map((p) => <li>{p}</li>)}</ul>
+  </section>
+
+  <section class="container" aria-labelledby="path-heading">
+    <h2 id="path-heading">What we do at each stage</h2>
+    <p>Start where you are. Each step builds on the last, so nothing you pay for gets thrown away.</p>
+    <ol class="path">
+      {
+        stages.map((s) => (
+          <li>
+            <span class="num">Stage {s.number} · {s.name}</span>
+            <p>{industry.byStage[s.number]}</p>
+            <a href={`/get-started?stage=${s.number}`}>Start at stage {s.number} →</a>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  {
+    industry.demoVideo && (
+      <section class="container demo" aria-labelledby="demo-heading">
+        <h2 id="demo-heading">See it working</h2>
+        <a class="button" href={industry.demoVideo}>
+          Watch the demo
+        </a>
+      </section>
+    )
+  }
+
+  <CallToAction heading={`Let's talk about your ${industry.noun}`} />
+</Base>
+
+<style>
+  .hero {
+    background: var(--white);
+    padding-block: 2.5rem;
+  }
+  .crumb {
+    margin: 0 0 0.5rem;
+  }
+  .tagline {
+    font-size: 1.2rem;
+    margin: 0;
+  }
+  .pains {
+    padding-block: 2.5rem 1rem;
+  }
+  .pains ul {
+    padding-left: 1.2rem;
+  }
+  .pains li {
+    margin-bottom: 0.5rem;
+  }
+  .path {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  }
+  .path li {
+    padding: 1.25rem;
+    background: var(--white);
+    border-radius: var(--radius);
+    border-top: 5px solid var(--turquoise);
+  }
+  .path li:nth-child(even) {
+    border-top-color: var(--ochre);
+  }
+  .num {
+    font: 700 1.05rem/1.2 var(--font-heading);
+  }
+  .demo {
+    padding-top: 1.5rem;
+  }
+</style>

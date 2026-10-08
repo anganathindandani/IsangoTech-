@@ -1,0 +1,46 @@
+---
+import { allSolutions } from "../data/industries";
+---
+
+<ul class="tiles">
+  {
+    allSolutions.map((i) => (
+      <li>
+        <a href={`/solutions/${i.slug}`}>
+          <span class="name">{i.name}</span>
+          <span class="tagline">{i.tagline}</span>
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .tiles {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  }
+  a {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    height: 100%;
+    padding: 1.25rem;
+    border-radius: var(--radius);
+    background: var(--indigo);
+    color: var(--sand);
+    text-decoration: none;
+    border-left: 6px solid var(--ochre);
+  }
+  a:hover,
+  a:focus-visible {
+    border-left-color: var(--turquoise);
+  }
+  .name {
+    font: 700 1.2rem/1.2 var(--font-heading);
+  }
+</style>

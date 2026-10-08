@@ -1,25 +1,141 @@
 ---
 import Base from "../layouts/Base.astro";
+import Beadwork from "../components/Beadwork.astro";
+import CallToAction from "../components/CallToAction.astro";
+import IndustryTiles from "../components/IndustryTiles.astro";
+import StagePicker from "../components/StagePicker.astro";
+import { testimonials } from "../data/testimonials";
 import { site } from "../site";
+
+const outcomes = [
+  { title: "Time saved", text: "Bookings, reminders and follow-ups happen without you chasing them." },
+  { title: "More customers", text: "People find you online and every enquiry gets an answer." },
+  { title: "Less admin", text: "Your daily work lives in one place, not in spreadsheets and chat threads." },
+];
 ---
 
 <Base>
-  <section class="hero container">
-    <h1>{site.tagline}</h1>
-    <p>
-      We build websites, booking and enquiry tools, staff portals and AI automation for small businesses in East London
-      and beyond, so you get found, never miss a customer, and spend less time on admin.
-    </p>
-    <a class="button" href="/get-started">Get started</a>
+  <section class="hero">
+    <div class="container">
+      <p class="eyebrow">Proudly African · East London and beyond</p>
+      <h1>{site.tagline}</h1>
+      <p class="offer">
+        We build websites, booking tools, staff portals and AI automation for small businesses, so you get found, never
+        miss a customer and spend less time on admin.
+      </p>
+      <div class="actions">
+        <a class="button" href="/get-started">Get started</a>
+        <a class="secondary" href="/services">See packages and prices</a>
+      </div>
+    </div>
   </section>
+  <Beadwork />
+
+  <section class="container outcomes" aria-label="What you get">
+    {
+      outcomes.map((o) => (
+        <div>
+          <h2>{o.title}</h2>
+          <p>{o.text}</p>
+        </div>
+      ))
+    }
+  </section>
+
+  <StagePicker />
+
+  <section class="container industries" aria-labelledby="industries-heading">
+    <h2 id="industries-heading">Built for businesses like yours</h2>
+    <p>We specialise in a few industries so we can reuse what works, and we help any small business on the same path.</p>
+    <IndustryTiles />
+  </section>
+
+  {
+    testimonials.length > 0 && (
+      <section class="container testimonials" aria-labelledby="testimonials-heading">
+        <h2 id="testimonials-heading">What our clients say</h2>
+        <div class="quotes">
+          {testimonials.map((t) => (
+            <figure>
+              <blockquote>"{t.quote}"</blockquote>
+              <figcaption>
+                {t.name}, {t.business}
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <CallToAction />
 </Base>
 
 <style>
   .hero {
-    padding-block: 4rem;
-    max-width: 48rem;
+    background: var(--white);
+    padding-block: 3.5rem 3rem;
   }
-  .hero p {
-    font-size: 1.125rem;
+  .eyebrow {
+    margin: 0 0 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+  }
+  .hero h1 {
+    max-width: 14ch;
+  }
+  .offer {
+    max-width: 38rem;
+    font-size: 1.15rem;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.5rem;
+    margin-top: 1.5rem;
+  }
+  .secondary {
+    font-weight: 500;
+  }
+  .outcomes {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    padding-block: 3rem 0;
+  }
+  .outcomes h2 {
+    font-size: 1.4rem;
+    color: var(--turquoise-text);
+  }
+  .outcomes p {
+    margin: 0;
+  }
+  .industries {
+    padding-block: 1rem 0;
+  }
+  .testimonials {
+    padding-block: 3rem 0;
+  }
+  .quotes {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  }
+  figure {
+    margin: 0;
+    padding: 1.25rem;
+    background: var(--white);
+    border-radius: var(--radius);
+  }
+  blockquote {
+    margin: 0 0 0.75rem;
+    font-size: 1.05rem;
+  }
+  figcaption {
+    font-weight: 500;
   }
 </style>

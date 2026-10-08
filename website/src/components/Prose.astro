@@ -1,0 +1,41 @@
+---
+// Long-form text pages (privacy policy, terms).
+import { site } from "../site";
+
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+---
+
+<section class="container prose">
+  <h1>{title}</h1>
+  {
+    !site.legalReviewed && (
+      <p class="draft">Draft: this page will be reviewed before the website goes live.</p>
+    )
+  }
+  <slot />
+</section>
+
+<style>
+  .prose {
+    padding-block: 3rem 1rem;
+  }
+  .prose > :global(*) {
+    max-width: 46rem;
+  }
+  .prose :global(h2) {
+    font-size: 1.4rem;
+    margin-top: 2rem;
+  }
+  .prose :global(li) {
+    margin-bottom: 0.35rem;
+  }
+  .draft {
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    background: rgb(224 122 31 / 0.15);
+    font-weight: 500;
+  }
+</style>

@@ -1,0 +1,38 @@
+---
+import Beadwork from "./Beadwork.astro";
+
+interface Props {
+  heading?: string;
+  text?: string;
+}
+const {
+  heading = "Let's get your admin off your plate",
+  text = "Tell us where your business is now. We'll get back to you with honest advice on what to do next, even if that's nothing yet.",
+} = Astro.props;
+---
+
+<section class="cta">
+  <Beadwork />
+  <div class="container inner">
+    <h2>{heading}</h2>
+    <p>{text}</p>
+    <a class="button" href="/get-started">Get started</a>
+  </div>
+</section>
+
+<style>
+  .cta {
+    background: var(--indigo);
+    color: var(--sand);
+    margin-top: 3rem;
+  }
+  .inner {
+    padding-block: 3rem;
+  }
+  .inner > * {
+    max-width: 44rem;
+  }
+  .inner p {
+    margin-bottom: 1.5rem;
+  }
+</style>

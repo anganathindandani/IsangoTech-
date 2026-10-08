@@ -1,0 +1,16 @@
+---
+// Signature beadwork band from the brand board. Decorative only.
+interface Props {
+  size?: number;
+}
+const { size = 36 } = Astro.props;
+---
+
+<div class="beadwork" style={`--bead: ${size}px`} aria-hidden="true"></div>
+
+<style>
+  .beadwork {
+    height: var(--bead);
+    background: url("/brand/beadwork.svg") repeat-x left center / var(--bead) var(--bead);
+  }
+</style>

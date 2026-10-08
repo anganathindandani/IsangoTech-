@@ -6,7 +6,7 @@ One system with two faces: a public website that wins clients, and a private tea
 | --- | --- | --- |
 | `brand/` | Logo files, colours and usage rules | Done |
 | `supabase/` | Database, security rules, website intake functions | Phase 1 done and tested |
-| `website/` | Astro site for `isangotech.co.za` | Skeleton with branding |
+| `website/` | Astro site for `isangotech.co.za` | Phase 1 pages built |
 | `portal/` | Flutter Web app for `portal.isangotech.co.za` | Not started |
 
 ## Database (`supabase/`)
@@ -30,6 +30,30 @@ cd supabase/functions && deno task test                      # edge functions
 ```
 
 CI runs both, plus the website build, on every push to `main` and on pull requests.
+
+## Website (`website/`)
+
+Home (with the stage picker), Solutions (salons, restaurants, caterers and other small businesses), Services and pricing, About, Get started, Contact, Privacy policy, Terms and a 404 page. Fonts are served from the site itself, and the Google map on the Contact page loads only when someone taps "Show map".
+
+Most content lives in plain data files, so it can be edited without touching the page layouts:
+
+| File | What's in it |
+| --- | --- |
+| `src/site.ts` | WhatsApp number, phone, email, registration number, social links, founder, Information Officer, VAT status. Anything left empty is hidden. |
+| `src/data/packages.ts` | Packages and their "from" prices. A package with no price shows "Price on request". |
+| `src/data/stages.ts` | The four growth stages. |
+| `src/data/industries.ts` | Solutions pages: pains and what we offer at each stage. |
+| `src/data/testimonials.ts` | Client quotes. The Home page hides this section while the list is empty. |
+
+The Get started form talks to the Supabase edge functions. Build with:
+
+```sh
+cd website
+PUBLIC_SUPABASE_FUNCTIONS_URL=https://<ref>.supabase.co/functions/v1 \
+PUBLIC_TURNSTILE_SITE_KEY=<from Cloudflare Turnstile> npm run build
+```
+
+Without `PUBLIC_SUPABASE_FUNCTIONS_URL`, the form is replaced by a message pointing people to WhatsApp. The privacy policy and terms show a "Draft" notice until `legalReviewed` is set to `true` in `src/site.ts`.
 
 ## Going live: one-time setup
 

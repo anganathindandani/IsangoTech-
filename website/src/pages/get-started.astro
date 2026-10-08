@@ -1,0 +1,418 @@
+---
+import Base from "../layouts/Base.astro";
+import { stages } from "../data/stages";
+import { formConfig, site } from "../site";
+
+const whatsappLink = site.whatsappNumber ? `https://wa.me/${site.whatsappNumber}` : null;
+---
+
+<Base title="Get started" description="Tell us about your business and where it is now. We'll recommend where to start.">
+  <section class="container intro">
+    <h1>Get started</h1>
+    <p>
+      Tell us a little about your business. We'll get back to you with honest advice on where to start, in plain
+      language.
+      {whatsappLink && (
+        <>
+          Prefer to chat? <a href={whatsappLink}>Message us on WhatsApp</a>.
+        </>
+      )}
+    </p>
+  </section>
+
+  <section class="container">
+    <form
+      id="enquiry"
+      class="card"
+      novalidate
+      data-functions-url={formConfig.functionsUrl}
+      data-turnstile-site-key={formConfig.turnstileSiteKey}
+    >
+      <div class="field">
+        <label for="full_name">Your name <span class="req">required</span></label>
+        <input id="full_name" name="full_name" autocomplete="name" required maxlength="120" />
+      </div>
+
+      <div class="field">
+        <label for="business_name">Business name</label>
+        <input id="business_name" name="business_name" autocomplete="organization" maxlength="160" />
+      </div>
+
+      <div class="field" id="industry-field" hidden>
+        <label for="industry_id">Industry</label>
+        <select id="industry_id" name="industry_id">
+          <option value="">Choose one</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="phone">Phone or WhatsApp number <span class="req">required</span></label>
+          <input id="phone" name="phone" type="tel" autocomplete="tel" required inputmode="tel" />
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" autocomplete="email" />
+        </div>
+      </div>
+
+      <fieldset class="field">
+        <legend>What do you need most right now?</legend>
+        <div class="choices">
+          {
+            stages.map((s) => (
+              <label class="choice">
+                <input type="radio" name="stage_needed" value={s.number} />
+                <span>
+                  <strong>{s.need}</strong>
+                  <small>
+                    Stage {s.number} · {s.name}
+                  </small>
+                </span>
+              </label>
+            ))
+          }
+          <label class="choice">
+            <input type="radio" name="stage_needed" value="" checked />
+            <span><strong>I'm not sure yet</strong><small>We'll help you work it out</small></span>
+          </label>
+        </div>
+      </fieldset>
+
+      <div class="field">
+        <label for="biggest_pain">What's the biggest headache in your business at the moment?</label>
+        <textarea id="biggest_pain" name="biggest_pain" rows="4" maxlength="2000"></textarea>
+      </div>
+
+      <fieldset class="field" id="slots-field" hidden>
+        <legend>Book an AI Readiness Assessment (optional)</legend>
+        <p class="hint">
+          Best for businesses that already run on a system and want to automate. Pick a time and we'll come to you, or
+          meet online.
+        </p>
+        <select id="booking_slot_id" name="booking_slot_id" aria-label="Assessment time">
+          <option value="">No thanks, not now</option>
+        </select>
+      </fieldset>
+
+      <div class="field checks">
+        <label class="check">
+          <input type="checkbox" name="consent" required />
+          <span>
+            I agree that IsangoTech may use these details to reply to my enquiry, as explained in the
+            <a href="/privacy" target="_blank">privacy policy</a>. <span class="req">required</span>
+          </span>
+        </label>
+        <label class="check">
+          <input type="checkbox" name="whatsapp_opt_in" />
+          <span>You may contact me on WhatsApp.</span>
+        </label>
+      </div>
+
+      <!-- Honeypot: hidden from people, filled in by bots. -->
+      <div class="hp" aria-hidden="true">
+        <label for="website">Leave this empty</label>
+        <input id="website" name="website" tabindex="-1" autocomplete="off" />
+      </div>
+
+      <div id="turnstile" class="turnstile"></div>
+
+      <p id="form-error" class="error" role="alert" tabindex="-1" hidden></p>
+
+      <button class="button" type="submit" id="submit">Send</button>
+    </form>
+
+    <div id="success" class="card success" hidden tabindex="-1">
+      <h2>Thank you, we've got it.</h2>
+      <p id="success-text">We'll be in touch soon.</p>
+      <p><a href="/">Back to the home page</a></p>
+    </div>
+
+    <div id="unavailable" class="card" hidden>
+      <h2>The form isn't available right now</h2>
+      <p>
+        {
+          whatsappLink ? (
+            <>
+              Please <a href={whatsappLink}>message us on WhatsApp</a> instead, and we'll help you from there.
+            </>
+          ) : (
+            <>Please try again a little later.</>
+          )
+        }
+      </p>
+    </div>
+  </section>
+</Base>
+
+<script>
+  type Slot = { id: string; starts_at: string; ends_at: string; mode: "in_person" | "online" };
+  type Options = { industries: { id: string; name: string }[]; slots: Slot[]; privacy_policy_version: string };
+
+  declare global {
+    interface Window {
+      turnstile?: { reset(el?: string | HTMLElement): void; render(el: string | HTMLElement, opts: object): string };
+      onTurnstileLoad?: () => void;
+    }
+  }
+
+  const form = document.getElementById("enquiry") as HTMLFormElement;
+  const functionsUrl = form.dataset.functionsUrl?.replace(/\/$/, "") ?? "";
+  const siteKey = form.dataset.turnstileSiteKey ?? "";
+  const errorBox = document.getElementById("form-error") as HTMLParagraphElement;
+  const submit = document.getElementById("submit") as HTMLButtonElement;
+  let turnstileToken = "";
+
+  const timeFormat = new Intl.DateTimeFormat("en-ZA", {
+    timeZone: "Africa/Johannesburg",
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  function showError(message: string) {
+    errorBox.textContent = message;
+    errorBox.hidden = false;
+    errorBox.focus();
+  }
+
+  function unavailable() {
+    form.hidden = true;
+    (document.getElementById("unavailable") as HTMLElement).hidden = false;
+  }
+
+  // Pre-select the stage chosen on the home page (/get-started?stage=2).
+  const stageParam = new URLSearchParams(location.search).get("stage");
+  if (stageParam) {
+    const radio = form.querySelector<HTMLInputElement>(`input[name="stage_needed"][value="${CSS.escape(stageParam)}"]`);
+    if (radio) radio.checked = true;
+  }
+
+  async function loadOptions() {
+    const res = await fetch(`${functionsUrl}/enquiry-options`);
+    if (!res.ok) throw new Error(`enquiry-options ${res.status}`);
+    const options = (await res.json()) as Options;
+
+    const industry = document.getElementById("industry_id") as HTMLSelectElement;
+    for (const i of options.industries) industry.add(new Option(i.name, i.id));
+    (document.getElementById("industry-field") as HTMLElement).hidden = options.industries.length === 0;
+
+    const slotSelect = document.getElementById("booking_slot_id") as HTMLSelectElement;
+    slotSelect.length = 1;
+    for (const s of options.slots) {
+      const where = s.mode === "online" ? "online" : "in person";
+      slotSelect.add(new Option(`${timeFormat.format(new Date(s.starts_at))} (${where})`, s.id));
+    }
+    (document.getElementById("slots-field") as HTMLElement).hidden = options.slots.length === 0;
+  }
+
+  function loadTurnstile() {
+    window.onTurnstileLoad = () => {
+      window.turnstile!.render("#turnstile", {
+        sitekey: siteKey,
+        callback: (token: string) => (turnstileToken = token),
+        "expired-callback": () => (turnstileToken = ""),
+      });
+    };
+    const script = document.createElement("script");
+    script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileLoad&render=explicit";
+    script.async = true;
+    document.head.append(script);
+  }
+
+  function validate(): string | null {
+    const data = new FormData(form);
+    if (!String(data.get("full_name") ?? "").trim()) return "Please tell us your name.";
+    const phoneDigits = String(data.get("phone") ?? "").replace(/[^0-9+]/g, "");
+    if (phoneDigits.length < 9) return "Please give a phone number we can reach you on.";
+    const email = String(data.get("email") ?? "").trim();
+    if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return "That email address doesn't look right.";
+    if (!data.get("consent")) return "Please agree to the privacy policy so we can reply to you.";
+    if (siteKey && !turnstileToken) return "Please complete the spam check.";
+    return null;
+  }
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    errorBox.hidden = true;
+    const problem = validate();
+    if (problem) return showError(problem);
+
+    const data = new FormData(form);
+    const stage = String(data.get("stage_needed") ?? "");
+    const body = {
+      full_name: String(data.get("full_name")).trim(),
+      business_name: String(data.get("business_name") ?? "").trim(),
+      industry_id: String(data.get("industry_id") ?? ""),
+      phone: String(data.get("phone")).trim(),
+      email: String(data.get("email") ?? "").trim(),
+      stage_needed: stage ? Number(stage) : null,
+      biggest_pain: String(data.get("biggest_pain") ?? "").trim(),
+      booking_slot_id: String(data.get("booking_slot_id") ?? ""),
+      consent: data.get("consent") === "on",
+      whatsapp_opt_in: data.get("whatsapp_opt_in") === "on",
+      website: String(data.get("website") ?? ""),
+      turnstile_token: turnstileToken,
+    };
+
+    submit.disabled = true;
+    submit.textContent = "Sending…";
+    try {
+      const res = await fetch(`${functionsUrl}/submit-enquiry`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const result = await res.json().catch(() => ({}));
+      if (res.ok) {
+        form.hidden = true;
+        const success = document.getElementById("success") as HTMLElement;
+        if (result.assessment_starts_at) {
+          (document.getElementById("success-text") as HTMLElement).textContent =
+            `Your AI Readiness Assessment is booked for ${timeFormat.format(new Date(result.assessment_starts_at))}. ` +
+            "We'll confirm the details with you before then.";
+        }
+        success.hidden = false;
+        success.focus();
+        return;
+      }
+      if (res.status === 409) await loadOptions().catch(() => {});
+      showError(result.error ?? "Something went wrong. Please try again.");
+    } catch {
+      showError("We couldn't send your details. Please check your connection and try again.");
+    } finally {
+      submit.disabled = false;
+      submit.textContent = "Send";
+      window.turnstile?.reset("#turnstile");
+      turnstileToken = "";
+    }
+  });
+
+  if (!functionsUrl) {
+    unavailable();
+  } else {
+    loadOptions().catch(() => {
+      // The form still works without industries and slots.
+    });
+    if (siteKey) loadTurnstile();
+  }
+</script>
+
+<style>
+  .intro {
+    padding-block: 3rem 1.5rem;
+  }
+  .intro > * {
+    max-width: 44rem;
+  }
+  .card {
+    max-width: 44rem;
+    padding: 1.5rem;
+    background: var(--white);
+    border-radius: var(--radius);
+  }
+  .field {
+    margin: 0 0 1.25rem;
+    border: 0;
+    padding: 0;
+  }
+  label,
+  legend {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.35rem;
+  }
+  .req {
+    font-weight: 400;
+    font-size: 0.8rem;
+    color: var(--terracotta);
+  }
+  input:not([type="radio"], [type="checkbox"]),
+  select,
+  textarea {
+    width: 100%;
+    padding: 0.7rem 0.8rem;
+    border: 1.5px solid rgb(27 42 74 / 0.3);
+    border-radius: 0.5rem;
+    font: inherit;
+    color: inherit;
+    background: var(--white);
+  }
+  input:focus,
+  select:focus,
+  textarea:focus {
+    border-color: var(--turquoise);
+    outline: none;
+    box-shadow: 0 0 0 3px rgb(43 168 160 / 0.25);
+  }
+  .row {
+    display: grid;
+    gap: 0 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  }
+  .choices {
+    display: grid;
+    gap: 0.5rem;
+  }
+  .choice {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    padding: 0.75rem;
+    border: 1.5px solid rgb(27 42 74 / 0.15);
+    border-radius: 0.5rem;
+    font-weight: 400;
+    cursor: pointer;
+  }
+  .choice:has(input:checked) {
+    border-color: var(--turquoise);
+    background: rgb(43 168 160 / 0.08);
+  }
+  .choice span,
+  .check span {
+    display: grid;
+  }
+  .choice input,
+  .check input {
+    margin-top: 0.3rem;
+    accent-color: var(--turquoise-text);
+  }
+  .check {
+    display: flex;
+    gap: 0.75rem;
+    font-weight: 400;
+    margin-bottom: 0.75rem;
+  }
+  .check span {
+    display: block;
+  }
+  .hint {
+    margin: 0 0 0.75rem;
+    font-size: 0.95rem;
+  }
+  .hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .turnstile {
+    margin-bottom: 1rem;
+  }
+  .error {
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    background: rgb(181 82 59 / 0.1);
+    color: #8a3a28;
+    font-weight: 500;
+  }
+  .success {
+    border-top: 6px solid var(--turquoise);
+  }
+  [hidden] {
+    display: none !important;
+  }
+</style>

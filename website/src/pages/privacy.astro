@@ -1,0 +1,91 @@
+---
+import Base from "../layouts/Base.astro";
+import Prose from "../components/Prose.astro";
+import { site } from "../site";
+
+const officer = site.informationOfficer;
+---
+
+<Base title="Privacy policy" description="How IsangoTech collects, uses and protects personal information under POPIA.">
+  <Prose title="Privacy policy">
+    <p>
+      Version {site.privacyPolicyVersion}{site.privacyPolicyDate && `, ${site.privacyPolicyDate}`}. This policy explains
+      how {site.name} handles your personal information under the Protection of Personal Information Act (POPIA).
+    </p>
+
+    <h2>What we collect</h2>
+    <p>When you contact us or fill in a form, we collect only what we need to help you:</p>
+    <ul>
+      <li>your name, business name and industry</li>
+      <li>your phone number and, if you give it, your email address</li>
+      <li>what you tell us about your business and what you need</li>
+      <li>if you book an assessment, the time you picked</li>
+      <li>your consent choices, when you gave them, and which version of this policy you agreed to</li>
+    </ul>
+
+    <h2>Why we use it</h2>
+    <ul>
+      <li>to reply to your enquiry and give you advice or a quote</li>
+      <li>to arrange and carry out an assessment you booked</li>
+      <li>to message you on WhatsApp, only if you said we may</li>
+      <li>if you become a client, to deliver our services, invoice you and support you</li>
+    </ul>
+    <p>We don't sell your information, and we don't use it for anything you haven't agreed to.</p>
+
+    <h2>Where it's stored</h2>
+    <p>
+      Our systems run on Supabase, which stores data in data centres in the European Union or the United Kingdom,
+      because it has no South African region. That means your information is transferred outside South Africa. We only
+      use providers bound by a data processing agreement that protects your information to a standard at least as high
+      as POPIA requires.
+    </p>
+
+    <h2>How long we keep it</h2>
+    <p>
+      If you don't become a client, we anonymise your details after 12 months without contact. If you do become a
+      client, we keep your records for as long as we work together and as long as the law requires for financial
+      records afterwards.
+    </p>
+
+    <h2>How we protect it</h2>
+    <p>
+      Only our staff can see your information. They sign in with a password and a second check on their phone, and
+      each person sees only what their work needs. We keep a record of who changes or exports information, and access is
+      removed the day someone leaves.
+    </p>
+
+    <h2>Your rights</h2>
+    <p>You can ask us at any time to:</p>
+    <ul>
+      <li>tell you what information we hold about you</li>
+      <li>correct it or delete it</li>
+      <li>stop contacting you on WhatsApp or for marketing</li>
+    </ul>
+    <p>
+      {
+        officer.name ? (
+          <>
+            Contact our Information Officer, {officer.name}, at <a href={`mailto:${officer.email}`}>{officer.email}</a>.
+          </>
+        ) : (
+          <>Contact us using the details on our <a href="/contact">contact page</a>.</>
+        )
+      }
+      If you're not happy with our response, you can complain to the Information Regulator at
+      <a href="https://inforegulator.org.za">inforegulator.org.za</a>.
+    </p>
+
+    <h2>If something goes wrong</h2>
+    <p>
+      If we ever discover that your information has been accessed without permission, we'll contain it, assess it, and
+      notify you and the Information Regulator as POPIA requires.
+    </p>
+
+    <h2>Cookies</h2>
+    <p>
+      This website doesn't use tracking or advertising cookies, and our fonts are served from our own site. Our spam
+      check (Cloudflare Turnstile) runs only on our forms, to tell people from bots. The map on our contact page loads
+      from Google, which may set cookies, only if you choose to show it.
+    </p>
+  </Prose>
+</Base>

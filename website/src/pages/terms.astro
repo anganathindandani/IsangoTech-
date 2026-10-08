@@ -1,0 +1,37 @@
+---
+import Base from "../layouts/Base.astro";
+import Prose from "../components/Prose.astro";
+import { site } from "../site";
+---
+
+<Base title="Terms" description="The terms for using the IsangoTech website.">
+  <Prose title="Terms of use">
+    <p>These terms apply to your use of the {site.name} website. Our services are covered by a separate written agreement.</p>
+
+    <h2>Information on this site</h2>
+    <p>
+      We keep this site accurate and up to date, but it's general information, not advice for your specific business.
+      Prices shown are starting prices. The final price is always confirmed in a written quote before any work starts.
+    </p>
+
+    <h2>Quotes and work</h2>
+    <p>
+      A quote is valid for the period stated on it. Work starts once you've accepted the quote and any deposit it asks
+      for has been paid.
+    </p>
+
+    <h2>Our content</h2>
+    <p>
+      The {site.name} name, logo, beadwork pattern and the content of this site belong to {site.name}. Please don't copy
+      them without our permission.
+    </p>
+
+    <h2>Links to other sites</h2>
+    <p>We're not responsible for the content of websites we link to, such as WhatsApp, Google or social media.</p>
+
+    <h2>Law</h2>
+    <p>These terms are governed by the laws of the Republic of South Africa.</p>
+
+    <p>Questions? <a href="/contact">Get in touch</a>.</p>
+  </Prose>
+</Base>
