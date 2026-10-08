@@ -9,13 +9,18 @@ Open `preview.html` in a browser to see every version.
 | File | Use |
 | --- | --- |
 | `logo/isangotech-logo.svg` | Primary. White or Warm Sand backgrounds. |
-| `logo/isangotech-logo-reversed.svg` | Deep Indigo or other dark backgrounds. |
+| `logo/isangotech-logo-reversed.svg` | Deep Indigo or other dark backgrounds. The door turns Beadwork Turquoise and "sango" turns Warm Sand. |
 | `logo/isangotech-logo-mono-indigo.svg` | One-colour printing, stamps, embroidery on light material. |
 | `logo/isangotech-logo-mono-white.svg` | One-colour on photos or dark material. |
 | `logo/isangotech-mark.svg` | The door on its own, for tight spaces next to the name. |
 | `logo/isangotech-mark-reversed.svg` | The door on its own, on dark backgrounds. |
-| `logo/isangotech-app-icon.svg` | Favicon, app icon, WhatsApp and social profile picture. |
+| `logo/isangotech-app-icon.svg` | Favicon, app icon, WhatsApp and social profile picture. Turquoise door on Deep Indigo. |
 | `logo/png/` | Transparent PNG exports for tools that don't take SVG (Word, Canva, WhatsApp). |
+
+### Decisions
+
+- **The door is the only logo.** It replaces concept 3, the beadwork gate, everywhere: website, portal, business cards, social posts, app icon and profile pictures. The beadwork pattern stays as a signature graphic for borders, section dividers and card backs, but is never used as a logo.
+- **On dark backgrounds the door is Beadwork Turquoise** (`#2BA8A0`), so it matches "Tech", with the ochre light unchanged.
 
 ### Rules
 
