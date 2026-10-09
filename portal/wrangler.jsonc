@@ -3,6 +3,8 @@
 {
   "name": "isangotech-portal",
   "compatibility_date": "2026-10-01",
+  // Serve at isangotech-portal.<account>.workers.dev until portal.isangotech.co.za is set up.
+  "workers_dev": true,
   "assets": {
     "directory": "./build/web",
     "not_found_handling": "single-page-application"
