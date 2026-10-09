@@ -33,13 +33,14 @@ void main() {
       : false;
 
   late SupabaseClient client;
+  late String email;
+  const password = 'Test-Password-123';
   late Repository repo;
 
   setUpAll(() async {
     if (skip != false) return;
     final admin = SupabaseClient(url!, serviceKey!, authOptions: const AuthClientOptions(autoRefreshToken: false));
-    final email = 'admin-${DateTime.now().millisecondsSinceEpoch}@isangotech.test';
-    const password = 'Test-Password-123';
+    email = 'admin-${DateTime.now().millisecondsSinceEpoch}@isangotech.test';
     final user = (await admin.auth.admin.createUser(
       AdminUserAttributes(email: email, password: password, emailConfirm: true),
     )).user!;
@@ -54,12 +55,19 @@ void main() {
     repo = Repository(client);
     await client.auth.signInWithPassword(email: email, password: password);
 
-    // Before 2FA the database shows nothing, even to an admin.
-    expect(await repo.me(), isNull, reason: 'aal1 sessions must not see team records');
+    // Two-step sign-in is off by default: the password is enough.
+    expect((await repo.me())?.role, 'admin', reason: 'admins without 2FA set up sign in with their password');
 
+    // Turn it on. From then on a password-only session sees nothing.
     final enrolment = await client.auth.mfa.enroll(factorType: FactorType.totp, friendlyName: 'Test phone');
     await client.auth.mfa.challengeAndVerify(factorId: enrolment.id, code: totp(enrolment.totp!.secret));
     expect(client.auth.mfa.getAuthenticatorAssuranceLevel().currentLevel, AuthenticatorAssuranceLevels.aal2);
+
+    final passwordOnly = SupabaseClient(url!, anonKey!, authOptions: const AuthClientOptions(autoRefreshToken: false));
+    await passwordOnly.auth.signInWithPassword(email: email, password: password);
+    expect(passwordOnly.auth.mfa.getAuthenticatorAssuranceLevel().nextLevel, AuthenticatorAssuranceLevels.aal2);
+    expect(await Repository(passwordOnly).me(), isNull, reason: 'once 2FA is on, the password alone must not be enough');
+    await passwordOnly.dispose();
   });
 
   test('admin profile is visible after 2FA', () async {
@@ -221,5 +229,16 @@ void main() {
       audit.any((a) => a.tableName == 'contacts' && a.action == 'update' && a.changedFields!.contains('role')),
       isTrue,
     );
+  }, skip: skip);
+
+  test('turning two-step sign-in off lets the password through again', () async {
+    final mfa = client.auth.mfa;
+    for (final f in (await mfa.listFactors()).totp) {
+      await mfa.unenroll(f.id);
+    }
+    final passwordOnly = SupabaseClient(url!, anonKey!, authOptions: const AuthClientOptions(autoRefreshToken: false));
+    await passwordOnly.auth.signInWithPassword(email: email, password: password);
+    expect((await Repository(passwordOnly).me())?.role, 'admin');
+    await passwordOnly.dispose();
   }, skip: skip);
 }

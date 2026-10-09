@@ -24,9 +24,10 @@ import 'theme.dart';
 
 late Repository repo;
 
-enum AuthStatus { loading, signedOut, needsEnrol, needsVerify, noAccess, ready }
+enum AuthStatus { loading, signedOut, needsVerify, noAccess, ready }
 
-/// Where the signed-in person is in sign-in: password, 2FA, then team access.
+/// Where the signed-in person is in sign-in: password, the code from their
+/// authenticator app if they've turned on two-step sign-in, then team access.
 class AuthState extends ChangeNotifier {
   AuthState(this.client) {
     _sub = client.auth.onAuthStateChange.listen((_) => _update());
@@ -60,9 +61,11 @@ class AuthState extends ChangeNotifier {
       me = null;
       return AuthStatus.signedOut;
     }
+    // Two-step sign-in is optional. Once someone has turned it on, they need
+    // their code as well as their password (the database insists on it too).
     final aal = client.auth.mfa.getAuthenticatorAssuranceLevel();
-    if (aal.currentLevel != AuthenticatorAssuranceLevels.aal2) {
-      return aal.nextLevel == AuthenticatorAssuranceLevels.aal2 ? AuthStatus.needsVerify : AuthStatus.needsEnrol;
+    if (aal.currentLevel != AuthenticatorAssuranceLevels.aal2 && aal.nextLevel == AuthenticatorAssuranceLevels.aal2) {
+      return AuthStatus.needsVerify;
     }
     try {
       me = await repo.me();
@@ -104,7 +107,6 @@ class _PortalAppState extends State<PortalApp> {
 GoRouter buildRouter(AuthState auth) {
   const gateRoutes = {
     AuthStatus.signedOut: '/sign-in',
-    AuthStatus.needsEnrol: '/set-up-2fa',
     AuthStatus.needsVerify: '/verify',
     AuthStatus.noAccess: '/no-access',
   };
@@ -131,7 +133,8 @@ GoRouter buildRouter(AuthState auth) {
         builder: (_, _) => const Scaffold(body: Center(child: CircularProgressIndicator())),
       ),
       GoRoute(path: '/sign-in', builder: (_, _) => const SignInPage()),
-      GoRoute(path: '/set-up-2fa', builder: (_, _) => const EnrolPage()),
+      // Opened from Settings to turn on two-step sign-in.
+      GoRoute(path: '/two-step-sign-in', builder: (_, _) => const EnrolPage()),
       GoRoute(path: '/verify', builder: (_, _) => const VerifyPage()),
       GoRoute(path: '/no-access', builder: (_, _) => const NoAccessPage()),
       ShellRoute(

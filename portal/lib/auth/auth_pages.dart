@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -118,7 +119,7 @@ class _SignInPageState extends State<SignInPage> {
   }
 }
 
-/// First sign-in: set up an authenticator app. 2FA is required for everyone.
+/// Turning on two-step sign-in from Settings: link an authenticator app.
 class EnrolPage extends StatefulWidget {
   const EnrolPage({super.key});
 
@@ -165,6 +166,10 @@ class _EnrolPageState extends State<EnrolPage> {
     try {
       ScaffoldMessenger.of(context).clearSnackBars();
       await _mfa.challengeAndVerify(factorId: e.id, code: _code.text.trim());
+      if (mounted) {
+        showDone(context, 'Two-step sign-in is on. You\'ll need a code from your app each time you sign in.');
+        context.go('/settings');
+      }
     } catch (err) {
       if (mounted) showError(context, err);
       _code.clear();
@@ -177,8 +182,8 @@ class _EnrolPageState extends State<EnrolPage> {
   Widget build(BuildContext context) {
     final e = _enrolment;
     return AuthCard(
-      title: 'Set up two-step sign-in',
-      subtitle: 'Every IsangoTech staff account uses an authenticator app (such as Google Authenticator or Microsoft Authenticator) as a second step. You only set this up once.',
+      title: 'Turn on two-step sign-in',
+      subtitle: 'After your password, you\'ll also enter a 6-digit code from an authenticator app on your phone (such as Google Authenticator or Microsoft Authenticator). Even if someone learns your password, they can\'t get in without your phone.',
       children: [
         if (_error != null) Text(errorMessage(_error!), style: const TextStyle(color: Brand.terracotta)),
         if (e == null && _error == null) const Center(child: CircularProgressIndicator()),
@@ -219,7 +224,7 @@ class _EnrolPageState extends State<EnrolPage> {
           ),
         ],
         const SizedBox(height: 8),
-        TextButton(onPressed: () => Supabase.instance.client.auth.signOut(), child: const Text('Sign out')),
+        TextButton(onPressed: () => context.go('/settings'), child: const Text('Cancel')),
       ],
     );
   }

@@ -13,6 +13,12 @@ begin
   return uid;
 end $$;
 
+-- Turns on two-step sign-in for a user (a verified authenticator app).
+create function tests.add_authenticator(p_user uuid)
+returns void language sql as $$
+  insert into auth.mfa_factors (user_id, status) values (p_user, 'verified');
+$$;
+
 -- Sets the JWT claims PostgREST would set for a signed-in user. Follow with
 -- "set local role authenticated".
 create function tests.sign_in(p_user uuid, p_aal text default 'aal2')

@@ -1,6 +1,6 @@
 # Team portal
 
-Flutter Web app for `portal.isangotech.co.za`. Staff sign in with Supabase Auth: a password, then an authenticator app (two-step sign-in is required for everyone). The database's row-level security decides what each person can see, so the portal has no permission logic of its own. In Phase 1 that means an active admin, signed in with 2FA, sees everything and nobody else sees anything.
+Flutter Web app for `portal.isangotech.co.za`. Staff sign in with Supabase Auth using their email and password. Two-step sign-in (a code from an authenticator app) is optional and off by default; each person turns it on or off under **Settings**, and once it's on, the code is required every time. The database's row-level security decides what each person can see, so the portal has no permission logic of its own. In Phase 1 that means an active admin sees everything and nobody else sees anything.
 
 ## What's in Phase 1
 
@@ -13,7 +13,7 @@ Flutter Web app for `portal.isangotech.co.za`. Staff sign in with Supabase Auth:
 | Quotes | Line items from the price list or custom. Quotes above the approval amount need **Approve** before **Mark as sent**. Then Accepted / Declined / Expired. Branded PDF download. **Create setup invoice** from an accepted quote |
 | Invoices | Drafts get a number when marked as sent. Record full or partial payments, void unpaid invoices, branded PDF with your payment details |
 | Price list | Packages by growth stage, once-off or monthly |
-| Settings | Approval amount, quote and invoice terms, VAT status, privacy policy version, retention periods, booking rules, payment details on invoices |
+| Settings | Your two-step sign-in (on or off), approval amount, quote and invoice terms, VAT status, privacy policy version, retention periods, booking rules, payment details on invoices |
 | Audit log | Who added, changed, deleted or exported what, and when |
 
 Downloading a quote or invoice PDF is recorded in the audit log as an export.
@@ -48,7 +48,7 @@ flutter analyze
 flutter test                      # PDF tests; the integration tests skip themselves
 ```
 
-`test/integration/repository_test.dart` runs every database call the portal makes against a real Supabase API, with real sign-in and 2FA: lead to client to quote to approval to invoice to payment, bookings, price list, contacts, settings and the audit log. It needs a **local or throwaway** project, never the live one:
+`test/integration/repository_test.dart` runs every database call the portal makes against a real Supabase API, with real sign-in and 2FA: two-step sign-in on and off, lead to client to quote to approval to invoice to payment, bookings, price list, contacts, settings and the audit log. It needs a **local or throwaway** project, never the live one:
 
 ```sh
 SUPABASE_TEST_URL=http://127.0.0.1:54321 \

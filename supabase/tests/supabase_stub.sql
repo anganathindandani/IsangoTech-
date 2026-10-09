@@ -18,6 +18,13 @@ create table auth.users (
   email text
 );
 
+-- Authenticator apps people have set up for two-step sign-in.
+create table auth.mfa_factors (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users (id),
+  status text not null default 'verified'
+);
+
 create function auth.jwt() returns jsonb language sql stable as $$
   select coalesce(
     nullif(current_setting('request.jwt.claim', true), ''),

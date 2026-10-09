@@ -13,7 +13,7 @@ One system with two faces: a public website that wins clients, and a private tea
 
 `migrations/` holds every table from the spec, plus the business rules that keep the data honest:
 
-- **Access:** only an active admin who signed in with two-factor authentication can reach any record. Staff who sign in without 2FA, inactive staff and other roles see nothing. Anonymous visitors can't read or write any table.
+- **Access:** only an active admin can reach any record. Two-step sign-in (an authenticator app code after the password) is optional and off by default; each person turns it on or off in the portal's Settings. Once someone has turned it on, their password alone gets them nothing, even through the API. Inactive staff and other roles see nothing. Anonymous visitors can't read or write any table.
 - **Website intake:** the Get started form goes through the `submit-enquiry` edge function. It checks for spam (Cloudflare Turnstile and a hidden honeypot field), then creates the lead, its consent records and any assessment booking in one step.
 - **Quotes:** quotes are numbered `Q-2026-0001`. Totals are worked out from the line items. A quote whose first-year value is above the approval amount can't be sent until an admin approves it, and editing it afterwards clears the approval. Sent quotes are locked. Accepting a quote makes the client active and marks the lead won; declining sends the lead back for follow-up.
 - **Invoices:** an invoice gets its number (`INV-2026-0001`) when it's sent, so deleted drafts leave no gaps. Sent invoices are locked. Partial payments are supported and overpayments are refused. `invoice_summaries` shows the balance, paid/part-paid/unpaid and overdue.
@@ -75,7 +75,7 @@ Flutter Web app for staff. See [`portal/README.md`](portal/README.md) for what e
    insert into public.team_members (id, full_name, role, email)
    select id, 'Your Name', 'admin', email from auth.users where email = 'you@isangotech.co.za';
    ```
-   Then sign in to the portal and set up your authenticator app. Nothing is visible until you do.
+   Then sign in to the portal. Turning on two-step sign-in under Settings is recommended.
 7. **Fill in Settings in the portal:** your bank details for invoices, and check the approval amount and retention periods.
 
 ## Settings to confirm

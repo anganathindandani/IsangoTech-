@@ -1,10 +1,12 @@
--- Who can reach what: anonymous visitors, staff without 2FA, inactive staff,
--- non-admin roles, and an admin signed in with 2FA.
+-- Who can reach what: anonymous visitors, admins with and without two-step
+-- sign-in turned on, inactive staff and non-admin roles.
 begin;
 
 select tests.create_staff('founder@isangotech.co.za') as admin_id \gset
 select tests.create_staff('dev@isangotech.co.za', 'developer') as dev_id \gset
 select tests.create_staff('former@isangotech.co.za', 'admin', false) as former_id \gset
+select tests.create_staff('careful@isangotech.co.za') as careful_id \gset
+select tests.add_authenticator(:'careful_id');
 
 insert into public.leads (full_name, phone, source) values ('Existing Lead', '0821234567', 'whatsapp');
 
@@ -17,11 +19,23 @@ select tests.expect_error($$insert into public.leads (full_name, phone, source) 
 select tests.expect_error($$select public.submit_enquiry('{}')$$, 'permission denied');
 reset role;
 
--- Admin who signed in without 2FA: sees nothing and can't write.
+-- Admin who hasn't turned on two-step sign-in: the password is enough.
 select tests.sign_in(:'admin_id', 'aal1');
 set local role authenticated;
-do $$ begin assert (select count(*) from public.leads) = 0, 'aal1 session must not see leads'; end $$;
+do $$ begin assert (select count(*) from public.leads) = 1, 'admin without 2FA set up must see leads'; end $$;
+reset role;
+
+-- Admin who turned it on but only entered a password: sees nothing and can't write.
+select tests.sign_in(:'careful_id', 'aal1');
+set local role authenticated;
+do $$ begin assert (select count(*) from public.leads) = 0, 'password-only session must not see leads once 2FA is on'; end $$;
 select tests.expect_error($$insert into public.leads (full_name, phone, source) values ('x', '0820000000', 'other')$$, 'row-level security');
+reset role;
+
+-- The same admin after entering their code: full access.
+select tests.sign_in(:'careful_id');
+set local role authenticated;
+do $$ begin assert (select count(*) from public.leads) = 1, 'admin with 2FA completed must see leads'; end $$;
 reset role;
 
 -- Former staff member (inactive): locked out even with 2FA.
