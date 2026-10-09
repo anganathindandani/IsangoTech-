@@ -3,7 +3,9 @@
 {
   "name": "isangotech-portal",
   "compatibility_date": "2026-10-01",
-  // Serve at isangotech-portal.<account>.workers.dev until portal.isangotech.co.za is set up.
+  // The real address. Cloudflare creates the DNS record and certificate for it.
+  "routes": [{ "pattern": "portal.isangotech.co.za", "custom_domain": true }],
+  // Keep the old isangotech-portal.<account>.workers.dev address working too.
   "workers_dev": true,
   "assets": {
     "directory": "./build/web",
