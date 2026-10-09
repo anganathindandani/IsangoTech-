@@ -123,6 +123,10 @@ const whatsappLink = site.whatsappNumber ? `https://wa.me/${site.whatsappNumber}
     </form>
 
     <div id="success" class="card success" hidden tabindex="-1">
+      <svg class="tick" viewBox="0 0 64 64" width="64" height="64" aria-hidden="true">
+        <circle cx="32" cy="32" r="28" fill="none" stroke="#2BA8A0" stroke-width="4" />
+        <path d="M20 33l8 8 16-18" fill="none" stroke="#E07A1F" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
       <h2>Thank you, we've got it.</h2>
       <p id="success-text">We'll be in touch soon.</p>
       <p><a href="/">Back to the home page</a></p>
@@ -275,7 +279,8 @@ const whatsappLink = site.whatsappNumber ? `https://wa.me/${site.whatsappNumber}
             "We'll confirm the details with you before then.";
         }
         success.hidden = false;
-        success.focus();
+        success.focus({ preventScroll: true });
+        success.scrollIntoView({ block: "center", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
         return;
       }
       if (res.status === 409) await loadOptions().catch(() => {});
@@ -411,6 +416,35 @@ const whatsappLink = site.whatsappNumber ? `https://wa.me/${site.whatsappNumber}
   }
   .success {
     border-top: 6px solid var(--turquoise);
+    animation: success-in 0.6s var(--ease-out) both;
+  }
+  @keyframes success-in {
+    from {
+      opacity: 0;
+      transform: translateY(16px) scale(0.98);
+    }
+  }
+  /* The circle draws itself, then the tick. */
+  .tick circle {
+    stroke-dasharray: 176;
+    stroke-dashoffset: 176;
+    animation: draw 0.7s var(--ease-out) 0.2s forwards;
+  }
+  .tick path {
+    stroke-dasharray: 40;
+    stroke-dashoffset: 40;
+    animation: draw 0.4s var(--ease-out) 0.75s forwards;
+  }
+  @keyframes draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tick circle,
+    .tick path {
+      stroke-dashoffset: 0;
+    }
   }
   [hidden] {
     display: none !important;

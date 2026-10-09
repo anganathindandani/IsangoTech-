@@ -1,6 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import Beadwork from "../components/Beadwork.astro";
+import DoorHero from "../components/DoorHero.astro";
 import CallToAction from "../components/CallToAction.astro";
 import IndustryTiles from "../components/IndustryTiles.astro";
 import StagePicker from "../components/StagePicker.astro";
@@ -8,24 +9,41 @@ import { testimonials } from "../data/testimonials";
 import { site } from "../site";
 
 const outcomes = [
-  { title: "Time saved", text: "Bookings, reminders and follow-ups happen without you chasing them." },
-  { title: "More customers", text: "People find you online and every enquiry gets an answer." },
-  { title: "Less admin", text: "Your daily work lives in one place, not in spreadsheets and chat threads." },
+  {
+    title: "Time saved",
+    text: "Bookings, reminders and follow-ups happen without you chasing them.",
+    icon: '<circle cx="24" cy="26" r="15" fill="none" stroke="currentColor" stroke-width="3"/><path d="M24 17v9l6 4" fill="none" stroke="#E07A1F" stroke-width="3" stroke-linecap="round"/><path d="M19 6h10" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>',
+  },
+  {
+    title: "More customers",
+    text: "People find you online and every enquiry gets an answer.",
+    icon: '<circle cx="17" cy="17" r="6" fill="none" stroke="currentColor" stroke-width="3"/><path d="M6 38c1-7 5-11 11-11s10 4 11 11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="33" cy="15" r="5" fill="#E07A1F"/><path d="M28 27c6-2 13 2 14 10" fill="none" stroke="#E07A1F" stroke-width="3" stroke-linecap="round"/>',
+  },
+  {
+    title: "Less admin",
+    text: "Your daily work lives in one place, not in spreadsheets and chat threads.",
+    icon: '<rect x="9" y="8" width="30" height="34" rx="4" fill="none" stroke="currentColor" stroke-width="3"/><path d="M16 20l4 4 8-9" fill="none" stroke="#E07A1F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 33h16" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>',
+  },
 ];
 ---
 
 <Base>
   <section class="hero">
-    <div class="container">
-      <p class="eyebrow">Proudly African · East London and beyond</p>
-      <h1>{site.tagline}</h1>
-      <p class="offer">
-        We build websites, booking tools, staff portals and AI automation for small businesses, so you get found, never
-        miss a customer and spend less time on admin.
-      </p>
-      <div class="actions">
-        <a class="button" href="/get-started">Get started</a>
-        <a class="secondary" href="/services">See packages and prices</a>
+    <div class="container hero-inner">
+      <div class="hero-text">
+        <p class="eyebrow hero-in" style="--d: 0">Proudly African · East London and beyond</p>
+        <h1 class="hero-in" style="--d: 1">{site.tagline}</h1>
+        <p class="offer hero-in" style="--d: 2">
+          We build websites, booking tools, staff portals and AI automation for small businesses, so you get found,
+          never miss a customer and spend less time on admin.
+        </p>
+        <div class="actions hero-in" style="--d: 3">
+          <a class="button" href="/get-started">Get started <span class="arrow" aria-hidden="true">→</span></a>
+          <a class="secondary" href="/services">See packages and prices</a>
+        </div>
+      </div>
+      <div class="hero-door">
+        <DoorHero />
       </div>
     </div>
   </section>
@@ -34,7 +52,8 @@ const outcomes = [
   <section class="container outcomes" aria-label="What you get">
     {
       outcomes.map((o) => (
-        <div>
+        <div class="outcome">
+          <svg viewBox="0 0 48 48" width="48" height="48" aria-hidden="true" set:html={o.icon} />
           <h2>{o.title}</h2>
           <p>{o.text}</p>
         </div>
@@ -73,22 +92,38 @@ const outcomes = [
 
 <style>
   .hero {
-    background: var(--white);
-    padding-block: 3.5rem 3rem;
+    background: linear-gradient(180deg, var(--white) 0%, var(--white) 55%, #fbf5ec 100%);
+    padding-block: 2.5rem 2rem;
+    overflow: hidden;
   }
-  .eyebrow {
-    margin: 0 0 0.75rem;
-    font-size: 0.8rem;
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--terracotta);
+  .hero-inner {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+  }
+  .hero-door {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 2.5rem;
+    order: -1;
+  }
+  @media (min-width: 52rem) {
+    .hero {
+      padding-block: 4.5rem 3.5rem;
+    }
+    .hero-inner {
+      grid-template-columns: 1.25fr 1fr;
+    }
+    .hero-door {
+      order: 0;
+      padding-bottom: 4rem;
+    }
   }
   .hero h1 {
-    max-width: 14ch;
+    max-width: 13ch;
   }
   .offer {
-    max-width: 38rem;
+    max-width: 36rem;
     font-size: 1.15rem;
   }
   .actions {
@@ -96,20 +131,52 @@ const outcomes = [
     flex-wrap: wrap;
     align-items: center;
     gap: 1rem 1.5rem;
-    margin-top: 1.5rem;
+    margin-top: 1.75rem;
+  }
+  .actions .button {
+    padding: 0.9rem 1.5rem;
+    font-size: 1.05rem;
   }
   .secondary {
     font-weight: 500;
   }
+  /* Headline lines arrive one after another as the door opens. */
+  .hero-in {
+    animation: hero-in 0.8s var(--ease-out) both;
+    animation-delay: calc(0.2s + var(--d) * 0.12s);
+  }
+  @keyframes hero-in {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+  }
   .outcomes {
     display: grid;
-    gap: 1.5rem;
-    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-    padding-block: 3rem 0;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    padding-block: 3.5rem 0.5rem;
+  }
+  .outcome {
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    background: var(--white);
+    color: var(--indigo);
+    transition:
+      transform 0.3s var(--ease-out),
+      box-shadow 0.3s var(--ease-out);
+  }
+  .outcome:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 30px -12px rgb(27 42 74 / 0.25);
+  }
+  .outcome svg {
+    color: var(--turquoise-text);
+    margin-bottom: 0.75rem;
   }
   .outcomes h2 {
     font-size: 1.4rem;
-    color: var(--turquoise-text);
+    margin-bottom: 0.35rem;
   }
   .outcomes p {
     margin: 0;

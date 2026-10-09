@@ -12,5 +12,17 @@ const { size = 36 } = Astro.props;
   .beadwork {
     height: var(--bead);
     background: url("/brand/beadwork.svg") repeat-x left center / var(--bead) var(--bead);
+    animation: drift 40s linear infinite;
+  }
+  /* Slow drift; one full tile per cycle step keeps the pattern seamless. */
+  @keyframes drift {
+    to {
+      background-position-x: calc(var(--bead) * 20);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .beadwork {
+      animation: none;
+    }
   }
 </style>

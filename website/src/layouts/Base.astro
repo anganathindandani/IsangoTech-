@@ -40,6 +40,16 @@ const year = new Date().getFullYear();
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="theme-color" content="#1B2A4A" />
+    <script is:inline>
+      // Hide scroll-reveal content only when motion is allowed and the script can run.
+      // If the motion script hasn't started within 3 s, show everything.
+      if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        document.documentElement.classList.add("motion");
+        setTimeout(() => {
+          if (!document.documentElement.dataset.motionReady) document.documentElement.classList.add("reveal-all");
+        }, 3000);
+      }
+    </script>
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
@@ -116,6 +126,10 @@ const year = new Date().getFullYear();
   </body>
 </html>
 
+<script>
+  import "../scripts/motion.ts";
+</script>
+
 <style>
   .skip {
     position: absolute;
@@ -129,9 +143,17 @@ const year = new Date().getFullYear();
     padding: 0.5rem 1rem;
   }
   .site-header {
-    background: var(--white);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgb(255 255 255 / 0.92);
+    backdrop-filter: saturate(1.4) blur(10px);
     border-bottom: 1px solid rgb(27 42 74 / 0.08);
-    position: relative;
+    transition: box-shadow 0.3s ease;
+    view-transition-name: site-header;
+  }
+  .site-header.is-scrolled {
+    box-shadow: 0 6px 24px rgb(27 42 74 / 0.1);
   }
   .header-inner {
     display: flex;
@@ -157,11 +179,31 @@ const year = new Date().getFullYear();
     text-decoration: none;
     font-weight: 500;
   }
+  .desktop-nav a {
+    position: relative;
+    padding-block: 0.35rem;
+  }
+  .desktop-nav a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--ochre);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s var(--ease-out);
+  }
+  .desktop-nav a:hover::after,
+  .desktop-nav a:focus-visible::after,
+  .desktop-nav a[aria-current="page"]::after {
+    transform: scaleX(1);
+  }
   .desktop-nav a[aria-current="page"],
   .mobile-nav a[aria-current="page"] {
     color: var(--turquoise-text);
-    text-decoration: underline;
-    text-underline-offset: 6px;
   }
   .header-cta {
     display: none;
@@ -191,6 +233,22 @@ const year = new Date().getFullYear();
   .mobile-nav nav a {
     padding: 1rem var(--gutter);
     border-top: 1px solid rgb(27 42 74 / 0.08);
+  }
+  .mobile-nav[open] nav {
+    animation: menu-in 0.3s var(--ease-out);
+  }
+  .mobile-nav[open] nav a {
+    animation: menu-item-in 0.35s var(--ease-out) both;
+  }
+  .mobile-nav[open] nav a:nth-child(2) { animation-delay: 40ms; }
+  .mobile-nav[open] nav a:nth-child(3) { animation-delay: 80ms; }
+  .mobile-nav[open] nav a:nth-child(4) { animation-delay: 120ms; }
+  .mobile-nav[open] nav a:nth-child(5) { animation-delay: 160ms; }
+  @keyframes menu-in {
+    from { opacity: 0; transform: translateY(-8px); }
+  }
+  @keyframes menu-item-in {
+    from { opacity: 0; transform: translateX(-10px); }
   }
   @media (min-width: 60rem) {
     .desktop-nav,

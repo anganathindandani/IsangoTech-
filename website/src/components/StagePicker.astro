@@ -1,21 +1,28 @@
 ---
-// "Where is your business now?" Each stage links to Get started with the stage filled in.
+// "Where is your business now?" The four stages as one connected path. A line
+// draws itself as you scroll and each stage lights up as you reach it
+// (scripts/motion.ts sets --progress and .is-active). Each stage links to
+// Get started with the stage filled in.
 import { stages } from "../data/stages";
 ---
 
 <section class="picker" aria-labelledby="picker-heading">
   <div class="container">
+    <p class="eyebrow">Your growth path</p>
     <h2 id="picker-heading">Where is your business now?</h2>
     <p class="lead">Pick the one that sounds most like you. We'll start there, and show you what comes next.</p>
-    <ol class="stages">
+    <ol class="path" data-path>
       {
         stages.map((s) => (
-          <li>
+          <li class="path-step">
+            <span class="node" aria-hidden="true">{s.number}</span>
             <a href={`/get-started?stage=${s.number}`} class="stage">
               <span class="num">Stage {s.number}</span>
               <span class="name">{s.name}</span>
               <span class="quote">"{s.whereYouAre}"</span>
-              <span class="go">Start here →</span>
+              <span class="go">
+                Start here <span class="arrow" aria-hidden="true">→</span>
+              </span>
             </a>
           </li>
         ))
@@ -26,51 +33,148 @@ import { stages } from "../data/stages";
 
 <style>
   .picker {
-    padding-block: 3.5rem;
+    --progress: 0;
+    background: var(--indigo);
+    color: var(--sand);
+    padding-block: 4rem;
+  }
+  .picker h2 {
+    color: var(--white);
+  }
+  .picker .eyebrow {
+    color: var(--turquoise);
   }
   .lead {
     max-width: 40rem;
     margin-top: 0;
   }
-  .stages {
+  .path {
+    --node: 2.75rem;
+    position: relative;
     list-style: none;
     padding: 0;
-    margin: 1.5rem 0 0;
+    margin: 2.25rem 0 0;
     display: grid;
+    gap: 1.25rem;
+  }
+  /* The track and the part of it already travelled. */
+  .path::before,
+  .path::after {
+    content: "";
+    position: absolute;
+    left: calc(var(--node) / 2 - 2px);
+    top: calc(var(--node) / 2);
+    bottom: calc(var(--node) / 2);
+    width: 4px;
+    border-radius: 2px;
+  }
+  .path::before {
+    background: rgb(245 235 221 / 0.18);
+  }
+  .path::after {
+    background: linear-gradient(var(--turquoise), var(--ochre));
+    transform-origin: top;
+    transform: scaleY(var(--progress));
+  }
+  .path-step {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: var(--node) 1fr;
     gap: 1rem;
-    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    align-items: start;
+  }
+  .node {
+    display: grid;
+    place-items: center;
+    width: var(--node);
+    height: var(--node);
+    border-radius: 50%;
+    font: 700 1.1rem/1 var(--font-heading);
+    background: var(--indigo);
+    color: rgb(245 235 221 / 0.6);
+    border: 3px solid rgb(245 235 221 / 0.25);
+    transition:
+      background 0.4s var(--ease-out),
+      color 0.4s var(--ease-out),
+      border-color 0.4s var(--ease-out),
+      transform 0.4s var(--ease-out),
+      box-shadow 0.4s var(--ease-out);
+  }
+  .path-step.is-active .node {
+    background: var(--ochre);
+    border-color: var(--ochre);
+    color: var(--indigo);
+    transform: scale(1.08);
+    box-shadow: 0 0 0 6px rgb(224 122 31 / 0.2);
+  }
+  @media (min-width: 52rem) {
+    .path {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .path::before,
+    .path::after {
+      top: calc(var(--node) / 2 - 2px);
+      bottom: auto;
+      left: calc(12.5% - 0.6rem);
+      right: calc(12.5% - 0.6rem);
+      width: auto;
+      height: 4px;
+    }
+    .path::after {
+      background: linear-gradient(90deg, var(--turquoise), var(--ochre));
+      transform-origin: left;
+      transform: scaleX(var(--progress));
+    }
+    .path-step {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 1fr;
+      justify-items: center;
+    }
   }
   .stage {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
     height: 100%;
+    width: 100%;
+    box-sizing: border-box;
     padding: 1.25rem;
     border-radius: var(--radius);
-    background: var(--white);
-    border: 2px solid transparent;
-    color: var(--indigo);
+    background: rgb(255 255 255 / 0.06);
+    border: 1px solid rgb(245 235 221 / 0.14);
+    color: var(--sand);
     text-decoration: none;
+    transition:
+      background 0.3s var(--ease-out),
+      border-color 0.3s var(--ease-out),
+      transform 0.3s var(--ease-out);
   }
   .stage:hover,
   .stage:focus-visible {
+    background: rgb(255 255 255 / 0.11);
     border-color: var(--turquoise);
+    transform: translateY(-4px);
+  }
+  .path-step.is-active .stage {
+    border-color: rgb(43 168 160 / 0.5);
   }
   .num {
     font-size: 0.8rem;
     font-weight: 500;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--terracotta);
+    color: var(--ochre);
   }
   .name {
     font: 700 1.35rem/1.2 var(--font-heading);
+    color: var(--white);
   }
   .quote {
     flex: 1;
   }
   .go {
     font-weight: 500;
-    color: var(--turquoise-text);
+    color: var(--turquoise);
   }
 </style>

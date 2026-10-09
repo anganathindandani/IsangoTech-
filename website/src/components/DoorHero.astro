@@ -1,0 +1,154 @@
+---
+// The logo's door, large: it swings open on load and warm light spills out.
+// Built with CSS 3D so it stays crisp and light. Decorative only.
+---
+
+<div class="scene" aria-hidden="true">
+  <div class="glow"></div>
+  <div class="frame">
+    <div class="opening">
+      <div class="light"></div>
+      <div class="rays"></div>
+      <div class="leaf"><span class="knob"></span></div>
+    </div>
+  </div>
+  <div class="spill"></div>
+</div>
+
+<style>
+  /* Proportions follow the logo mark: 560 × 900 frame, 84-unit border. */
+  .scene {
+    --w: clamp(7.5rem, 30vw, 19rem);
+    position: relative;
+    width: var(--w);
+    aspect-ratio: 560 / 900;
+    isolation: isolate;
+  }
+
+  .glow {
+    position: absolute;
+    inset: -35% -55%;
+    z-index: -1;
+    background: radial-gradient(closest-side, rgb(224 122 31 / 0.5), rgb(224 122 31 / 0) 70%);
+    opacity: 0;
+    animation:
+      glow-in 1.2s var(--ease-out) 1s forwards,
+      breathe 5s ease-in-out 2.2s infinite;
+  }
+
+  .frame {
+    position: absolute;
+    inset: 0;
+    padding: 15% 15% 0;
+    padding-bottom: calc(var(--w) * 84 / 560);
+    background: var(--indigo);
+    border-radius: 10% / 6.2%;
+    box-shadow: 0 30px 60px -20px rgb(27 42 74 / 0.45);
+  }
+
+  .opening {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+    perspective: 900px;
+    perspective-origin: 50% 100%;
+    background: #f0a053;
+  }
+
+  .light {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(120% 70% at 50% 100%, #ffd9a8 0%, rgb(255 217 168 / 0) 60%),
+      linear-gradient(180deg, #e07a1f 0%, #f39b45 100%);
+  }
+
+  .rays {
+    position: absolute;
+    inset: 0;
+    background: repeating-conic-gradient(from 200deg at 50% 110%, rgb(255 255 255 / 0.14) 0deg 4deg, transparent 4deg 12deg);
+    mix-blend-mode: soft-light;
+    opacity: 0;
+    animation: glow-in 1.4s ease 1.2s forwards;
+  }
+
+  .leaf {
+    position: absolute;
+    inset: 0;
+    transform-origin: left center;
+    background: linear-gradient(90deg, #22355d 0%, #1b2a4a 100%);
+    box-shadow: inset -6px 0 12px rgb(0 0 0 / 0.25);
+    animation: door-open 1.6s var(--ease-in-out) 0.45s forwards;
+  }
+
+  .knob {
+    position: absolute;
+    right: 12%;
+    top: 55%;
+    width: 9%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--ochre);
+    box-shadow: 0 0 0 2px rgb(255 255 255 / 0.15);
+  }
+
+  /* Light falling on the floor in front of the door. */
+  .spill {
+    position: absolute;
+    left: -15%;
+    right: -15%;
+    top: 100%;
+    height: 24%;
+    background: linear-gradient(180deg, rgb(240 160 83 / 0.45), rgb(240 160 83 / 0));
+    /* Starts as wide as the opening and fans out across the floor. */
+    clip-path: polygon(27% 0, 73% 0, 100% 100%, 0 100%);
+    transform-origin: top;
+    transform: scaleY(0);
+    opacity: 0;
+    animation: spill 1.2s var(--ease-out) 1.1s forwards;
+  }
+
+  @keyframes door-open {
+    to {
+      transform: rotateY(72deg);
+    }
+  }
+
+  @keyframes spill {
+    to {
+      transform: scaleY(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes glow-in {
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes breathe {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.65;
+    }
+  }
+
+  /* Still version: the door is already open. */
+  @media (prefers-reduced-motion: reduce) {
+    .leaf {
+      animation: none;
+      transform: rotateY(72deg);
+    }
+    .glow,
+    .rays,
+    .spill {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>

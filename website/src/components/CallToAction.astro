@@ -16,7 +16,7 @@ const {
   <div class="container inner">
     <h2>{heading}</h2>
     <p>{text}</p>
-    <a class="button" href="/get-started">Get started</a>
+    <a class="button" href="/get-started">Get started <span class="arrow" aria-hidden="true">→</span></a>
   </div>
 </section>
 
@@ -27,7 +27,11 @@ const {
     margin-top: 3rem;
   }
   .inner {
-    padding-block: 3rem;
+    position: relative;
+    padding-block: 4rem;
+  }
+  .cta h2 {
+    color: var(--white);
   }
   .inner > * {
     max-width: 44rem;
