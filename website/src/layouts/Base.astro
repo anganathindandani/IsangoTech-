@@ -9,11 +9,45 @@ import { nav, site } from "../site";
 
 interface Props {
   title?: string;
+  /** Replaces the whole <title> when the short title isn't descriptive enough for search. */
+  searchTitle?: string;
   description?: string;
+  /** Keeps a page out of search results (the 404 page). */
+  noindex?: boolean;
 }
 
-const { title, description = site.description } = Astro.props;
-const pageTitle = title ? `${title} · ${site.name}` : `${site.name} · ${site.tagline}`;
+const { title, searchTitle, description = site.description, noindex = false } = Astro.props;
+const pageTitle = searchTitle
+  ? `${searchTitle} · ${site.name}`
+  : title
+    ? `${title} · ${site.name}`
+    : `${site.name} · ${site.tagline}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const shareImage = new URL("/share.png", Astro.site);
+
+// What Google shows for the business in search and Maps. Empty details are left out.
+const business = {
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "@id": new URL("/#business", Astro.site).href,
+  name: site.name,
+  slogan: site.tagline,
+  description: site.description,
+  url: new URL("/", Astro.site).href,
+  logo: new URL("/apple-touch-icon.png", Astro.site).href,
+  image: shareImage.href,
+  address: { "@type": "PostalAddress", addressLocality: "East London", addressRegion: "Eastern Cape", addressCountry: "ZA" },
+  areaServed: [
+    { "@type": "City", name: "East London" },
+    { "@type": "State", name: "Eastern Cape" },
+    { "@type": "Country", name: "South Africa" },
+  ],
+  knowsAbout: ["Website design", "Online booking systems", "Business process automation", "AI automation", "Small business software"],
+  ...(site.email && { email: site.email }),
+  ...(site.phone && { telephone: site.phone }),
+  ...(site.founder.name && { founder: { "@type": "Person", name: site.founder.name, jobTitle: site.founder.role } }),
+  sameAs: [site.social.facebook, site.social.instagram, site.social.linkedin, site.googleBusinessProfileUrl].filter(Boolean),
+};
 const whatsappLink = site.whatsappNumber ? `https://wa.me/${site.whatsappNumber}` : null;
 const current = Astro.url.pathname.replace(/\/$/, "") || "/";
 const isCurrent = (href: string) => current === href || current.startsWith(`${href}/`);
@@ -33,10 +67,21 @@ const year = new Date().getFullYear();
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="sitemap" href="/sitemap.xml" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:locale" content="en_ZA" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
+    <meta property="og:image" content={shareImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${site.name}: ${site.tagline}`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={JSON.stringify(business)} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon-96.png" sizes="96x96" type="image/png" />
     <link rel="icon" href="/favicon-48.png" sizes="48x48" type="image/png" />

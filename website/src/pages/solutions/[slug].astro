@@ -13,9 +13,21 @@ interface Props {
 }
 
 const { industry } = Astro.props;
+
+// What people type into Google, with the place.
+const searchTitles: Record<string, string> = {
+  salons: "Salon websites and bookings in East London",
+  restaurants: "Restaurant websites and bookings, East London",
+  caterers: "Websites and quoting for caterers, East London",
+  "other-small-businesses": "Small business automation in East London",
+};
 ---
 
-<Base title={industry.name} description={`${industry.tagline} How IsangoTech helps ${industry.name.toLowerCase()}, stage by stage.`}>
+<Base
+  title={industry.name}
+  searchTitle={searchTitles[industry.slug]}
+  description={`${industry.tagline} How IsangoTech helps ${industry.name.toLowerCase()} in East London and the Eastern Cape, from a website to booking systems and AI automation.`}
+>
   <section class="hero">
     <div class="container">
       <p class="crumb"><a href="/solutions">Solutions</a></p>
