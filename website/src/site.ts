@@ -30,11 +30,15 @@ export const site = {
   // The About page's "Meet the founder" section stays hidden until name is set.
   // Each string in story is one paragraph. photo is in public/founder/.
   founder: {
-    name: "",
+    name: "Anganathi Ndandani",
     role: "Founder",
     photo: "/founder/founder-960.webp",
     photoSmall: "/founder/founder-480.webp",
-    story: [] as string[],
+    story: [
+      "I'm from Ngqamakhwe in the Eastern Cape, and East London has been home since 2022. I studied at Walter Sisulu University here, graduated in 2025, and I'm now completing my Advanced Diploma while building software for real clients.",
+      "I started IsangoTech because Eastern Cape businesses deserve to be found, and to be answered. Too many good salons, restaurants and caterers here are almost invisible online, and the ones people do find often lose customers simply because nobody could reply in time. A message that waits until evening is a booking that went somewhere else. AI changes that: it can answer an enquiry the moment it arrives, book the appointment and send the reminder, while the owner gets on with the work only they can do. It isn't only for big companies any more, and I want small businesses here to have it too.",
+      "When you work with IsangoTech, you work with me. I'll explain things in plain language, tell you honestly if you don't need something yet, and stay with you after your system goes live.",
+    ],
   },
 };
 
