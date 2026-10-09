@@ -27,10 +27,14 @@ export const site = {
   privacyPolicyDate: "",
   // Name and email of the Information Officer registered with the Information Regulator.
   informationOfficer: { name: "", email: "" },
+  // The About page's "Meet the founder" section stays hidden until name is set.
+  // Each string in story is one paragraph. photo is in public/founder/.
   founder: {
     name: "",
     role: "Founder",
-    bio: "",
+    photo: "/founder/founder-960.webp",
+    photoSmall: "/founder/founder-480.webp",
+    story: [] as string[],
   },
 };
 

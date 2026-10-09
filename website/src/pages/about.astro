@@ -52,7 +52,31 @@ const values = [
     </div>
   </section>
 
-  <section class="container" aria-labelledby="values-heading">
+  {
+    site.founder.name && (
+      <section class="container founder" aria-labelledby="founder-heading">
+        <figure class="photo">
+          <img
+            src={site.founder.photo}
+            srcset={`${site.founder.photoSmall} 480w, ${site.founder.photo} 960w`}
+            sizes="(min-width: 52rem) 22rem, 80vw"
+            width="960"
+            height="960"
+            loading="lazy"
+            alt={`${site.founder.name}, ${site.founder.role} of IsangoTech`}
+          />
+        </figure>
+        <div class="words">
+          <p class="eyebrow">Meet the founder</p>
+          <h2 id="founder-heading">{site.founder.name}</h2>
+          <p class="role">{site.founder.role}, IsangoTech</p>
+          {site.founder.story.map((paragraph) => <p>{paragraph}</p>)}
+        </div>
+      </section>
+    )
+  }
+
+  <section class="container values-section" aria-labelledby="values-heading">
     <h2 id="values-heading">What we stand for</h2>
     <ul class="values">
       {
@@ -65,18 +89,6 @@ const values = [
       }
     </ul>
   </section>
-
-  {
-    site.founder.name && (
-      <section class="container founder" aria-labelledby="founder-heading">
-        <h2 id="founder-heading">Meet the founder</h2>
-        <h3>
-          {site.founder.name}, {site.founder.role}
-        </h3>
-        <p>{site.founder.bio}</p>
-      </section>
-    )
-  }
 
   <section class="container roots">
     <h2>Proudly African, rooted in East London</h2>
@@ -101,13 +113,56 @@ const values = [
     margin: 0;
   }
   .story,
-  .roots,
-  .founder {
+  .roots {
     padding-block: 2.5rem 0;
   }
+  .founder {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+    padding-block: 4rem 1.5rem;
+  }
+  @media (min-width: 52rem) {
+    .founder {
+      grid-template-columns: 22rem 1fr;
+      gap: 3.5rem;
+    }
+  }
+  .photo {
+    position: relative;
+    margin: 0;
+    max-width: 22rem;
+    justify-self: center;
+  }
+  /* An ochre door-frame offset behind the photo, echoing the logo. */
+  .photo::before {
+    content: "";
+    position: absolute;
+    inset: 1rem -1rem -1rem 1rem;
+    border: 4px solid var(--ochre);
+    border-radius: calc(var(--radius) * 2);
+  }
+  .photo img {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: calc(var(--radius) * 2);
+    box-shadow: 0 24px 48px -24px rgb(27 42 74 / 0.45);
+  }
+  .words {
+    max-width: 40rem;
+  }
+  .words h2 {
+    margin-bottom: 0.15rem;
+  }
+  .role {
+    margin-top: 0;
+    font-weight: 500;
+    color: var(--turquoise-text);
+  }
   .story > *,
-  .roots > *,
-  .founder > * {
+  .roots > * {
     max-width: 48rem;
   }
   .pair {
@@ -115,6 +170,9 @@ const values = [
     gap: 1.5rem;
     grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
     margin-top: 2rem;
+  }
+  .values-section {
+    padding-top: 3rem;
   }
   .values {
     list-style: none;
