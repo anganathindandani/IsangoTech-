@@ -4,6 +4,16 @@ import { stages } from "../data/stages";
 import { formConfig, site } from "../site";
 
 const whatsappLink = site.whatsappNumber ? `https://wa.me/${site.whatsappNumber}` : null;
+
+// Quick picks for step 2. The ones ticked are sent in the "biggest headache" text.
+const pains = [
+  "Missed calls and messages",
+  "No-shows and late cancellations",
+  "People can't find us online",
+  "Quotes and invoices take too long",
+  "Too much paperwork and spreadsheets",
+  "Juggling staff, stock or bookings",
+];
 ---
 
 <Base title="Get started" description="Tell us about your business and where it is now. We'll recommend where to start.">
@@ -28,98 +38,125 @@ const whatsappLink = site.whatsappNumber ? `https://wa.me/${site.whatsappNumber}
       data-functions-url={formConfig.functionsUrl}
       data-turnstile-site-key={formConfig.turnstileSiteKey}
     >
-      <div class="field">
-        <label for="full_name">Your name <span class="req">required</span></label>
-        <input id="full_name" name="full_name" autocomplete="name" required maxlength="120" />
-      </div>
+      <!-- Filled in by the script; without JavaScript every step shows at once. -->
+      <ol class="progress" id="progress" hidden></ol>
+      <p class="visually-hidden" id="step-status" aria-live="polite"></p>
 
-      <div class="field">
-        <label for="business_name">Business name</label>
-        <input id="business_name" name="business_name" autocomplete="organization" maxlength="160" />
-      </div>
-
-      <div class="field" id="industry-field" hidden>
-        <label for="industry_id">Industry</label>
-        <select id="industry_id" name="industry_id">
-          <option value="">Choose one</option>
-        </select>
-      </div>
-
-      <div class="row">
-        <div class="field">
-          <label for="phone">Phone or WhatsApp number <span class="req">required</span></label>
-          <input id="phone" name="phone" type="tel" autocomplete="tel" required inputmode="tel" />
-        </div>
-        <div class="field">
-          <label for="email">Email</label>
-          <input id="email" name="email" type="email" autocomplete="email" />
-        </div>
-      </div>
-
-      <fieldset class="field">
-        <legend>What do you need most right now?</legend>
-        <div class="choices">
+      <fieldset class="step" data-step="Your business">
+        <legend tabindex="-1"><span class="step-num"></span>Where is your business now?</legend>
+        <p class="hint">Pick the one that sounds most like you.</p>
+        <div class="choices stages">
           {
             stages.map((s) => (
               <label class="choice">
                 <input type="radio" name="stage_needed" value={s.number} />
+                <span class="choice-num" aria-hidden="true">{s.number}</span>
                 <span>
-                  <strong>{s.need}</strong>
-                  <small>
-                    Stage {s.number} · {s.name}
-                  </small>
+                  <strong>{s.name}</strong>
+                  <small>"{s.whereYouAre}"</small>
                 </span>
               </label>
             ))
           }
           <label class="choice">
             <input type="radio" name="stage_needed" value="" checked />
+            <span class="choice-num" aria-hidden="true">?</span>
             <span><strong>I'm not sure yet</strong><small>We'll help you work it out</small></span>
           </label>
         </div>
+
+        <div class="field" id="industry-field" hidden>
+          <p class="label" id="industry-label">What kind of business is it?</p>
+          <div class="pills" role="radiogroup" aria-labelledby="industry-label" id="industries"></div>
+        </div>
       </fieldset>
 
-      <div class="field">
-        <label for="biggest_pain">What's the biggest headache in your business at the moment?</label>
-        <textarea id="biggest_pain" name="biggest_pain" rows="4" maxlength="2000"></textarea>
-      </div>
+      <fieldset class="step" data-step="Your headache">
+        <legend tabindex="-1"><span class="step-num"></span>What's giving you the biggest headache?</legend>
+        <p class="hint">Tap any that sound familiar.</p>
+        <div class="pills" id="pains">
+          {
+            pains.map((p) => (
+              <label class="pill">
+                <input type="checkbox" name="pain" value={p} />
+                <span>{p}</span>
+              </label>
+            ))
+          }
+        </div>
+        <div class="field">
+          <label for="biggest_pain">Anything else? Tell us in your own words (optional)</label>
+          <textarea id="biggest_pain" name="biggest_pain" rows="3" maxlength="1500"></textarea>
+        </div>
+      </fieldset>
 
-      <fieldset class="field" id="slots-field" hidden>
-        <legend>Book an AI Readiness Assessment (optional)</legend>
+      <fieldset class="step" data-step="Assessment" id="slots-field" hidden data-skip>
+        <legend tabindex="-1"><span class="step-num"></span>Want a free AI Readiness Assessment?</legend>
         <p class="hint">
           Best for businesses that already run on a system and want to automate. Pick a time and we'll come to you, or
           meet online.
         </p>
-        <select id="booking_slot_id" name="booking_slot_id" aria-label="Assessment time">
-          <option value="">No thanks, not now</option>
-        </select>
+        <div class="choices slots" id="slots">
+          <label class="choice">
+            <input type="radio" name="booking_slot_id" value="" checked />
+            <span><strong>Not now, thanks</strong><small>You can always book one later</small></span>
+          </label>
+        </div>
       </fieldset>
 
-      <div class="field checks">
-        <label class="check">
-          <input type="checkbox" name="consent" required />
-          <span>
-            I agree that IsangoTech may use these details to reply to my enquiry, as explained in the
-            <a href="/privacy" target="_blank">privacy policy</a>. <span class="req">required</span>
-          </span>
-        </label>
-        <label class="check">
-          <input type="checkbox" name="whatsapp_opt_in" />
-          <span>You may contact me on WhatsApp.</span>
-        </label>
-      </div>
+      <fieldset class="step" data-step="Your details">
+        <legend tabindex="-1"><span class="step-num"></span>How can we reach you?</legend>
+        <div class="field">
+          <label for="full_name">Your name <span class="req">required</span></label>
+          <input id="full_name" name="full_name" autocomplete="name" required maxlength="120" />
+        </div>
 
-      <!-- Honeypot: hidden from people, filled in by bots. -->
-      <div class="hp" aria-hidden="true">
-        <label for="website">Leave this empty</label>
-        <input id="website" name="website" tabindex="-1" autocomplete="off" />
-      </div>
+        <div class="field">
+          <label for="business_name">Business name</label>
+          <input id="business_name" name="business_name" autocomplete="organization" maxlength="160" />
+        </div>
 
-      <div id="turnstile" class="turnstile"></div>
+        <div class="row">
+          <div class="field">
+            <label for="phone">Phone or WhatsApp number <span class="req">required</span></label>
+            <input id="phone" name="phone" type="tel" autocomplete="tel" required inputmode="tel" />
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" autocomplete="email" />
+          </div>
+        </div>
+
+        <div class="field checks">
+          <label class="check">
+            <input type="checkbox" name="consent" required />
+            <span>
+              I agree that IsangoTech may use these details to reply to my enquiry, as explained in the
+              <a href="/privacy" target="_blank">privacy policy</a>. <span class="req">required</span>
+            </span>
+          </label>
+          <label class="check">
+            <input type="checkbox" name="whatsapp_opt_in" />
+            <span>You may contact me on WhatsApp.</span>
+          </label>
+        </div>
+
+        <!-- Honeypot: hidden from people, filled in by bots. -->
+        <div class="hp" aria-hidden="true">
+          <label for="website">Leave this empty</label>
+          <input id="website" name="website" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <div id="turnstile" class="turnstile"></div>
+      </fieldset>
 
       <p id="form-error" class="error" role="alert" tabindex="-1" hidden></p>
 
-      <button class="button" type="submit" id="submit">Send</button>
+      <div class="nav">
+        <button class="back" type="button" id="back" hidden>← Back</button>
+        <button class="button" type="button" id="next" hidden>Next <span class="arrow" aria-hidden="true">→</span></button>
+        <button class="button" type="submit" id="submit">Send</button>
+      </div>
     </form>
 
     <div id="success" class="card success" hidden tabindex="-1">
@@ -160,12 +197,19 @@ const whatsappLink = site.whatsappNumber ? `https://wa.me/${site.whatsappNumber}
     }
   }
 
-  const form = document.getElementById("enquiry") as HTMLFormElement;
+  const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+  const form = $<HTMLFormElement>("enquiry");
   const functionsUrl = form.dataset.functionsUrl?.replace(/\/$/, "") ?? "";
   const siteKey = form.dataset.turnstileSiteKey ?? "";
-  const errorBox = document.getElementById("form-error") as HTMLParagraphElement;
-  const submit = document.getElementById("submit") as HTMLButtonElement;
+  const errorBox = $<HTMLParagraphElement>("form-error");
+  const submit = $<HTMLButtonElement>("submit");
+  const next = $<HTMLButtonElement>("next");
+  const back = $<HTMLButtonElement>("back");
+  const progress = $<HTMLOListElement>("progress");
+  const status = $<HTMLParagraphElement>("step-status");
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
   let turnstileToken = "";
+  let turnstileLoaded = false;
 
   const timeFormat = new Intl.DateTimeFormat("en-ZA", {
     timeZone: "Africa/Johannesburg",
@@ -184,8 +228,81 @@ const whatsappLink = site.whatsappNumber ? `https://wa.me/${site.whatsappNumber}
 
   function unavailable() {
     form.hidden = true;
-    (document.getElementById("unavailable") as HTMLElement).hidden = false;
+    $("unavailable").hidden = false;
   }
+
+  // ---- Steps -------------------------------------------------------------
+  // The form is one long page without JavaScript. With it, one step shows at
+  // a time. Steps marked data-skip (the assessment, when there are no times
+  // to book) are left out.
+  const allSteps = [...form.querySelectorAll<HTMLFieldSetElement>(".step")];
+  let current = 0;
+
+  const steps = () => allSteps.filter((s) => !("skip" in s.dataset));
+
+  function renderProgress() {
+    const list = steps();
+    progress.style.setProperty("--done", String(list.length > 1 ? current / (list.length - 1) : 1));
+    progress.replaceChildren(
+      ...list.map((s, i) => {
+        const li = document.createElement("li");
+        li.className = i < current ? "done" : i === current ? "current" : "";
+        if (i === current) li.setAttribute("aria-current", "step");
+        li.innerHTML = `<span class="dot">${i < current ? "✓" : i + 1}</span><span class="name"></span>`;
+        (li.querySelector(".name") as HTMLElement).textContent = s.dataset.step ?? "";
+        return li;
+      }),
+    );
+  }
+
+  function show(index: number, { focus = true } = {}) {
+    const list = steps();
+    const forward = index > current;
+    current = Math.max(0, Math.min(index, list.length - 1));
+    for (const s of allSteps) {
+      const on = s === list[current];
+      s.hidden = !on;
+      s.classList.remove("enter-forward", "enter-back");
+      if (on && focus && !reduceMotion) s.classList.add(forward ? "enter-forward" : "enter-back");
+    }
+    list.forEach((s, i) => {
+      const num = s.querySelector(".step-num");
+      if (num) num.textContent = `Step ${i + 1} of ${list.length}`;
+    });
+    const last = current === list.length - 1;
+    back.hidden = current === 0;
+    next.hidden = last;
+    submit.hidden = !last;
+    errorBox.hidden = true;
+    renderProgress();
+    status.textContent = `Step ${current + 1} of ${list.length}: ${list[current].dataset.step}`;
+    if (last && siteKey && !turnstileLoaded) loadTurnstile();
+    if (focus) {
+      // Bring the top of the form back into view if the person had scrolled past it.
+      if (form.getBoundingClientRect().top < 80) form.scrollIntoView({ block: "start", behavior: reduceMotion ? "auto" : "smooth" });
+      list[current].querySelector<HTMLElement>("legend")?.focus({ preventScroll: true });
+    }
+  }
+
+  function startSteps() {
+    form.classList.add("stepped");
+    progress.hidden = false;
+    show(0, { focus: false });
+  }
+
+  next.addEventListener("click", () => show(current + 1));
+  form.addEventListener("input", () => (errorBox.hidden = true));
+  back.addEventListener("click", () => show(current - 1));
+
+  // Picking a stage card is a natural "next": nudge the button so people see it.
+  form.addEventListener("change", (e) => {
+    const t = e.target as HTMLInputElement;
+    if (t.type === "radio" && !reduceMotion) {
+      next.classList.remove("nudge");
+      void next.offsetWidth;
+      next.classList.add("nudge");
+    }
+  });
 
   // Pre-select the stage chosen on the home page (/get-started?stage=2).
   const stageParam = new URLSearchParams(location.search).get("stage");
@@ -194,25 +311,61 @@ const whatsappLink = site.whatsappNumber ? `https://wa.me/${site.whatsappNumber}
     if (radio) radio.checked = true;
   }
 
+  // ---- Options from the database -------------------------------------------
+  function choice(name: string, value: string, title: string, detail?: string, cls = "pill") {
+    const label = document.createElement("label");
+    label.className = cls;
+    const input = document.createElement("input");
+    input.type = "radio";
+    input.name = name;
+    input.value = value;
+    const text = document.createElement("span");
+    const strong = document.createElement(cls === "pill" ? "span" : "strong");
+    strong.textContent = title;
+    text.append(strong);
+    if (detail) {
+      const small = document.createElement("small");
+      small.textContent = detail;
+      text.append(small);
+    }
+    label.append(input, text);
+    return label;
+  }
+
   async function loadOptions() {
     const res = await fetch(`${functionsUrl}/enquiry-options`);
     if (!res.ok) throw new Error(`enquiry-options ${res.status}`);
     const options = (await res.json()) as Options;
 
-    const industry = document.getElementById("industry_id") as HTMLSelectElement;
-    for (const i of options.industries) industry.add(new Option(i.name, i.id));
-    (document.getElementById("industry-field") as HTMLElement).hidden = options.industries.length === 0;
-
-    const slotSelect = document.getElementById("booking_slot_id") as HTMLSelectElement;
-    slotSelect.length = 1;
-    for (const s of options.slots) {
-      const where = s.mode === "online" ? "online" : "in person";
-      slotSelect.add(new Option(`${timeFormat.format(new Date(s.starts_at))} (${where})`, s.id));
+    const industries = $("industries");
+    if (!industries.childElementCount) {
+      for (const i of options.industries) industries.append(choice("industry_id", i.id, i.name));
     }
-    (document.getElementById("slots-field") as HTMLElement).hidden = options.slots.length === 0;
+    $("industry-field").hidden = options.industries.length === 0;
+
+    const slots = $("slots");
+    slots.querySelectorAll(".slot").forEach((el) => el.remove());
+    const none = slots.querySelector<HTMLInputElement>("input")!;
+    none.checked = true;
+    for (const s of options.slots) {
+      const where = s.mode === "online" ? "Online" : "In person";
+      slots.append(choice("booking_slot_id", s.id, timeFormat.format(new Date(s.starts_at)), where, "choice slot"));
+    }
+    const slotStep = $("slots-field");
+    const wasOn = !("skip" in slotStep.dataset);
+    if (options.slots.length) delete slotStep.dataset.skip;
+    else slotStep.dataset.skip = "";
+    // Keep the person on the step they're on if the step list changed.
+    if (form.classList.contains("stepped") && wasOn !== !("skip" in slotStep.dataset)) {
+      const on = allSteps.find((s) => !s.hidden);
+      show(Math.max(0, steps().indexOf(on!)), { focus: false });
+    } else if (!form.classList.contains("stepped")) {
+      slotStep.hidden = options.slots.length === 0;
+    }
   }
 
   function loadTurnstile() {
+    turnstileLoaded = true;
     window.onTurnstileLoad = () => {
       window.turnstile!.render("#turnstile", {
         sitekey: siteKey,
@@ -226,6 +379,7 @@ const whatsappLink = site.whatsappNumber ? `https://wa.me/${site.whatsappNumber}
     document.head.append(script);
   }
 
+  // ---- Sending -------------------------------------------------------------
   function validate(): string | null {
     const data = new FormData(form);
     if (!String(data.get("full_name") ?? "").trim()) return "Please tell us your name.";
@@ -238,8 +392,17 @@ const whatsappLink = site.whatsappNumber ? `https://wa.me/${site.whatsappNumber}
     return null;
   }
 
+  /** The ticked quick picks plus the person's own words, as one note. */
+  function biggestPain(data: FormData) {
+    const picks = data.getAll("pain").map(String);
+    const own = String(data.get("biggest_pain") ?? "").trim();
+    return [picks.length ? picks.join("; ") + "." : "", own].filter(Boolean).join(" ").slice(0, 2000);
+  }
+
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
+    // Enter on an earlier step moves on rather than sending.
+    if (form.classList.contains("stepped") && current < steps().length - 1) return show(current + 1);
     errorBox.hidden = true;
     const problem = validate();
     if (problem) return showError(problem);
@@ -253,7 +416,7 @@ const whatsappLink = site.whatsappNumber ? `https://wa.me/${site.whatsappNumber}
       phone: String(data.get("phone")).trim(),
       email: String(data.get("email") ?? "").trim(),
       stage_needed: stage ? Number(stage) : null,
-      biggest_pain: String(data.get("biggest_pain") ?? "").trim(),
+      biggest_pain: biggestPain(data),
       booking_slot_id: String(data.get("booking_slot_id") ?? ""),
       consent: data.get("consent") === "on",
       whatsapp_opt_in: data.get("whatsapp_opt_in") === "on",
@@ -272,25 +435,31 @@ const whatsappLink = site.whatsappNumber ? `https://wa.me/${site.whatsappNumber}
       const result = await res.json().catch(() => ({}));
       if (res.ok) {
         form.hidden = true;
-        const success = document.getElementById("success") as HTMLElement;
+        const success = $("success");
         if (result.assessment_starts_at) {
-          (document.getElementById("success-text") as HTMLElement).textContent =
+          $("success-text").textContent =
             `Your AI Readiness Assessment is booked for ${timeFormat.format(new Date(result.assessment_starts_at))}. ` +
             "We'll confirm the details with you before then.";
         }
         success.hidden = false;
         success.focus({ preventScroll: true });
-        success.scrollIntoView({ block: "center", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+        success.scrollIntoView({ block: "center", behavior: reduceMotion ? "auto" : "smooth" });
         return;
       }
-      if (res.status === 409) await loadOptions().catch(() => {});
+      if (res.status === 409) {
+        // That time was just taken: refresh the times and go back to pick another.
+        await loadOptions().catch(() => {});
+        const slotStep = steps().indexOf($("slots-field") as HTMLFieldSetElement);
+        if (slotStep >= 0) show(slotStep);
+      }
       showError(result.error ?? "Something went wrong. Please try again.");
     } catch {
       showError("We couldn't send your details. Please check your connection and try again.");
     } finally {
       submit.disabled = false;
       submit.textContent = "Send";
-      window.turnstile?.reset("#turnstile");
+      // Only once the Turnstile script is in: before that, window.turnstile is the #turnstile element.
+      if (turnstileLoaded && typeof window.turnstile?.reset === "function") window.turnstile.reset("#turnstile");
       turnstileToken = "";
     }
   });
@@ -298,10 +467,10 @@ const whatsappLink = site.whatsappNumber ? `https://wa.me/${site.whatsappNumber}
   if (!functionsUrl) {
     unavailable();
   } else {
+    startSteps();
     loadOptions().catch(() => {
       // The form still works without industries and slots.
     });
-    if (siteKey) loadTurnstile();
   }
 </script>
 
@@ -313,8 +482,10 @@ const whatsappLink = site.whatsappNumber ? `https://wa.me/${site.whatsappNumber}
     max-width: 44rem;
   }
   .card {
+    scroll-margin-top: 6rem;
     max-width: 44rem;
-    padding: 1.5rem;
+    padding: clamp(1.25rem, 4vw, 2.25rem);
+    box-shadow: 0 20px 40px -24px rgb(27 42 74 / 0.35);
     background: var(--white);
     border-radius: var(--radius);
   }
@@ -359,30 +530,125 @@ const whatsappLink = site.whatsappNumber ? `https://wa.me/${site.whatsappNumber}
   }
   .choices {
     display: grid;
-    gap: 0.5rem;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
   }
-  .choice {
+  @media (min-width: 40rem) {
+    .stages,
+    .slots {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  #enquiry :global(.choice) {
+    position: relative;
     display: flex;
-    gap: 0.75rem;
+    gap: 0.85rem;
     align-items: flex-start;
-    padding: 0.75rem;
+    padding: 0.9rem 1rem;
     border: 1.5px solid rgb(27 42 74 / 0.15);
-    border-radius: 0.5rem;
+    border-radius: 0.75rem;
     font-weight: 400;
     cursor: pointer;
+    transition:
+      border-color 0.2s var(--ease-out),
+      background 0.2s var(--ease-out),
+      transform 0.2s var(--ease-out),
+      box-shadow 0.2s var(--ease-out);
   }
-  .choice:has(input:checked) {
+  #enquiry :global(.choice:hover) {
+    border-color: rgb(43 168 160 / 0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px -10px rgb(27 42 74 / 0.35);
+  }
+  #enquiry :global(.choice:has(input:checked)) {
     border-color: var(--turquoise);
     background: rgb(43 168 160 / 0.08);
+    box-shadow: 0 0 0 1px var(--turquoise);
   }
-  .choice span,
-  .check span {
+  #enquiry :global(.choice:has(input:focus-visible)),
+  #enquiry :global(.pill:has(input:focus-visible)) {
+    outline: 3px solid var(--turquoise);
+    outline-offset: 2px;
+  }
+  /* The real radio stays in the page for keyboards and screen readers. */
+  #enquiry :global(.choice input),
+  #enquiry :global(.pill input) {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  #enquiry :global(.choice-num) {
+    flex: none;
     display: grid;
+    place-items: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 50%;
+    font: 700 1rem/1 var(--font-heading);
+    background: var(--sand);
+    color: var(--indigo);
+    transition:
+      background 0.2s var(--ease-out),
+      color 0.2s var(--ease-out),
+      transform 0.3s var(--ease-out);
   }
-  .choice input,
-  .check input {
-    margin-top: 0.3rem;
-    accent-color: var(--turquoise-text);
+  #enquiry :global(.choice:has(input:checked) .choice-num) {
+    background: var(--ochre);
+    color: var(--white);
+    transform: scale(1.1);
+  }
+  #enquiry :global(.choice span:not(.choice-num)) {
+    display: grid;
+    gap: 0.15rem;
+  }
+  #enquiry :global(.choice strong) {
+    font-weight: 500;
+  }
+  #enquiry :global(.choice small) {
+    font-size: 0.9rem;
+    opacity: 0.85;
+  }
+  #enquiry :global(.slot strong) {
+    font-weight: 500;
+  }
+  .pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+  #enquiry :global(.pill) {
+    position: relative;
+    margin: 0;
+    padding: 0.55rem 1rem;
+    border: 1.5px solid rgb(27 42 74 / 0.2);
+    border-radius: 999px;
+    font-weight: 400;
+    cursor: pointer;
+    transition:
+      border-color 0.2s var(--ease-out),
+      background 0.2s var(--ease-out),
+      color 0.2s var(--ease-out),
+      transform 0.2s var(--ease-out);
+  }
+  #enquiry :global(.pill:hover) {
+    border-color: var(--turquoise);
+  }
+  #enquiry :global(.pill:has(input:checked)) {
+    background: var(--indigo);
+    border-color: var(--indigo);
+    color: var(--white);
+  }
+  #enquiry :global(.pill:has(input[type="checkbox"]:checked) span::before) {
+    content: "✓ ";
+    color: var(--ochre);
+  }
+  #enquiry :global(.pill:active) {
+    transform: scale(0.96);
+  }
+  .label {
+    font-weight: 500;
+    margin: 0 0 0.5rem;
   }
   .check {
     display: flex;
@@ -390,8 +656,188 @@ const whatsappLink = site.whatsappNumber ? `https://wa.me/${site.whatsappNumber}
     font-weight: 400;
     margin-bottom: 0.75rem;
   }
+  .check input {
+    flex: none;
+    margin-top: 0.3rem;
+    accent-color: var(--turquoise-text);
+  }
   .check span {
     display: block;
+  }
+
+  /* ---- Steps ---- */
+  .step {
+    margin: 0 0 1.5rem;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+  }
+  .step legend {
+    padding: 0;
+    margin-bottom: 0.5rem;
+    font: 700 clamp(1.35rem, 3.5vw, 1.7rem) / 1.2 var(--font-heading);
+    color: var(--indigo);
+  }
+  .step legend:focus {
+    outline: none;
+  }
+  .step-num {
+    display: block;
+    margin-bottom: 0.4rem;
+    font: 500 0.8rem/1 var(--font-body);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+  }
+  .step-num:empty {
+    display: none;
+  }
+  .enter-forward {
+    animation: step-forward 0.45s var(--ease-out) both;
+  }
+  .enter-back {
+    animation: step-back 0.45s var(--ease-out) both;
+  }
+  @keyframes step-forward {
+    from {
+      opacity: 0;
+      transform: translateX(32px);
+    }
+  }
+  @keyframes step-back {
+    from {
+      opacity: 0;
+      transform: translateX(-32px);
+    }
+  }
+
+  /* Progress: the growth path in miniature. */
+  .progress {
+    --done: 0;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    list-style: none;
+    margin: 0 0 2rem;
+    padding: 0;
+  }
+  .progress::before,
+  .progress::after {
+    content: "";
+    position: absolute;
+    top: 0.95rem;
+    left: 1rem;
+    right: 1rem;
+    height: 3px;
+    border-radius: 2px;
+  }
+  .progress::before {
+    background: rgb(27 42 74 / 0.12);
+  }
+  .progress::after {
+    background: linear-gradient(90deg, var(--turquoise), var(--ochre));
+    transform-origin: left;
+    transform: scaleX(var(--done));
+    transition: transform 0.5s var(--ease-out);
+  }
+  #enquiry :global(.progress li) {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    justify-items: center;
+    gap: 0.35rem;
+    font-size: 0.8rem;
+    color: rgb(27 42 74 / 0.6);
+  }
+  #enquiry :global(.progress li:first-child) {
+    justify-items: start;
+  }
+  #enquiry :global(.progress li:last-child) {
+    justify-items: end;
+  }
+  #enquiry :global(.progress .dot) {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    font: 700 0.9rem/1 var(--font-heading);
+    background: var(--white);
+    border: 2px solid rgb(27 42 74 / 0.2);
+    transition:
+      background 0.3s var(--ease-out),
+      border-color 0.3s var(--ease-out),
+      transform 0.3s var(--ease-out);
+  }
+  #enquiry :global(.progress .done .dot) {
+    background: var(--turquoise-text);
+    border-color: var(--turquoise-text);
+    color: var(--white);
+  }
+  #enquiry :global(.progress .current) {
+    color: var(--indigo);
+    font-weight: 500;
+  }
+  #enquiry :global(.progress .current .dot) {
+    background: var(--ochre);
+    border-color: var(--ochre);
+    color: var(--white);
+    transform: scale(1.12);
+    box-shadow: 0 0 0 5px rgb(224 122 31 / 0.18);
+  }
+  @media (max-width: 30rem) {
+    #enquiry :global(.progress .name) {
+      display: none;
+    }
+    #enquiry :global(.progress .current .name) {
+      display: block;
+      position: absolute;
+      top: 2.5rem;
+      white-space: nowrap;
+    }
+    .progress {
+      margin-bottom: 2.75rem;
+    }
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgb(27 42 74 / 0.1);
+  }
+  .nav .button {
+    margin-left: auto;
+  }
+  .back {
+    padding: 0.7rem 0.25rem;
+    border: 0;
+    background: none;
+    font: 500 1rem var(--font-body);
+    color: var(--turquoise-text);
+    cursor: pointer;
+  }
+  .back:hover {
+    text-decoration: underline;
+  }
+  .nudge {
+    animation: nudge 0.5s var(--ease-out);
+  }
+  @keyframes nudge {
+    40% {
+      transform: translateY(-3px) scale(1.04);
+      box-shadow: 0 8px 20px rgb(224 122 31 / 0.35);
+    }
+  }
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
   .hint {
     margin: 0 0 0.75rem;
@@ -413,6 +859,9 @@ const whatsappLink = site.whatsappNumber ? `https://wa.me/${site.whatsappNumber}
     background: rgb(181 82 59 / 0.1);
     color: #8a3a28;
     font-weight: 500;
+  }
+  .success:focus {
+    outline: none;
   }
   .success {
     border-top: 6px solid var(--turquoise);

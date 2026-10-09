@@ -208,3 +208,9 @@ html.motion.reveal-all [data-reveal] {
     navigation: none;
   }
 }
+
+/* Room between a page's last section and the footer. The call-to-action band
+   sits flush against the footer on purpose. */
+main > :last-child:not(.cta) {
+  margin-bottom: 4.5rem;
+}
