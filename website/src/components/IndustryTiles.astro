@@ -47,6 +47,20 @@ const icons: Record<string, string> = {
     gap: 1rem;
     grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
   }
+  /* Wide screens: three across, then the rest share the next row evenly
+     (five tiles become 3 + 2, with no empty gap). */
+  @media (min-width: 46rem) {
+    .tiles {
+      grid-template-columns: repeat(6, 1fr);
+    }
+    .tiles li {
+      grid-column: span 2;
+    }
+    .tiles li:nth-child(n + 4):nth-last-child(2),
+    .tiles li:nth-child(n + 4):nth-last-child(1):nth-child(5) {
+      grid-column: span 3;
+    }
+  }
   a {
     position: relative;
     display: flex;
