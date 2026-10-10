@@ -6,13 +6,25 @@
 export interface Package {
   name: string;
   stage: 1 | 2 | 3 | 4 | null;
+  /** For packages outside the stage ladder: the small label above the name. */
+  label?: string;
   summary: string;
   includes: string[];
-  fromPrice: number | null;
-  billing: "once_off" | "monthly";
+  /** Starting setup price in rand, or null for "Price on request" (or priceNote). */
+  setupFrom: number | null;
+  /** Starting monthly fee in rand, added to the setup price. */
+  monthlyFrom?: number;
+  /** The price is fixed, not a starting price. */
+  fixed?: boolean;
+  /** Shown instead of a price when setupFrom is null. */
+  priceNote?: string;
+  /** A short line under the price, e.g. a credit. */
+  priceDetail?: string;
   nextStep?: string;
 }
 
+// Prices from the business plan (October 2026). Working prices to test with the
+// first clients; the final price is always confirmed in a written quote.
 export const packages: Package[] = [
   {
     name: "Starter website",
@@ -24,67 +36,101 @@ export const packages: Package[] = [
       "WhatsApp button on every page",
       "Hosting and your own domain name",
     ],
-    fromPrice: null,
-    billing: "once_off",
-    nextStep: "When enquiries start coming in, Core Starter makes sure none get lost.",
+    setupFrom: null,
+    priceNote: "Quoted after a free chat",
+    nextStep: "When enquiries start coming in, Core Starter answers every one of them.",
   },
   {
     name: "Core Starter",
     stage: 2,
-    summary: "Never miss an enquiry or a booking again.",
+    summary: "A WhatsApp assistant that answers your customers the moment they message, day or night.",
     includes: [
-      "Online booking or enquiry forms",
-      "Every enquiry tracked in one list",
-      "WhatsApp follow-ups and reminders",
-      "Simple weekly report of new enquiries",
+      "WhatsApp AI assistant for prices, hours and common questions",
+      "Every enquiry captured in one list",
+      "Automatic reminders so customers turn up",
+      "Live in 2 to 3 weeks, with training",
+      "Hosting, updates and support included monthly",
     ],
-    fromPrice: null,
-    billing: "once_off",
-    nextStep: "When the admin starts piling up, Core Business brings daily work into one system.",
+    setupFrom: 4500,
+    monthlyFrom: 650,
+    nextStep: "When you're ready to take bookings and orders in one place, move up to Core Business.",
   },
   {
     name: "Core Business",
     stage: 3,
-    summary: "One portal for your daily operations, built around how your business works.",
+    summary: "Bookings, orders and an owner dashboard, set up for how your industry works.",
     includes: [
-      "Staff or operations portal",
-      "Modules for events, staff, menus, stock or invoices",
-      "Add-ons as you grow",
+      "Everything in Core Starter",
+      "Bookings or orders taken on WhatsApp and online",
+      "Owner dashboard: bookings, sales, busy times and regulars",
+      "Deposit and balance reminders",
       "Training for you and your team",
     ],
-    fromPrice: null,
-    billing: "once_off",
-    nextStep: "Once your data lives in one place, automation can take the repetitive work off your plate.",
+    setupFrom: 8500,
+    monthlyFrom: 1200,
+    nextStep: "Once your work runs through one system, automation can take the repetitive jobs off your plate.",
   },
   {
     name: "AI Readiness Assessment",
     stage: 4,
-    summary: "We visit, look at how you work, and show you what's worth automating and what isn't.",
+    summary: "For businesses already running on a website or system. We find what's worth automating, and what isn't.",
     includes: [
-      "On-site or online visit",
+      "On-site or online visit to map how you work",
       "Written findings in plain language",
-      "A recommended solution with a clear price",
+      "A costed plan for what to automate first",
     ],
-    fromPrice: null,
-    billing: "once_off",
+    setupFrom: 1500,
+    fixed: true,
+    priceDetail: "Credited against your project if you go ahead",
     nextStep: "Then we build the automation that pays for itself first.",
+  },
+  {
+    name: "Automation add-ons",
+    stage: null,
+    label: "After your assessment",
+    summary: "AI that handles the admin that eats your week, linked to the tools you already use.",
+    includes: [
+      "Quotes drafted from enquiries",
+      "Invoices and payment reminders",
+      "Documents read, sorted and filed",
+      "Monthly care included in your plan",
+    ],
+    setupFrom: 3500,
+    priceDetail: "Per automation",
+  },
+  {
+    name: "Custom software",
+    stage: null,
+    label: "When you need more",
+    summary: "When you need more than the core platform: web and mobile apps, staff portals and dashboards, built AI-ready.",
+    includes: [
+      "Scoped and priced in writing before we start",
+      "Built on the same tested platform",
+      "Care plan for hosting, monitoring and improvements",
+    ],
+    setupFrom: 15000,
+    monthlyFrom: 1500,
   },
   {
     name: "Care plan",
     stage: null,
-    summary: "Hosting, updates and support so everything keeps working. Available at every stage.",
+    label: "Every stage",
+    summary: "Hosting, monitoring, updates and support so everything keeps working. We stay after launch.",
     includes: [
       "Hosting, backups and security updates",
-      "Small changes each month",
+      "Small improvements each month",
       "Help on WhatsApp when something goes wrong",
+      "A short results review",
     ],
-    fromPrice: null,
-    billing: "monthly",
+    setupFrom: null,
+    priceNote: "Included in every monthly fee",
   },
 ];
 
+const rand = (n: number) => `R${n.toLocaleString("en-ZA").replace(/,/g, "\u00a0")}`;
+
 export function formatPrice(p: Package): string {
-  if (p.fromPrice === null) return "Price on request";
-  const amount = `R${p.fromPrice.toLocaleString("en-ZA").replace(/,/g, " ")}`;
-  return p.billing === "monthly" ? `from ${amount} a month` : `from ${amount}`;
+  if (p.setupFrom === null) return p.priceNote ?? "Price on request";
+  const setup = p.fixed ? rand(p.setupFrom) : `from ${rand(p.setupFrom)}`;
+  return p.monthlyFrom ? `${setup} setup + ${rand(p.monthlyFrom)} a month` : setup;
 }

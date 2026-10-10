@@ -1,0 +1,82 @@
+---
+// The business plan's founding-client offer: a discount for the first clients in
+// exchange for a testimonial and a case study. Remove this component once the
+// five spots are taken.
+---
+
+<section class="founding" aria-labelledby="founding-heading">
+  <div class="container">
+    <div class="card" data-reveal-group>
+      <div class="words">
+        <p class="eyebrow">Founding client offer</p>
+        <h2 id="founding-heading">Up to 40% off setup for our first five clients</h2>
+        <p>
+          We're choosing five East London businesses to grow with. You get up to 40% off your setup fee. In return, we
+          ask for a short testimonial and permission to share your results as a case study.
+        </p>
+        <p class="small">Applies to setup fees. Monthly fees are the standard price.</p>
+      </div>
+      <a class="button" href="/get-started?founding=1">
+        Ask about a founding spot <span class="arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .founding {
+    padding-block: 1rem 3.5rem;
+  }
+  .card {
+    position: relative;
+    display: grid;
+    gap: 1.5rem;
+    align-items: center;
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    border-radius: calc(var(--radius) * 2);
+    background: var(--indigo);
+    color: var(--sand);
+    overflow: hidden;
+  }
+  /* A door of light in the corner, echoing the logo. */
+  .card::after {
+    content: "";
+    position: absolute;
+    right: -3.5rem;
+    bottom: -7rem;
+    width: 9rem;
+    height: 14rem;
+    border: 1.25rem solid var(--turquoise);
+    border-radius: 1rem;
+    opacity: 0.1;
+    transform: rotate(12deg);
+  }
+  @media (min-width: 52rem) {
+    .card {
+      grid-template-columns: 1fr auto;
+    }
+  }
+  .eyebrow {
+    color: var(--ochre);
+  }
+  h2 {
+    color: var(--white);
+    margin-bottom: 0.5rem;
+  }
+  .words {
+    position: relative;
+    max-width: 40rem;
+  }
+  .words p {
+    margin-top: 0;
+  }
+  .small {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin-bottom: 0;
+  }
+  .button {
+    position: relative;
+    justify-self: start;
+  }
+</style>

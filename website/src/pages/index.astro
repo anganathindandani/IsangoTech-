@@ -5,6 +5,8 @@ import DoorHero from "../components/DoorHero.astro";
 import CallToAction from "../components/CallToAction.astro";
 import IndustryTiles from "../components/IndustryTiles.astro";
 import StagePicker from "../components/StagePicker.astro";
+import WhatsAppDemo from "../components/WhatsAppDemo.astro";
+import FoundingOffer from "../components/FoundingOffer.astro";
 import { testimonials } from "../data/testimonials";
 import { site } from "../site";
 
@@ -28,8 +30,8 @@ const outcomes = [
 ---
 
 <Base
-  searchTitle="Websites and AI automation in East London"
-  description="IsangoTech builds websites, booking systems, staff portals and AI automation for small businesses in East London and the Eastern Cape. Get found, answer every enquiry and spend less time on admin."
+  searchTitle="WhatsApp AI assistants and websites in East London"
+  description="IsangoTech sets up WhatsApp AI assistants, bookings, reminders and websites for small businesses in East London and the Eastern Cape. Answer every enquiry, cut no-shows and spend less time on admin."
 >
   <section class="hero">
     <div class="container hero-inner">
@@ -37,8 +39,8 @@ const outcomes = [
         <p class="eyebrow hero-in" style="--d: 0">Proudly African · East London and beyond</p>
         <h1 class="hero-in" style="--d: 1">{site.tagline}</h1>
         <p class="offer hero-in" style="--d: 2">
-          We build websites, booking tools, staff portals and AI automation for small businesses, so you get found,
-          never miss a customer and spend less time on admin.
+          WhatsApp AI assistants, bookings, reminders and websites for small businesses, so you get found, never miss
+          a customer and spend less time on admin.
         </p>
         <div class="actions hero-in" style="--d: 3">
           <a class="button" href="/get-started">Get started <span class="arrow" aria-hidden="true">→</span></a>
@@ -64,6 +66,8 @@ const outcomes = [
     }
   </section>
 
+  <WhatsAppDemo />
+
   <StagePicker />
 
   <section class="container industries" aria-labelledby="industries-heading">
@@ -71,6 +75,8 @@ const outcomes = [
     <p>We specialise in a few industries so we can reuse what works, and we help any small business on the same path.</p>
     <IndustryTiles />
   </section>
+
+  <FoundingOffer />
 
   {
     testimonials.length > 0 && (

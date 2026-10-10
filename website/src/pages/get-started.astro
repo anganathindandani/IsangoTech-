@@ -38,6 +38,9 @@ const pains = [
       data-functions-url={formConfig.functionsUrl}
       data-turnstile-site-key={formConfig.turnstileSiteKey}
     >
+      <p class="founding-note" id="founding-note" hidden>
+        You're asking about the <strong>founding client offer</strong>: up to 40% off setup for our first five clients.
+      </p>
       <!-- Filled in by the script; without JavaScript every step shows at once. -->
       <ol class="progress" id="progress" hidden></ol>
       <p class="visually-hidden" id="step-status" aria-live="polite"></p>
@@ -392,11 +395,18 @@ const pains = [
     return null;
   }
 
+  // Came from "Ask about a founding spot" (/get-started?founding=1).
+  const founding = new URLSearchParams(location.search).has("founding");
+  if (founding) $("founding-note").hidden = false;
+
   /** The ticked quick picks plus the person's own words, as one note. */
   function biggestPain(data: FormData) {
     const picks = data.getAll("pain").map(String);
     const own = String(data.get("biggest_pain") ?? "").trim();
-    return [picks.length ? picks.join("; ") + "." : "", own].filter(Boolean).join(" ").slice(0, 2000);
+    return [founding ? "Interested in the founding client offer." : "", picks.length ? picks.join("; ") + "." : "", own]
+      .filter(Boolean)
+      .join(" ")
+      .slice(0, 2000);
   }
 
   form.addEventListener("submit", async (event) => {
@@ -864,6 +874,13 @@ const pains = [
     background: rgb(181 82 59 / 0.1);
     color: #8a3a28;
     font-weight: 500;
+  }
+  .founding-note {
+    margin: 0 0 1.5rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    background: rgb(224 122 31 / 0.12);
+    border-left: 4px solid var(--ochre);
   }
   .success:focus {
     outline: none;

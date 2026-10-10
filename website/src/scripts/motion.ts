@@ -16,6 +16,7 @@ const REVEAL_SELECTOR = [
   ".quotes figure",
   ".pains li",
   ".card",
+  ".chat",
 ].join(",");
 
 function setUpReveals() {

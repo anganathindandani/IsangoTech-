@@ -1,6 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import CallToAction from "../components/CallToAction.astro";
+import FoundingOffer from "../components/FoundingOffer.astro";
 import { formatPrice, packages } from "../data/packages";
 import { stageByNumber } from "../data/stages";
 import { site } from "../site";
@@ -15,9 +16,21 @@ const everyStage = packages.filter((p) => p.stage === null);
     <h1>Services and pricing</h1>
     <p>
       Our packages follow the growth path. Find the stage your business is at, start there, and see what comes next.
-      Every price is a starting price. We confirm the final price in a written quote before any work starts.
+      Prices are fixed in a written quote before any work starts, so you know the full cost upfront.
     </p>
+    <div class="free-chat">
+      <div>
+        <h2>Not sure where you fit? Start with a free chat.</h2>
+        <p>
+          Tell us about your business and we'll recommend where to start, even if the honest answer is "you don't need
+          this yet".
+        </p>
+      </div>
+      <a class="button" href="/get-started">Book a free chat <span class="arrow" aria-hidden="true">→</span></a>
+    </div>
   </section>
+
+  <FoundingOffer />
 
   <section class="container" aria-label="Packages by growth stage">
     <ol class="packages">
@@ -31,6 +44,7 @@ const everyStage = packages.filter((p) => p.stage === null);
               </p>
               <h2>{p.name}</h2>
               <p class="price">{formatPrice(p)}</p>
+              {p.priceDetail && <p class="price-detail">{p.priceDetail}</p>}
               <p>{p.summary}</p>
               <ul>
                 {p.includes.map((i) => (
@@ -38,7 +52,7 @@ const everyStage = packages.filter((p) => p.stage === null);
                 ))}
               </ul>
               <a class="button" href={`/get-started?stage=${p.stage}`}>
-                Get started
+                Get started <span class="arrow" aria-hidden="true">→</span>
               </a>
               {p.nextStep && (
                 <p class="next">
@@ -52,11 +66,11 @@ const everyStage = packages.filter((p) => p.stage === null);
     </ol>
   </section>
 
-  <section class="container" aria-label="Available at every stage">
+  <section class="container extras" aria-label="Custom work and care">
     {
       everyStage.map((p) => (
         <div class="package care">
-          <p class="stage">Every stage</p>
+          <p class="stage">{p.label}</p>
           <h2>{p.name}</h2>
           <p class="price">{formatPrice(p)}</p>
           <p>{p.summary}</p>
@@ -69,7 +83,8 @@ const everyStage = packages.filter((p) => p.stage === null);
       ))
     }
     <p class="note">
-      Prices are in South African rand.
+      Prices are in South African rand. WhatsApp and AI usage is included up to a fair limit, set out in your
+      agreement.
       {
         site.vatRegistered
           ? "Prices include VAT."
@@ -87,6 +102,29 @@ const everyStage = packages.filter((p) => p.stage === null);
   }
   .intro > * {
     max-width: 48rem;
+  }
+  .free-chat {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    max-width: none;
+    margin-top: 1.5rem;
+    padding: 1.25rem 1.5rem;
+    border-radius: var(--radius);
+    background: var(--white);
+    border-left: 6px solid var(--turquoise);
+  }
+  .free-chat > div {
+    max-width: 40rem;
+  }
+  .free-chat h2 {
+    font-size: 1.3rem;
+    margin-bottom: 0.25rem;
+  }
+  .free-chat p {
+    margin: 0;
   }
   .packages {
     list-style: none;
@@ -122,6 +160,11 @@ const everyStage = packages.filter((p) => p.stage === null);
     text-transform: uppercase;
     color: var(--terracotta);
   }
+  .price-detail {
+    margin: -0.5rem 0 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
   .price {
     margin: 0 0 0.75rem;
     font: 600 1.15rem/1.3 var(--font-heading);
@@ -133,8 +176,20 @@ const everyStage = packages.filter((p) => p.stage === null);
     border-top: 1px solid rgb(27 42 74 / 0.1);
     font-size: 0.95rem;
   }
-  .care {
+  .extras {
+    display: grid;
+    gap: 1rem;
     margin-top: 1rem;
+  }
+  @media (min-width: 52rem) {
+    .extras {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .extras .note {
+    grid-column: 1 / -1;
+  }
+  .care {
     border-left: 6px solid var(--ochre);
   }
   .care ul {

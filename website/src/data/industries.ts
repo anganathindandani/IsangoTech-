@@ -26,9 +26,9 @@ export const industries: Industry[] = [
     ],
     byStage: {
       1: "A website with your services, prices and photos of your work, and your salon showing up on Google Maps.",
-      2: "Online booking with WhatsApp reminders, so clients book themselves and actually turn up.",
-      3: "A portal for your stylists' schedules, client history, stock and daily takings.",
-      4: "Automatic rebooking reminders and a WhatsApp assistant that answers common questions after hours.",
+      2: "A WhatsApp assistant that answers price and availability questions instantly, with reminders that cut no-shows.",
+      3: "Slot booking per stylist, a daily booking view, and a dashboard of takings and regulars.",
+      4: "Automatic rebooking reminders, client history and review requests that run themselves.",
     },
   },
   {
@@ -43,8 +43,8 @@ export const industries: Industry[] = [
     ],
     byStage: {
       1: "A website with an up-to-date menu, opening hours and a WhatsApp button, plus a proper Google listing.",
-      2: "Table bookings and order enquiries in one list, with automatic confirmations.",
-      3: "A portal for menus, stock, staff shifts and supplier invoices.",
+      2: "Your menu, hours and directions answered automatically on WhatsApp, and every reservation captured in one list.",
+      3: "WhatsApp ordering and reservations, with daily sales and stock reports.",
       4: "Stock alerts, automatic supplier orders and weekly reports that write themselves.",
     },
   },
@@ -60,9 +60,26 @@ export const industries: Industry[] = [
     ],
     byStage: {
       1: "A website that shows your menus and past events, with an easy way to ask for a quote.",
-      2: "An event enquiry form that captures date, headcount and menu, and tracks every lead to a booking.",
-      3: "A portal for events, menus, staff, equipment, deposits and invoices.",
-      4: "Quotes drafted automatically from the enquiry, and reminders for final numbers and payments.",
+      2: "Event enquiries answered instantly on WhatsApp, capturing the date, headcount and menu, and tracked to a booking.",
+      3: "Instant quotes from event details, event and staff scheduling, and deposit and balance reminders.",
+      4: "Invoices, supplier orders and final-numbers reminders handled automatically.",
+    },
+  },
+  {
+    slug: "guesthouses",
+    noun: "guesthouse",
+    name: "Guesthouses and B&Bs",
+    tagline: "More direct bookings, less commission.",
+    pains: [
+      "Bookings are scattered across WhatsApp, calls and booking sites.",
+      "Every online booking costs you commission.",
+      "Check-in details, deposits and reviews are chased by hand.",
+    ],
+    byStage: {
+      1: "A website with your rooms, rates and photos, a proper Google listing, and a WhatsApp button for direct bookings.",
+      2: "Direct WhatsApp bookings with availability answered instantly, and deposit requests sent for you.",
+      3: "One booking calendar, check-in details sent automatically, and review requests after checkout.",
+      4: "Follow-ups that bring past guests back, and reports on occupancy and income.",
     },
   },
 ];
@@ -79,8 +96,8 @@ export const otherBusinesses: Industry = {
   ],
   byStage: {
     1: "A website, Google Business Profile and WhatsApp button that make you easy to find and trust.",
-    2: "Forms and follow-ups that catch every enquiry.",
-    3: "A portal for your daily operations, built from our tested templates.",
+    2: "A WhatsApp assistant and follow-ups that catch every enquiry.",
+    3: "Bookings or orders in one system, with an owner dashboard, configured for your industry.",
     4: "Automation for the jobs that eat your week.",
   },
 };
