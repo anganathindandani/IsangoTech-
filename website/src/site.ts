@@ -34,6 +34,9 @@ export const site = {
     role: "Founder",
     photo: "/founder/founder-960.webp",
     photoSmall: "/founder/founder-480.webp",
+    // The short version for the home page; story is the full one on About.
+    intro:
+      "I'm Anganathi, from Ngqamakhwe and based in East London. I started IsangoTech because Eastern Cape businesses deserve to be found, and to be answered. When you work with IsangoTech, you work with me.",
     story: [
       "I'm from Ngqamakhwe in the Eastern Cape, and East London has been home since 2022. I earned my Diploma in ICT Application Development at Walter Sisulu University here in 2025, and I'm now completing my Advanced Diploma while building software for real clients.",
       "I started IsangoTech because Eastern Cape businesses deserve to be found, and to be answered. Too many good salons, guesthouses, restaurants and caterers here are almost invisible online, and the ones people do find often lose customers simply because nobody could reply in time. A message that waits until evening is a booking that went somewhere else. AI changes that: it can answer an enquiry the moment it arrives, book the appointment and send the reminder, while the owner gets on with the work only they can do. It isn't only for big companies any more, and I want small businesses here to have it too.",

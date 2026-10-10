@@ -1,0 +1,81 @@
+---
+// Home page: a short introduction to the founder, linking to the full story on About.
+import { site } from "../site";
+const f = site.founder;
+---
+
+{
+  f.name && (
+    <section class="intro container" aria-labelledby="intro-heading">
+      <figure class="photo">
+        <img
+          src={f.photoSmall}
+          srcset={`${f.photoSmall} 480w, ${f.photo} 960w`}
+          sizes="(min-width: 52rem) 16rem, 60vw"
+          width="480"
+          height="480"
+          loading="lazy"
+          alt={`${f.name}, ${f.role} of IsangoTech`}
+        />
+      </figure>
+      <div class="words">
+        <p class="eyebrow">Meet the founder</p>
+        <h2 id="intro-heading">{f.name}</h2>
+        <p>{f.intro}</p>
+        <a class="more" href="/about/#founder">
+          See more <span class="arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .intro {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+    padding-block: 4.5rem 4rem;
+  }
+  @media (min-width: 52rem) {
+    .intro {
+      grid-template-columns: 16rem 1fr;
+      gap: 3.5rem;
+    }
+  }
+  .photo {
+    position: relative;
+    margin: 0;
+    width: min(16rem, 70vw);
+    justify-self: center;
+  }
+  /* The ochre door-frame offset, as on the About page. */
+  .photo::before {
+    content: "";
+    position: absolute;
+    inset: 0.75rem -0.75rem -0.75rem 0.75rem;
+    border: 4px solid var(--ochre);
+    border-radius: calc(var(--radius) * 2);
+  }
+  .photo img {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: calc(var(--radius) * 2);
+    box-shadow: 0 20px 40px -22px rgb(27 42 74 / 0.45);
+  }
+  .words {
+    max-width: 38rem;
+  }
+  .words h2 {
+    margin-bottom: 0.5rem;
+  }
+  .words p:not(.eyebrow) {
+    font-size: 1.1rem;
+  }
+  .more {
+    font-weight: 500;
+    color: var(--turquoise-text);
+  }
+</style>

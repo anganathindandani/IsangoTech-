@@ -55,7 +55,7 @@ const values = [
 
   {
     site.founder.name && (
-      <section class="container founder" aria-labelledby="founder-heading">
+      <section class="container founder" id="founder" aria-labelledby="founder-heading">
         <figure class="photo">
           <img
             src={site.founder.photo}
@@ -118,6 +118,7 @@ const values = [
     padding-block: 2.5rem 0;
   }
   .founder {
+    scroll-margin-top: 5rem;
     display: grid;
     gap: 2rem;
     align-items: center;
