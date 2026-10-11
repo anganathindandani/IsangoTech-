@@ -8,7 +8,9 @@ import 'auth/auth_pages.dart';
 import 'data/models.dart';
 import 'data/repository.dart';
 import 'format.dart';
+import 'auth/set_password_page.dart';
 import 'pages/account_page.dart';
+import 'pages/admin_page.dart';
 import 'pages/assistant_page.dart';
 import 'pages/bookings_page.dart';
 import 'pages/chat_page.dart';
@@ -35,6 +37,9 @@ class AuthState extends ChangeNotifier {
   List<Membership> memberships = [];
   Membership? current;
 
+  /// IsangoTech's own admins, who onboard businesses. They may belong to no business.
+  bool isPlatformAdmin = false;
+
   /// The page someone asked for before being sent to sign-in or the loading screen.
   String? pendingLocation;
 
@@ -60,6 +65,7 @@ class AuthState extends ChangeNotifier {
     if (client.auth.currentSession == null) {
       memberships = [];
       current = null;
+      isPlatformAdmin = false;
       return AuthStatus.signedOut;
     }
     final aal = client.auth.mfa.getAuthenticatorAssuranceLevel();
@@ -67,13 +73,16 @@ class AuthState extends ChangeNotifier {
       return AuthStatus.needsVerify;
     }
     try {
-      memberships = await repo.memberships();
+      final results = await Future.wait([repo.memberships(), repo.isPlatformAdmin()]);
+      memberships = results[0] as List<Membership>;
+      isPlatformAdmin = results[1] as bool;
     } catch (_) {
       memberships = [];
+      isPlatformAdmin = false;
     }
     if (memberships.isEmpty) {
       current = null;
-      return AuthStatus.noAccess;
+      return isPlatformAdmin ? AuthStatus.ready : AuthStatus.noAccess;
     }
     current = memberships.firstWhere((m) => m.businessId == current?.businessId, orElse: () => memberships.first);
     setBusinessTimeZone(current!.timeZone);
@@ -93,6 +102,8 @@ class Session extends InheritedNotifier<AuthState> {
 
   static Membership of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<Session>()!.notifier!.current!;
+
+  static AuthState auth(BuildContext context) => context.dependOnInheritedWidgetOfExactType<Session>()!.notifier!;
 }
 
 class BusinessApp extends StatefulWidget {
@@ -132,13 +143,20 @@ GoRouter buildRouter(AuthState auth) {
     initialLocation: '/',
     redirect: (context, state) {
       final here = state.matchedLocation;
+      // Opened from a setup link or Account; works in any state (the page checks for a session).
+      if (here == '/set-password') return null;
       final isGate = here == '/loading' || gateRoutes.containsValue(here);
       if (!isGate) auth.pendingLocation = state.uri.toString();
       if (auth.status == AuthStatus.loading) return here == '/loading' ? null : '/loading';
       final gate = gateRoutes[auth.status];
       if (gate != null) return here == gate ? null : gate;
+      // Admins who belong to no business only have the Businesses screen.
+      if (auth.current == null) return here.startsWith('/admin') ? null : '/admin';
+      if (here.startsWith('/admin') && !auth.isPlatformAdmin) return '/';
       // Staff only see their own bookings; the rest is for owners and managers.
-      if (!auth.current!.isManager && !_staffPages.any((p) => p == '/' ? here == '/' : here.startsWith(p))) {
+      if (!auth.current!.isManager &&
+          !here.startsWith('/admin') &&
+          !_staffPages.any((p) => p == '/' ? here == '/' : here.startsWith(p))) {
         return '/';
       }
       if (!isGate) return null;
@@ -155,6 +173,7 @@ GoRouter buildRouter(AuthState auth) {
       GoRoute(path: '/two-step-sign-in', builder: (_, _) => const EnrolPage()),
       GoRoute(path: '/verify', builder: (_, _) => const VerifyPage()),
       GoRoute(path: '/no-access', builder: (_, _) => const NoAccessPage()),
+      GoRoute(path: '/set-password', builder: (_, _) => const SetPasswordPage()),
       ShellRoute(
         builder: (context, state, child) => AppShell(auth: auth, location: state.matchedLocation, child: child),
         routes: [
@@ -168,6 +187,7 @@ GoRouter buildRouter(AuthState auth) {
           GoRoute(path: '/bookings', builder: (_, _) => const BookingsPage()),
           GoRoute(path: '/assistant', builder: (_, _) => const AssistantPage()),
           GoRoute(path: '/account', builder: (_, _) => const AccountPage()),
+          GoRoute(path: '/admin', builder: (_, _) => const AdminPage()),
         ],
       ),
     ],
@@ -192,6 +212,14 @@ const _destinations = [
   _Dest('/account', 'Account', Icons.person_outline),
 ];
 
+void _go(BuildContext context, String path) {
+  if (path == '/account-signout') {
+    Supabase.instance.client.auth.signOut();
+  } else {
+    context.go(path);
+  }
+}
+
 class AppShell extends StatelessWidget {
   const AppShell({super.key, required this.auth, required this.location, required this.child});
   final AuthState auth;
@@ -200,10 +228,13 @@ class AppShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final me = auth.current!;
+    final me = auth.current;
     final dests = [
-      for (final d in _destinations)
-        if (me.isManager || _staffPages.contains(d.path)) d,
+      if (me != null)
+        for (final d in _destinations)
+          if (me.isManager || _staffPages.contains(d.path)) d,
+      if (auth.isPlatformAdmin) const _Dest('/admin', 'Businesses', Icons.storefront_outlined),
+      if (me == null) const _Dest('/account-signout', 'Sign out', Icons.logout),
     ];
     var selected = 0;
     for (var i = dests.length - 1; i >= 0; i--) {
@@ -223,7 +254,7 @@ class AppShell extends StatelessWidget {
             },
             itemBuilder: (_) => [
               for (final m in auth.memberships)
-                CheckedPopupMenuItem(value: m, checked: m.businessId == me.businessId, child: Text(m.businessName)),
+                CheckedPopupMenuItem(value: m, checked: m.businessId == me?.businessId, child: Text(m.businessName)),
             ],
             child: const Padding(padding: EdgeInsets.all(8), child: Icon(Icons.swap_horiz)),
           );
@@ -236,7 +267,7 @@ class AppShell extends StatelessWidget {
               extended: true,
               minExtendedWidth: 220,
               selectedIndex: selected,
-              onDestinationSelected: (i) => context.go(dests[i].path),
+              onDestinationSelected: (i) => _go(context, dests[i].path),
               leading: Padding(
                 padding: const EdgeInsets.fromLTRB(12, 16, 12, 24),
                 child: SizedBox(
@@ -250,7 +281,7 @@ class AppShell extends StatelessWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              me.businessName,
+                              me?.businessName ?? 'IsangoTech',
                               style: const TextStyle(color: Brand.white, fontWeight: FontWeight.w600, fontSize: 16),
                             ),
                           ),
@@ -261,7 +292,10 @@ class AppShell extends StatelessWidget {
                             ),
                         ],
                       ),
-                      Text(roles[me.role] ?? me.role, style: const TextStyle(color: Brand.sand, fontSize: 13)),
+                      Text(
+                        me == null ? 'Admin' : roles[me.role] ?? me.role,
+                        style: const TextStyle(color: Brand.sand, fontSize: 13),
+                      ),
                     ],
                   ),
                 ),
@@ -276,11 +310,11 @@ class AppShell extends StatelessWidget {
       );
     }
     return Scaffold(
-      appBar: AppBar(title: Text(me.businessName), actions: [?switcher]),
+      appBar: AppBar(title: Text(me?.businessName ?? 'IsangoTech'), actions: [?switcher]),
       body: child,
       bottomNavigationBar: NavigationBar(
         selectedIndex: selected,
-        onDestinationSelected: (i) => context.go(dests[i].path),
+        onDestinationSelected: (i) => _go(context, dests[i].path),
         labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
         destinations: [for (final d in dests) NavigationDestination(icon: Icon(d.icon), label: d.label)],
       ),

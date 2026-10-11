@@ -14,7 +14,13 @@ Future<void> main() async {
     runApp(const _NotConfigured());
     return;
   }
-  await Supabase.initialize(url: Config.supabaseUrl, publishableKey: Config.supabaseKey);
+  await Supabase.initialize(
+    url: Config.supabaseUrl,
+    publishableKey: Config.supabaseKey,
+    // Setup links from IsangoTech arrive with the session in the address
+    // (the implicit flow), not as a code to exchange.
+    authOptions: const FlutterAuthClientOptions(authFlowType: AuthFlowType.implicit),
+  );
   repo = Repository(Supabase.instance.client);
   runApp(const BusinessApp());
 }

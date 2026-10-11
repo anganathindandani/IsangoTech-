@@ -74,6 +74,7 @@ PGHOST=localhost PGUSER=postgres platform/supabase/tests/run.sh
 - `03_records.sql`: bookings, chats and the POPIA rules.
 - `04_assistant.sql`: recording messages, free times and every tool, including that a conversation can't reach another business's services or another customer's bookings.
 - `05_dashboard.sql`: the business app's summary for each role, answering questions, and replying in person only within WhatsApp's 24-hour window.
+- `06_onboarding.sql`: only admins onboard, a new business starts switched off, and admins never see customers or chats.
 
 The edge function's tests use a fake database, AI and WhatsApp, so they cost nothing:
 
@@ -160,18 +161,30 @@ npx supabase functions deploy send-message --workdir platform
 npx supabase secrets set --workdir platform APP_ORIGINS=https://app.isangotech.co.za
 ```
 
-To give a business owner a login:
-1. Add them under Authentication → Users → **Add user** in the platform project. Tick "auto confirm" and set a password to give them.
-2. Run this in the SQL editor:
+## Onboarding a business
 
-   ```sql
-   insert into public.business_members (business_id, user_id, full_name, role)
-   select b.id, u.id, 'Their Name', 'owner'
-   from public.businesses b, auth.users u
-   where b.name = 'Demo Salon' and u.email = 'owner@example.co.za';
+IsangoTech's admins add businesses from the business app's **Businesses** screen. The form takes the business's name, kind, products, conversation allowance and WhatsApp number, and the owner's name and email. One step creates:
+- the owner's login, or reuses theirs if they already have one;
+- the business, which starts in **Onboarding** with the Assistant switched off;
+- their owner membership.
+
+You then get a **setup link** to send the owner on WhatsApp. It signs them in once so they choose their own password. No email is sent, so no email service is needed. **New setup link** on any owner makes a fresh one, for example if they forget their password.
+
+Admins see each business's plan and owners, and can change its status, products, allowance and WhatsApp number. They can't see any business's customers, chats or bookings.
+
+One-time setup:
+1. `npx supabase db push --workdir platform`, then deploy the function:
+   ```sh
+   npx supabase functions deploy onboard-business --workdir platform
    ```
+2. **Make yourself an admin** in the SQL editor, after adding yourself under Authentication → Users:
+   ```sql
+   insert into public.platform_admins (user_id, full_name)
+   select id, 'Anganathi Ndandani' from auth.users where email = 'you@isangotech.co.za';
+   ```
+3. **Let the setup link open the app:** in Authentication → URL Configuration, set the Site URL to `https://app.isangotech.co.za` and add `https://app.isangotech.co.za/set-password` to the Redirect URLs.
+4. **Optional: give owners longer to open the link.** By default a setup link works for an hour. Raise the expiry under Authentication → Providers → Email (up to 24 hours), so owners have time to open it.
 
 Coming next:
-- an IsangoTech-only onboarding screen that creates the business, its owner and their login in one step;
 - owners adding their own team;
 - booking reminders, which need message templates Meta has approved.

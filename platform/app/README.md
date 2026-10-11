@@ -11,7 +11,10 @@ Row-level security in the database decides what each person sees, so the app has
 | Questions | What the Assistant couldn't answer. **Answer** adds it to the Assistant's answers, so it knows next time |
 | Bookings | Two weeks at a time, by day. Mark completed, no-show or cancelled; record a deposit as received |
 | Assistant | Switch it on or off, opening hours, languages, tone, policies, topics to always hand over, notice and deposit rules, privacy link, how long chats are kept, services and prices, staff, and answers |
-| Account | Your details, sign out, and two-step sign-in (optional, off by default; once on, the database requires it) |
+| Account | Your details, change password, sign out, and two-step sign-in (optional, off by default; once on, the database requires it) |
+| Businesses | IsangoTech admins only: every client business, **Add a business** with its owner, edit the plan, and setup links |
+
+New owners get a setup link from IsangoTech, shared on WhatsApp. It opens **Choose your password** (`/set-password`), and from then on they sign in with their email and that password.
 
 Times always show in the business's own time (South African time), whatever the device is set to.
 

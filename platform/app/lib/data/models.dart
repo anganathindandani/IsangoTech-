@@ -317,3 +317,55 @@ class KnowledgeItem {
     active: j['active'] as bool,
   );
 }
+
+/// A business as IsangoTech's admins see it: plan details and owners, no customer data.
+class AdminBusiness {
+  AdminBusiness({
+    required this.id,
+    required this.name,
+    required this.industry,
+    required this.status,
+    required this.products,
+    required this.allowance,
+    required this.assistantEnabled,
+    required this.owners,
+    this.whatsappPhoneNumberId,
+    this.whatsappDisplayNumber,
+  });
+  final String id;
+  String name;
+  String industry;
+  String status;
+  List<String> products;
+  int allowance;
+  final bool assistantEnabled;
+  final List<({String name, String email})> owners;
+  String? whatsappPhoneNumberId;
+  String? whatsappDisplayNumber;
+
+  factory AdminBusiness.fromJson(Map<String, dynamic> j) => AdminBusiness(
+    id: j['id'] as String,
+    name: j['name'] as String,
+    industry: j['industry'] as String,
+    status: j['status'] as String,
+    products: (j['products'] as List).cast<String>(),
+    allowance: (j['monthly_conversation_allowance'] as num).toInt(),
+    assistantEnabled: j['assistant_enabled'] as bool,
+    whatsappPhoneNumberId: j['whatsapp_phone_number_id'] as String?,
+    whatsappDisplayNumber: j['whatsapp_display_number'] as String?,
+    owners: [
+      for (final o in (j['owners'] as List).cast<Map<String, dynamic>>())
+        (name: o['name'] as String, email: o['email'] as String? ?? ''),
+    ],
+  );
+
+  Map<String, dynamic> toJson() => {
+    'name': name.trim(),
+    'industry': industry,
+    'status': status,
+    'products': products,
+    'monthly_conversation_allowance': allowance,
+    'whatsapp_phone_number_id': (whatsappPhoneNumberId ?? '').trim(),
+    'whatsapp_display_number': (whatsappDisplayNumber ?? '').trim(),
+  };
+}

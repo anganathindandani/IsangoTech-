@@ -145,4 +145,37 @@ class Repository {
   }
 
   Future<void> deleteKnowledge(String id) => db.from('knowledge_items').delete().eq('id', id);
+
+  // IsangoTech admins ----------------------------------------------------------
+
+  Future<bool> isPlatformAdmin() async => await db.rpc('is_platform_admin') == true;
+
+  Future<List<AdminBusiness>> adminBusinesses() async {
+    final rows = (await db.rpc('admin_businesses') as List).cast<Map<String, dynamic>>();
+    return [for (final r in rows) AdminBusiness.fromJson(r)];
+  }
+
+  Future<void> adminUpdateBusiness(AdminBusiness b) =>
+      db.rpc('admin_update_business', params: {'p_business': b.id, 'p_values': b.toJson()});
+
+  /// Creates the business, its owner's login and membership; returns the owner's setup link.
+  Future<({String setupLink, bool newLogin})> onboard(AdminBusiness b, String ownerName, String ownerEmail) async {
+    final res = await db.functions.invoke(
+      'onboard-business',
+      body: {
+        'business': b.toJson(),
+        'owner': {'full_name': ownerName, 'email': ownerEmail},
+      },
+    );
+    final data = res.data as Map<String, dynamic>;
+    return (setupLink: data['setup_link'] as String, newLogin: data['new_login'] as bool);
+  }
+
+  /// A fresh one-time link for someone to choose a new password.
+  Future<String> setupLink(String email) async {
+    final res = await db.functions.invoke('onboard-business', body: {'action': 'link', 'email': email});
+    return (res.data as Map<String, dynamic>)['setup_link'] as String;
+  }
+
+  Future<void> setPassword(String password) => db.auth.updateUser(UserAttributes(password: password));
 }

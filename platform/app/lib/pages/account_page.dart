@@ -27,10 +27,21 @@ class AccountPage extends StatelessWidget {
               Field('Business', me.businessName),
               Field('Role', roles[me.role] ?? me.role),
               const SizedBox(height: 8),
-              OutlinedButton.icon(
-                onPressed: () => Supabase.instance.client.auth.signOut(),
-                icon: const Icon(Icons.logout),
-                label: const Text('Sign out'),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  OutlinedButton.icon(
+                    onPressed: () => context.go('/set-password'),
+                    icon: const Icon(Icons.password),
+                    label: const Text('Change password'),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: () => Supabase.instance.client.auth.signOut(),
+                    icon: const Icon(Icons.logout),
+                    label: const Text('Sign out'),
+                  ),
+                ],
               ),
             ],
           ),
