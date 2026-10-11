@@ -53,7 +53,7 @@ export const packages: Package[] = [
     ],
     setupFrom: 4500,
     monthlyFrom: 650,
-    nextStep: "When you're ready to take bookings and orders in one place, move up to Core Business.",
+    nextStep: "Ready for bookings and orders in one place? Move up to Core Business.",
   },
   {
     name: "Core Business",
@@ -68,7 +68,7 @@ export const packages: Package[] = [
     ],
     setupFrom: 8500,
     monthlyFrom: 1200,
-    nextStep: "Once your work runs through one system, automation can take the repetitive jobs off your plate.",
+    nextStep: "Once it all runs in one system, automation takes the repetitive jobs.",
   },
   {
     name: "AI Readiness Assessment",
