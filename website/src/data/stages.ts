@@ -49,13 +49,6 @@ export const stages: Stage[] = [
   },
 ];
 
-export const carePlan = {
-  name: "Care plan",
-  need: "Keep it running",
-  offer: "Hosting, updates and support, at every stage.",
-  nextStep: "Upgrade to the next stage when you're ready",
-};
-
 export function stageByNumber(n: number): Stage | undefined {
   return stages.find((s) => s.number === n);
 }

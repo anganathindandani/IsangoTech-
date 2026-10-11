@@ -73,6 +73,7 @@ const everyStage = packages.filter((p) => p.stage === null);
           <p class="stage">{p.label}</p>
           <h2>{p.name}</h2>
           <p class="price">{formatPrice(p)}</p>
+          {p.priceDetail && <p class="price-detail">{p.priceDetail}</p>}
           <p>{p.summary}</p>
           <ul>
             {p.includes.map((i) => (
@@ -83,8 +84,9 @@ const everyStage = packages.filter((p) => p.stage === null);
       ))
     }
     <p class="note">
-      Prices are in South African rand. WhatsApp and AI usage is included up to a fair limit, set out in your
-      agreement.
+      Prices are in South African rand. Websites and custom software are yours to keep, with no monthly fee unless
+      you choose the care plan. The WhatsApp assistant and portal run on our platform, so their monthly fee covers
+      hosting, WhatsApp and AI usage (up to a fair limit, set out in your agreement), updates and support.
       {
         site.vatRegistered
           ? "Prices include VAT."

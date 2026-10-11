@@ -14,6 +14,8 @@ export interface Package {
   setupFrom: number | null;
   /** Starting monthly fee in rand, added to the setup price. */
   monthlyFrom?: number;
+  /** setupFrom is a monthly price (the care plan). */
+  monthlyOnly?: boolean;
   /** The price is fixed, not a starting price. */
   fixed?: boolean;
   /** Shown instead of a price when setupFrom is null. */
@@ -34,10 +36,11 @@ export const packages: Package[] = [
       "Up to five pages, written in plain language",
       "Google Business Profile set up or tidied up",
       "WhatsApp button on every page",
-      "Hosting and your own domain name",
+      "Domain and hosting set up in your name, with a short guide",
     ],
     setupFrom: null,
     priceNote: "Quoted after a free chat",
+    priceDetail: "Yours to keep. No monthly fee",
     nextStep: "When enquiries start coming in, Core Starter answers every one of them.",
   },
   {
@@ -49,7 +52,7 @@ export const packages: Package[] = [
       "Every enquiry captured in one list",
       "Automatic reminders so customers turn up",
       "Live in 2 to 3 weeks, with training",
-      "Hosting, updates and support included monthly",
+      "Monthly fee covers hosting, WhatsApp and AI usage, updates and support",
     ],
     setupFrom: 4500,
     monthlyFrom: 650,
@@ -105,25 +108,25 @@ export const packages: Package[] = [
     summary: "When you need more than the core platform: web and mobile apps, staff portals and dashboards, built AI-ready.",
     includes: [
       "Scoped and priced in writing before we start",
-      "Built on the same tested platform",
-      "Care plan for hosting, monitoring and improvements",
+      "Yours to own, handed over with documentation",
+      "Look after it yourself, or add our optional care plan",
     ],
     setupFrom: 15000,
-    monthlyFrom: 1500,
   },
   {
     name: "Care plan",
     stage: null,
-    label: "Every stage",
-    summary: "Hosting, monitoring, updates and support so everything keeps working. We stay after launch.",
+    label: "Optional, for custom software",
+    summary: "Rather not look after it yourself? We'll keep your custom software running and improving. Cancel any time.",
     includes: [
       "Hosting, backups and security updates",
       "Small improvements each month",
       "Help on WhatsApp when something goes wrong",
       "A short results review",
     ],
-    setupFrom: null,
-    priceNote: "Included in every monthly fee",
+    setupFrom: 1500,
+    monthlyOnly: true,
+    priceDetail: "WhatsApp assistant and portal plans already include care in their monthly fee",
   },
 ];
 
@@ -131,6 +134,7 @@ const rand = (n: number) => `R${n.toLocaleString("en-ZA").replace(/,/g, "\u00a0"
 
 export function formatPrice(p: Package): string {
   if (p.setupFrom === null) return p.priceNote ?? "Price on request";
+  if (p.monthlyOnly) return `from ${rand(p.setupFrom)} a month`;
   const setup = p.fixed ? rand(p.setupFrom) : `from ${rand(p.setupFrom)}`;
   return p.monthlyFrom ? `${setup} setup + ${rand(p.monthlyFrom)} a month` : setup;
 }
