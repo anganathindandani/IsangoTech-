@@ -8,6 +8,7 @@ One system with two faces: a public website that wins clients, and a private tea
 | `supabase/` | Database, security rules, website intake functions | Phase 1 done and tested |
 | `website/` | Astro site for `isangotech.co.za` | Phase 1 pages built |
 | `portal/` | Flutter Web app for `portal.isangotech.co.za` | Phase 1 screens built and tested |
+| `platform/` | Separate Supabase project for client businesses (WhatsApp Assistant and Business Portal) | Foundation built and tested |
 
 ## Database (`supabase/`)
 
@@ -29,7 +30,7 @@ PGHOST=localhost PGUSER=postgres supabase/tests/run.sh       # database
 cd supabase/functions && deno task test                      # edge functions
 ```
 
-CI runs both, plus the website build and the portal's checks, on every push to `main` and on pull requests.
+CI runs both, plus the client platform's tests ([`platform/README.md`](platform/README.md)), the website build and the portal's checks, on every push to `main` and on pull requests.
 
 ## Website (`website/`)
 

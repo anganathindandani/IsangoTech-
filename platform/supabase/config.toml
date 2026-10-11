@@ -1,0 +1,32 @@
+# The client platform: the WhatsApp Assistant and Business Portal that client
+# businesses use. A separate Supabase project from IsangoTech's own records
+# (../../supabase), so client data and internal data never mix.
+#
+# Run the CLI from the platform folder, e.g. `supabase db push --workdir platform`
+# after `supabase link --workdir platform --project-ref <platform project ref>`.
+project_id = "isangotech-platform"
+
+# Local ports differ from the main project so both can run side by side.
+[api]
+port = 54341
+
+[db]
+port = 54342
+shadow_port = 54340
+
+[studio]
+port = 54343
+
+[inbucket]
+port = 54344
+
+[auth]
+site_url = "http://localhost:3000"
+# Logins are created by IsangoTech when a business is onboarded, never by sign-up.
+enable_signup = false
+minimum_password_length = 12
+password_requirements = "lower_upper_letters_digits"
+
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
