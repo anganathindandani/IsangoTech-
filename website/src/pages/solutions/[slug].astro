@@ -37,7 +37,7 @@ const searchTitles: Record<string, string> = pick(lang, {
 });
 const w = pick(lang, {
   en: {
-    description: `${industry.tagline} How IsangoTech helps ${industry.name.toLowerCase()} in East London and the Eastern Cape, from a website to booking systems and AI automation.`,
+    description: `${industry.tagline} How IsangoTech helps ${industry.name.charAt(0).toLowerCase() + industry.name.slice(1)} in East London and the Eastern Cape, from a website to booking systems and AI automation.`,
     crumb: "Solutions",
     familiar: "Sound familiar?",
     path: "What we do at each stage",
