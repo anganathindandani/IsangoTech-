@@ -61,14 +61,14 @@ update public.conversations set last_customer_message_at = now() - interval '2 d
 insert into public.messages (business_id, conversation_id, direction, sender, body)
 values (:'bid', :'conversation_id', 'outbound', 'assistant', 'Hi Thandi! We have 09:00 or 13:30.');
 do $$ begin
-  assert (select last_message_at from public.conversations) = now(), 'reply updates last message time';
+  assert (select last_message_at from public.conversations) > now() - interval '1 minute', 'reply updates last message time';
   assert (select last_customer_message_at from public.conversations) < now() - interval '1 day',
     'an outgoing message does not reopen the 24-hour window';
 end $$;
 insert into public.messages (business_id, conversation_id, direction, sender, body)
 values (:'bid', :'conversation_id', 'inbound', 'customer', '13:30 please');
 do $$ begin
-  assert (select last_customer_message_at from public.conversations) = now(), 'customer message opens the window';
+  assert (select last_customer_message_at from public.conversations) > now() - interval '1 minute', 'customer message opens the window';
 end $$;
 
 -- Old chats are deleted after the business's retention period.

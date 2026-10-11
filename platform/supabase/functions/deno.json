@@ -1,0 +1,8 @@
+{
+  "tasks": {
+    "check": "deno check whatsapp-webhook/index.ts",
+    "test": "deno test whatsapp-webhook/"
+  },
+  "fmt": { "lineWidth": 120 },
+  "lint": { "rules": { "exclude": ["no-non-null-assertion", "no-import-prefix"] } }
+}

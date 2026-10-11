@@ -30,3 +30,8 @@ password_requirements = "lower_upper_letters_digits"
 [auth.mfa.totp]
 enroll_enabled = true
 verify_enabled = true
+
+# Meta calls the webhook directly; it proves who it is with the
+# X-Hub-Signature-256 header, which the function checks instead of a JWT.
+[functions.whatsapp-webhook]
+verify_jwt = false
