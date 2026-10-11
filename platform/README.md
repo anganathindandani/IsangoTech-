@@ -59,8 +59,9 @@ CI runs them on every push to `main` and on pull requests.
    supabase db push --workdir platform
    ```
 3. **Auth settings in the dashboard:** turn off "Allow new users to sign up", enable TOTP multi-factor authentication, and set the minimum password length to 12.
-4. **Schedule the chat clean-up:** in the SQL editor, turn on the `pg_cron` extension and run:
+4. **Schedule the chat clean-up** (runs nightly at 02:15 UTC) in the SQL editor:
    ```sql
+   create extension if not exists pg_cron;
    select cron.schedule('delete-expired-messages', '15 2 * * *', 'select private.delete_expired_messages()');
    ```
 
