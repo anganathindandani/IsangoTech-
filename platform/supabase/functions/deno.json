@@ -1,8 +1,17 @@
 {
   "tasks": {
-    "check": "deno check whatsapp-webhook/index.ts",
-    "test": "deno test whatsapp-webhook/"
+    "check": "deno check whatsapp-webhook/index.ts send-message/index.ts",
+    "test": "deno test whatsapp-webhook/ send-message/"
   },
-  "fmt": { "lineWidth": 120 },
-  "lint": { "rules": { "exclude": ["no-non-null-assertion", "no-import-prefix"] } }
+  "fmt": {
+    "lineWidth": 120
+  },
+  "lint": {
+    "rules": {
+      "exclude": [
+        "no-non-null-assertion",
+        "no-import-prefix"
+      ]
+    }
+  }
 }

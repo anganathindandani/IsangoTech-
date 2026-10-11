@@ -73,6 +73,7 @@ PGHOST=localhost PGUSER=postgres platform/supabase/tests/run.sh
 - `02_roles.sql`: what each role can and can't do inside a business.
 - `03_records.sql`: bookings, chats and the POPIA rules.
 - `04_assistant.sql`: recording messages, free times and every tool, including that a conversation can't reach another business's services or another customer's bookings.
+- `05_dashboard.sql`: the business app's summary for each role, answering questions, and replying in person only within WhatsApp's 24-hour window.
 
 The edge function's tests use a fake database, AI and WhatsApp, so they cost nothing:
 
@@ -144,7 +145,33 @@ CI runs them on every push to `main` and on pull requests.
    ```
    Then message the test number from your phone. On Meta's test number, your phone must first be added as a recipient under WhatsApp → API Setup.
 
+## The business app
+
+Owners, managers and staff use the Flutter web app in `app/` (see [`app/README.md`](app/README.md)). They can:
+- see today's bookings;
+- read chats, take them over and reply on WhatsApp;
+- answer the questions the Assistant couldn't;
+- run the Assistant's settings, services, staff and answers.
+
+Replies go through the `send-message` edge function. Deploy it alongside the webhook:
+
+```sh
+npx supabase functions deploy send-message --workdir platform
+npx supabase secrets set --workdir platform APP_ORIGINS=https://app.isangotech.co.za
+```
+
+To give a business owner a login:
+1. Add them under Authentication → Users → **Add user** in the platform project. Tick "auto confirm" and set a password to give them.
+2. Run this in the SQL editor:
+
+   ```sql
+   insert into public.business_members (business_id, user_id, full_name, role)
+   select b.id, u.id, 'Their Name', 'owner'
+   from public.businesses b, auth.users u
+   where b.name = 'Demo Salon' and u.email = 'owner@example.co.za';
+   ```
+
 Coming next:
-- an IsangoTech-only onboarding function;
-- the owner's dashboard: chats, taking over, unanswered questions and usage;
+- an IsangoTech-only onboarding screen that creates the business, its owner and their login in one step;
+- owners adding their own team;
 - booking reminders, which need message templates Meta has approved.

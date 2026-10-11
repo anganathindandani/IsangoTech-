@@ -8,7 +8,7 @@ One system with two faces: a public website that wins clients, and a private tea
 | `supabase/` | Database, security rules, website intake functions | Phase 1 done and tested |
 | `website/` | Astro site for `isangotech.co.za` | Phase 1 pages built |
 | `portal/` | Flutter Web app for `portal.isangotech.co.za` | Phase 1 screens built and tested |
-| `platform/` | Separate Supabase project for client businesses (WhatsApp Assistant and Business Portal) | Foundation built and tested |
+| `platform/` | Separate Supabase project for client businesses: the WhatsApp Assistant and the business app at `app.isangotech.co.za` | Assistant and dashboard built and tested |
 
 ## Database (`supabase/`)
 

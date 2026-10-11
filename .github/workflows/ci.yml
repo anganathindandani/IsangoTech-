@@ -111,3 +111,20 @@ jobs:
       - run: flutter analyze
       - run: flutter test
       - run: flutter build web --release --no-web-resources-cdn --dart-define=SUPABASE_URL=https://example.supabase.co --dart-define=SUPABASE_PUBLISHABLE_KEY=ci-build-only
+
+  business-app:
+    name: Business app analyze and tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: platform/app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: dart format --line-length 120 --set-exit-if-changed lib test
+      - run: flutter analyze
+      - run: flutter test
