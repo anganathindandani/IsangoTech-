@@ -83,6 +83,16 @@ const everyStage = packages.filter((p) => p.stage === null);
         </div>
       ))
     }
+    <ul class="promises">
+      <li>
+        <strong>30 days of free fixes</strong>
+        <span>After every handover, we fix anything that doesn't work as agreed, at no cost.</span>
+      </li>
+      <li>
+        <strong>Help when you need it: R400 an hour</strong>
+        <span>No care plan? Ask for help any time. We tell you the cost before we start.</span>
+      </li>
+    </ul>
     <p class="note">
       Prices are in South African rand. Websites and custom software are yours to keep, with no monthly fee unless
       you choose the care plan. The WhatsApp assistant and portal run on our platform, so their monthly fee covers
@@ -195,6 +205,27 @@ const everyStage = packages.filter((p) => p.stage === null);
   }
   .extras .note {
     grid-column: 1 / -1;
+  }
+  .promises {
+    grid-column: 1 / -1;
+    list-style: none;
+    margin: 0.5rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  }
+  .promises li {
+    display: grid;
+    gap: 0.25rem;
+    padding: 1.1rem 1.25rem;
+    border-radius: var(--radius);
+    background: rgb(43 168 160 / 0.1);
+    border-left: 4px solid var(--turquoise);
+  }
+  .promises strong {
+    font: 600 1.1rem/1.3 var(--font-heading);
+    color: var(--indigo);
   }
   .care {
     border-left: 6px solid var(--ochre);
