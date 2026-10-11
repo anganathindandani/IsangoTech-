@@ -2,16 +2,29 @@
 import Base from "../../layouts/Base.astro";
 import CallToAction from "../../components/CallToAction.astro";
 import IndustryTiles from "../../components/IndustryTiles.astro";
+import { langOf, pick } from "../../i18n";
+const w = pick(langOf(Astro.url), {
+  en: {
+    title: "Solutions",
+    searchTitle: "WhatsApp assistants and bookings for small businesses",
+    description: "WhatsApp AI assistants, bookings, reminders and websites for salons, guesthouses, restaurants, caterers and other small businesses in East London and the Eastern Cape.",
+    h1: "Solutions for your kind of business",
+    lead: "Salons, guesthouses, restaurants and caterers are our focus industries: we set up our platform for how each of them works. Every other small business gets the same growth path, built from the same parts.",
+  },
+  xh: {
+    title: "Izisombululo",
+    searchTitle: "Ii-WhatsApp assistant nee-booking zamashishini amancinci",
+    description: "Ii-WhatsApp AI assistant, ii-booking, izikhumbuzo nee-website zeesalon, iindlu zeendwendwe, iirestyu, abapheki beminyhadala namanye amashishini amancinci eMonti naseMpuma Koloni.",
+    h1: "Izisombululo zohlobo lweshishini lakho",
+    lead: "Iisalon, iindlu zeendwendwe, iirestyu nabapheki beminyhadala ngamashishini esigxile kuwo: siseta iqonga lethu ngendlela elowo asebenza ngayo. Lonke elinye ishishini elincinci lifumana indlela efanayo yokukhula, eyakhiwe ngamalungu afanayo.",
+  },
+});
 ---
 
-<Base title="Solutions" searchTitle="WhatsApp assistants and bookings for small businesses"
-  description="WhatsApp AI assistants, bookings, reminders and websites for salons, guesthouses, restaurants, caterers and other small businesses in East London and the Eastern Cape.">
+<Base title={w.title} searchTitle={w.searchTitle} description={w.description}>
   <section class="container intro">
-    <h1>Solutions for your kind of business</h1>
-    <p>
-      Salons, guesthouses, restaurants and caterers are our focus industries: we set up our platform for how each of
-      them works. Every other small business gets the same growth path, built from the same parts.
-    </p>
+    <h1>{w.h1}</h1>
+    <p>{w.lead}</p>
   </section>
   <section class="container">
     <IndustryTiles />

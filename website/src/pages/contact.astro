@@ -1,16 +1,54 @@
 ---
 import Base from "../layouts/Base.astro";
-import { site } from "../site";
+import { site, siteText } from "../site";
+import { langOf, localize, pick } from "../i18n";
+
+const lang = langOf(Astro.url);
+const w = pick(lang, {
+  en: {
+    title: "Contact",
+    searchTitle: "Contact us in East London",
+    description: "WhatsApp, phone or email IsangoTech. Based in East London, meeting in person across the Eastern Cape and online anywhere in South Africa.",
+    h1: "Contact us",
+    intro: `The quickest way to reach us is WhatsApp. You can also call, email, or <a href="${localize("/get-started", lang)}">fill in the Get started form</a>.`,
+    chat: "Chat with us",
+    phone: "Phone",
+    email: "Email",
+    where: "Where we work",
+    whereText: "We meet in person in and around East London, and online anywhere.",
+    google: "Find us on Google",
+    mapNote: "The map loads from Google, which may set cookies.",
+    showMap: "Show map",
+    openMaps: "Open in Google Maps",
+    mapTitle: "Map of East London, Eastern Cape",
+  },
+  xh: {
+    title: "Qhagamshelana nathi",
+    searchTitle: "Qhagamshelana nathi eMonti",
+    description: "Thumela i-WhatsApp, tsalela umnxeba okanye uthumele i-imeyile kwi-IsangoTech. Sise-Monti, sidibana ebusweni eMpuma Koloni nakwi-intanethi naphi na eMzantsi Afrika.",
+    h1: "Qhagamshelana nathi",
+    intro: `Eyona ndlela ikhawulezayo yokusifumana yi-WhatsApp. Ungatsalela umnxeba, uthumele i-imeyile, okanye <a href="${localize("/get-started", lang)}">ugcwalise ifomu ethi Qalisa</a>.`,
+    chat: "Ncokola nathi",
+    phone: "Ifowuni",
+    email: "I-imeyile",
+    where: "Apho sisebenza khona",
+    whereText: "Sidibana ebusweni eMonti nakwiindawo ezikufutshane, nakwi-intanethi naphi na.",
+    google: "Sifumane kwi-Google",
+    mapNote: "Imephu ivela kwi-Google, enokuseta ii-cookie.",
+    showMap: "Bonisa imephu",
+    openMaps: "Vula kwi-Google Maps",
+    mapTitle: "Imephu yaseMonti, eMpuma Koloni",
+  },
+});
 
 const whatsappLink = site.whatsappNumber ? `https://wa.me/${site.whatsappNumber}` : null;
 const mapQuery = encodeURIComponent("East London, Eastern Cape, South Africa");
 ---
 
-<Base title="Contact" searchTitle="Contact us in East London"
-  description="WhatsApp, phone or email IsangoTech. Based in East London, meeting in person across the Eastern Cape and online anywhere in South Africa.">
+<Base title={w.title} searchTitle={w.searchTitle} description={w.description}>
   <section class="container intro">
-    <h1>Contact us</h1>
-    <p>The quickest way to reach us is WhatsApp. You can also call, email, or <a href="/get-started">fill in the Get started form</a>.</p>
+    <h1>{w.h1}</h1>
+    <p set:html={w.intro} />
   </section>
 
   <section class="container grid">
@@ -20,7 +58,7 @@ const mapQuery = encodeURIComponent("East London, Eastern Cape, South Africa");
           <li>
             <h2>WhatsApp</h2>
             <a class="button" href={whatsappLink}>
-              Chat with us
+              {w.chat}
             </a>
           </li>
         )
@@ -28,7 +66,7 @@ const mapQuery = encodeURIComponent("East London, Eastern Cape, South Africa");
       {
         site.phone && (
           <li>
-            <h2>Phone</h2>
+            <h2>{w.phone}</h2>
             <a href={`tel:${site.phone.replace(/\s/g, "")}`}>{site.phone}</a>
           </li>
         )
@@ -36,23 +74,23 @@ const mapQuery = encodeURIComponent("East London, Eastern Cape, South Africa");
       {
         site.email && (
           <li>
-            <h2>Email</h2>
+            <h2>{w.email}</h2>
             <a href={`mailto:${site.email}`}>{site.email}</a>
           </li>
         )
       }
       <li>
-        <h2>Where we work</h2>
-        <p>{site.areaServed}. We meet in person in and around East London, and online anywhere.</p>
-        {site.googleBusinessProfileUrl && <a href={site.googleBusinessProfileUrl}>Find us on Google</a>}
+        <h2>{w.where}</h2>
+        <p>{siteText[lang].areaServed}. {w.whereText}</p>
+        {site.googleBusinessProfileUrl && <a href={site.googleBusinessProfileUrl}>{w.google}</a>}
       </li>
     </ul>
     <div class="map" id="map">
-      <p>The map loads from Google, which may set cookies.</p>
-      <button class="button" type="button" id="show-map" data-src={`https://www.google.com/maps?q=${mapQuery}&output=embed`}>
-        Show map
+      <p>{w.mapNote}</p>
+      <button class="button" type="button" id="show-map" data-title={w.mapTitle} data-src={`https://www.google.com/maps?q=${mapQuery}&output=embed`}>
+        {w.showMap}
       </button>
-      <a href={`https://www.google.com/maps/search/?api=1&query=${mapQuery}`}>Open in Google Maps</a>
+      <a href={`https://www.google.com/maps/search/?api=1&query=${mapQuery}`}>{w.openMaps}</a>
     </div>
   </section>
 </Base>
@@ -61,7 +99,7 @@ const mapQuery = encodeURIComponent("East London, Eastern Cape, South Africa");
   const button = document.getElementById("show-map") as HTMLButtonElement;
   button.addEventListener("click", () => {
     const iframe = document.createElement("iframe");
-    iframe.title = "Map of East London, Eastern Cape";
+    iframe.title = button.dataset.title ?? "";
     iframe.src = button.dataset.src!;
     iframe.referrerPolicy = "no-referrer-when-downgrade";
     (document.getElementById("map") as HTMLElement).replaceChildren(iframe);

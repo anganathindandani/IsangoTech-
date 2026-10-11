@@ -9,7 +9,47 @@ import WhatsAppDemo from "../components/WhatsAppDemo.astro";
 import FoundingOffer from "../components/FoundingOffer.astro";
 import FounderIntro from "../components/FounderIntro.astro";
 import { testimonials } from "../data/testimonials";
-import { site } from "../site";
+import { siteText } from "../site";
+import { langOf, localize, pick } from "../i18n";
+
+const lang = langOf(Astro.url);
+const L = (path: string) => localize(path, lang);
+const w = pick(lang, {
+  en: {
+    searchTitle: "WhatsApp AI assistants and websites in East London",
+    description: "IsangoTech sets up WhatsApp AI assistants, bookings, reminders and websites for small businesses in East London and the Eastern Cape. Answer every enquiry, cut no-shows and spend less time on admin.",
+    eyebrow: "Proudly African · East London and beyond",
+    offer: "WhatsApp AI assistants, bookings, reminders and websites for small businesses, so you get found, never miss a customer and spend less time on admin.",
+    start: "Get started",
+    prices: "See packages and prices",
+    outcomesLabel: "What you get",
+    outcomes: [
+      ["Time saved", "Bookings, reminders and follow-ups happen without you chasing them."],
+      ["More customers", "People find you online and every enquiry gets an answer."],
+      ["Less admin", "Your daily work lives in one place, not in spreadsheets and chat threads."],
+    ],
+    industries: "Built for businesses like yours",
+    industriesLead: "We specialise in a few industries so we can reuse what works, and we help any small business on the same path.",
+    testimonials: "What our clients say",
+  },
+  xh: {
+    searchTitle: "Ii-WhatsApp AI assistant nee-website eMonti",
+    description: "I-IsangoTech iseta ii-WhatsApp AI assistant, ii-booking, izikhumbuzo nee-website zamashishini amancinci eMonti naseMpuma Koloni. Phendula wonke umbuzo, nciphisa abangafikiyo kwaye uchithe ixesha elincinci kwi-admin.",
+    eyebrow: "Simi ngobu-Afrika · EMonti nangaphaya",
+    offer: "Ii-WhatsApp AI assistant, ii-booking, izikhumbuzo nee-website zamashishini amancinci, ukuze ufumaneke, ungaphoswa ngumthengi, kwaye uchithe ixesha elincinci kwi-admin.",
+    start: "Qalisa",
+    prices: "Jonga iiphakheji namaxabiso",
+    outcomesLabel: "Oko ukufumanayo",
+    outcomes: [
+      ["Ixesha elongiweyo", "Ii-booking, izikhumbuzo nokulandelela kwenzeka ungakhange ubaleke emva kwazo."],
+      ["Abathengi abaninzi", "Abantu bakufumana kwi-intanethi kwaye wonke umbuzo uyaphendulwa."],
+      ["I-admin encinci", "Umsebenzi wakho wemihla ngemihla ukwindawo enye, kungekhona kwii-spreadsheet nakwimicu yeengxoxo."],
+    ],
+    industries: "Yakhelwe amashishini afana nelakho",
+    industriesLead: "Sigxila kumashishini ambalwa ukuze sisebenzise kwakhona oko kusebenzayo, kwaye sinceda nawuphi na ishishini elincinci kule ndlela inye.",
+    testimonials: "Abathengi bethu bathini",
+  },
+});
 
 const outcomes = [
   {
@@ -31,21 +71,18 @@ const outcomes = [
 ---
 
 <Base
-  searchTitle="WhatsApp AI assistants and websites in East London"
-  description="IsangoTech sets up WhatsApp AI assistants, bookings, reminders and websites for small businesses in East London and the Eastern Cape. Answer every enquiry, cut no-shows and spend less time on admin."
+  searchTitle={w.searchTitle}
+  description={w.description}
 >
   <section class="hero">
     <div class="container hero-inner">
       <div class="hero-text">
-        <p class="eyebrow hero-in" style="--d: 0">Proudly African · East London and beyond</p>
-        <h1 class="hero-in" style="--d: 1">{site.tagline}</h1>
-        <p class="offer hero-in" style="--d: 2">
-          WhatsApp AI assistants, bookings, reminders and websites for small businesses, so you get found, never miss
-          a customer and spend less time on admin.
-        </p>
+        <p class="eyebrow hero-in" style="--d: 0">{w.eyebrow}</p>
+        <h1 class="hero-in" style="--d: 1">{siteText[lang].tagline}</h1>
+        <p class="offer hero-in" style="--d: 2">{w.offer}</p>
         <div class="actions hero-in" style="--d: 3">
-          <a class="button" href="/get-started">Get started <span class="arrow" aria-hidden="true">→</span></a>
-          <a class="secondary" href="/services">See packages and prices</a>
+          <a class="button" href={L("/get-started")}>{w.start} <span class="arrow" aria-hidden="true">→</span></a>
+          <a class="secondary" href={L("/services")}>{w.prices}</a>
         </div>
       </div>
       <div class="hero-door">
@@ -55,13 +92,13 @@ const outcomes = [
   </section>
   <Beadwork />
 
-  <section class="container outcomes" aria-label="What you get">
+  <section class="container outcomes" aria-label={w.outcomesLabel}>
     {
-      outcomes.map((o) => (
+      outcomes.map((o, i) => (
         <div class="outcome">
           <svg viewBox="0 0 48 48" width="48" height="48" aria-hidden="true" set:html={o.icon} />
-          <h2>{o.title}</h2>
-          <p>{o.text}</p>
+          <h2>{w.outcomes.at(i)?.[0]}</h2>
+          <p>{w.outcomes.at(i)?.[1]}</p>
         </div>
       ))
     }
@@ -72,8 +109,8 @@ const outcomes = [
   <StagePicker />
 
   <section class="container industries" aria-labelledby="industries-heading">
-    <h2 id="industries-heading">Built for businesses like yours</h2>
-    <p>We specialise in a few industries so we can reuse what works, and we help any small business on the same path.</p>
+    <h2 id="industries-heading">{w.industries}</h2>
+    <p>{w.industriesLead}</p>
     <IndustryTiles />
   </section>
 
@@ -84,7 +121,7 @@ const outcomes = [
   {
     testimonials.length > 0 && (
       <section class="container testimonials" aria-labelledby="testimonials-heading">
-        <h2 id="testimonials-heading">What our clients say</h2>
+        <h2 id="testimonials-heading">{w.testimonials}</h2>
         <div class="quotes">
           {testimonials.map((t) => (
             <figure>

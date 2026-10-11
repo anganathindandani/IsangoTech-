@@ -130,9 +130,109 @@ export const packages: Package[] = [
   },
 ];
 
+// isiXhosa, by the English package name. Reviewed by the founder before it goes
+// live; product names and tech words stay in English.
+type PackageWords = Pick<Package, "name" | "summary" | "includes"> &
+  Partial<Pick<Package, "label" | "priceNote" | "priceDetail" | "nextStep">>;
+const packagesXh: Record<string, PackageWords> = {
+  "Starter website": {
+    name: "I-website yokuqalisa",
+    summary: "I-website ekhawulezayo, esebenza kakuhle kwifowuni, ekwenza ufumaneke lula kwaye uthembeke.",
+    includes: [
+      "Ukuya kumaphepha amahlanu, abhalwe ngolwimi olucacileyo",
+      "I-Google Business Profile isetwe okanye ilungiswe",
+      "Iqhosha le-WhatsApp kulo lonke iphepha",
+      "I-domain ne-hosting zisetwe egameni lakho, nesikhokelo esifutshane",
+    ],
+    priceNote: "Ixabiso emva kwencoko yasimahla",
+    priceDetail: "Yeyakho ngokupheleleyo. Akukho ntlawulo yenyanga",
+    nextStep: "Xa imibuzo iqala ukungena, i-Core Starter iyiphendula yonke.",
+  },
+  "Core Starter": {
+    name: "Core Starter",
+    summary: "I-WhatsApp assistant ephendula abathengi bakho kwangoko xa bethumela umyalezo, emini nasebusuku.",
+    includes: [
+      "I-WhatsApp AI assistant yamaxabiso, iiyure nemibuzo eqhelekileyo",
+      "Wonke umbuzo ubhalwa kuluhlu olunye",
+      "Izikhumbuzo ezizenzekelayo ukuze abathengi bafike",
+      "Iqala ukusebenza kwiiveki ezi-2 ukuya kwezi-3, kunye noqeqesho",
+      "Intlawulo yenyanga ihlawulela i-hosting, ukusetyenziswa kwe-WhatsApp ne-AI, uhlaziyo nenkxaso",
+    ],
+    nextStep: "Ukulungele ii-booking nee-oda kwindawo enye? Nyukela kwi-Core Business.",
+  },
+  "Core Business": {
+    name: "Core Business",
+    summary: "Ii-booking, ii-oda ne-dashboard yomnini, kusetwe ngendlela ishishini lakho elisebenza ngayo.",
+    includes: [
+      "Yonke into ekwi-Core Starter",
+      "Ii-booking okanye ii-oda zithathwa kwi-WhatsApp nakwi-intanethi",
+      "I-dashboard yomnini: ii-booking, intengiso, amaxesha axakekileyo nabathengi abaqhelekileyo",
+      "Izikhumbuzo zedipozithi nentsalela",
+      "Uqeqesho lwakho neqela lakho",
+    ],
+    nextStep: "Xa yonke into isebenza kwinkqubo enye, i-automation ithatha imisebenzi ephindaphindwayo.",
+  },
+  "AI Readiness Assessment": {
+    name: "AI Readiness Assessment",
+    summary: "Yamashishini asele esebenzisa i-website okanye inkqubo. Sifumanisa into efanele ukwenziwa ngokuzenzekelayo, nengafanelanga.",
+    includes: [
+      "Utyelelo apho ukhoyo okanye kwi-intanethi lokubona indlela osebenza ngayo",
+      "Iziphumo ezibhaliweyo ngolwimi olucacileyo",
+      "Isicwangciso esinamaxabiso sento ekufuneka yenziwe ngokuzenzekelayo kuqala",
+    ],
+    priceDetail: "Ibalelwa kwiprojekthi yakho ukuba uyaqhubeka",
+    nextStep: "Emva koko sakha i-automation ezihlawulela yona kuqala.",
+  },
+  "Automation add-ons": {
+    name: "Ii-automation add-ons",
+    label: "Emva kovavanyo lwakho",
+    summary: "I-AI esebenza i-admin etya iveki yakho, idityaniswe nezixhobo osele uzisebenzisa.",
+    includes: [
+      "Iikowuti ezibhalwa zisuka kwimibuzo",
+      "Ii-invoyisi nezikhumbuzo zentlawulo",
+      "Amaxwebhu afundwa, ahlelwe kwaye agcinwe",
+      "Ukhathalelo lwenyanga lubandakanyiwe kwisicwangciso sakho",
+    ],
+    priceDetail: "Nge-automation nganye",
+  },
+  "Custom software": {
+    name: "I-software eyenzelwe wena",
+    label: "Xa ufuna ngaphezulu",
+    summary: "Xa ufuna ngaphezu kweqonga eliphambili: ii-app ze-web nezeefowuni, ii-portal zabasebenzi nee-dashboard, ezakhelwe i-AI.",
+    includes: [
+      "Umsebenzi nexabiso zibhalwa phantsi ngaphambi kokuba siqale",
+      "Yeyakho, inikezelwa namaxwebhu",
+      "Yikhathalele ngokwakho, okanye wongeze i-care plan yethu ekhethwayo",
+    ],
+  },
+  "Care plan": {
+    name: "I-care plan",
+    label: "Ikhethwa, ye-software eyenzelwe wena",
+    summary: "Awufuni ukuyikhathalela ngokwakho? Siza kugcina i-software yakho isebenza kwaye iphucuka. Rhoxisa nanini na.",
+    includes: [
+      "I-hosting, ii-backup nohlaziyo lokhuseleko",
+      "Uphuculo oluncinci inyanga nganye",
+      "Uncedo kwi-WhatsApp xa kukho into engahambanga kakuhle",
+      "Uphononongo olufutshane lweziphumo",
+    ],
+    priceDetail: "Izicwangciso ze-WhatsApp assistant ne-portal sele zibandakanya ukhathalelo kwintlawulo yenyanga",
+  },
+};
+
+/** The packages in the page's language. */
+export function packagesFor(lang: "en" | "xh"): Package[] {
+  return lang === "en" ? packages : packages.map((p) => ({ ...p, ...packagesXh[p.name] }));
+}
+
 const rand = (n: number) => `R${n.toLocaleString("en-ZA").replace(/,/g, "\u00a0")}`;
 
-export function formatPrice(p: Package): string {
+export function formatPrice(p: Package, lang: "en" | "xh" = "en"): string {
+  if (lang === "xh") {
+    if (p.setupFrom === null) return p.priceNote ?? "Ixabiso ngesicelo";
+    if (p.monthlyOnly) return `ukusuka ku-${rand(p.setupFrom)} ngenyanga`;
+    const setup = p.fixed ? rand(p.setupFrom) : `ukusuka ku-${rand(p.setupFrom)}`;
+    return p.monthlyFrom ? `${setup} + ${rand(p.monthlyFrom)} ngenyanga` : setup;
+  }
   if (p.setupFrom === null) return p.priceNote ?? "Price on request";
   if (p.monthlyOnly) return `from ${rand(p.setupFrom)} a month`;
   const setup = p.fixed ? rand(p.setupFrom) : `from ${rand(p.setupFrom)}`;

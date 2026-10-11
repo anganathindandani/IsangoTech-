@@ -1,0 +1,77 @@
+---
+// isiXhosa summary of the privacy policy. The English policy is the official one.
+import Base from "../../layouts/Base.astro";
+import Prose from "../../components/Prose.astro";
+import { site } from "../../site";
+
+const officer = site.informationOfficer;
+---
+
+<Base title="Umgaqo-nkqubo wabucala" description="Isishwankathelo sendlela i-IsangoTech eqokelela, esebenzisa nekhusela ngayo iinkcukacha zakho ngokwe-POPIA.">
+  <Prose title="Umgaqo-nkqubo wabucala (isishwankathelo)">
+    <p class="official">
+      Esi sisishwankathelo ngesiXhosa. Umgaqo-nkqubo osemthethweni <a href="/privacy" lang="en-ZA">ungesiNgesi</a>, kwaye
+      ukuba kukho umahluko, isiNgesi siyalawula.
+    </p>
+
+    <h2>Esikuqokelelayo</h2>
+    <p>
+      Igama lakho negama leshishini lakho, inombolo yefowuni ne-imeyile (ukuba uyinikile), oko usixelela kona
+      ngeshishini lakho, ixesha lovavanyo olibhukisileyo, nezigqibo zakho zemvume.
+    </p>
+
+    <h2>Kutheni sikusebenzisa</h2>
+    <p>
+      Ukuphendula umbuzo wakho, ukulungiselela uvavanyo olubhukisileyo, ukukuthumelela imiyalezo kwi-WhatsApp kuphela
+      ukuba usivumele, kwaye ukuba uba ngumthengi, ukukunika iinkonzo zethu nokukwenzela ii-invoyisi. Asizithengisi
+      iinkcukacha zakho.
+    </p>
+
+    <h2>Apho zigcinwa khona</h2>
+    <p>
+      Iinkqubo zethu zisebenzisa i-Supabase, egcina idatha kumaziko edatha e-European Union okanye e-United Kingdom. Oku
+      kuthetha ukuba iinkcukacha zakho zithunyelwa ngaphandle koMzantsi Afrika, kubaboneleli ababotshelelwe
+      sisivumelwano sokukhusela idatha.
+    </p>
+
+    <h2>Zigcinwa ixesha elingakanani</h2>
+    <p>
+      Ukuba awubi ngumthengi, siyazicima iinkcukacha zakho emva kweenyanga ezili-12 ungaqhagamshelani nathi. Ukuba uba
+      ngumthengi, sizigcina ixesha lonke sisebenza kunye, nangexesha elifunwa ngumthetho kwiirekhodi zezimali.
+    </p>
+
+    <h2>Amalungelo akho</h2>
+    <p>
+      Ungasicela nanini na ukuba sikuxelele iinkcukacha esinazo ngawe, sizilungise okanye sizicime, okanye siyeke
+      ukuqhagamshelana nawe kwi-WhatsApp.
+      {
+        officer.name ? (
+          <>
+            Qhagamshelana noMgcini-Lwazi wethu, {officer.name}, ku-<a href={`mailto:${officer.email}`}>{officer.email}</a>.
+          </>
+        ) : (
+          <>
+            Qhagamshelana nathi usebenzisa iinkcukacha <a href="/xh/contact">ezikwiphepha lokuqhagamshelana</a>.
+          </>
+        )
+      }
+      Ukuba akwanelisekanga yimpendulo yethu, ungakhalaza kuMlawuli Wolwazi (Information Regulator) ku-
+      <a href="https://inforegulator.org.za">inforegulator.org.za</a>.
+    </p>
+
+    <h2>Ii-cookie</h2>
+    <p>
+      Le website ayisebenzisi ii-cookie zokulandela okanye zentengiso. Imephu ekwiphepha lokuqhagamshelana ivela
+      kwi-Google, enokuseta ii-cookie, kuphela ukuba ukhetha ukuyibonisa.
+    </p>
+  </Prose>
+</Base>
+
+<style>
+  .official {
+    padding: 0.75rem 1rem;
+    border-left: 4px solid var(--turquoise);
+    background: rgb(43 168 160 / 0.08);
+    border-radius: 0.5rem;
+  }
+</style>

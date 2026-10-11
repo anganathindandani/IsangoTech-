@@ -2,53 +2,94 @@
 // The headline offer: a WhatsApp assistant, shown as an example conversation.
 // Messages appear one by one when the phone scrolls into view (motion.ts adds
 // .is-visible); without motion they're all shown at once.
-const messages = [
-  { from: "them", text: "Hi, do you have a gap for braids on Saturday?", time: "23:14" },
-  { from: "us", text: "Hi Thandi! Saturday we have 09:00 with Ayanda or 13:30 with Lindi. Braids start at R450. Which suits you?", time: "23:14" },
-  { from: "them", text: "13:30 please", time: "23:15" },
-  { from: "us", text: "You're booked for Saturday at 13:30 with Lindi. I'll send you a reminder on Friday.", time: "23:15" },
-];
+import { langOf, localize, pick } from "../i18n";
+const lang = langOf(Astro.url);
+const w = pick(lang, {
+  en: {
+    messages: [
+      { from: "them", text: "Hi, do you have a gap for braids on Saturday?", time: "23:14" },
+      { from: "us", text: "Hi Thandi! Saturday we have 09:00 with Ayanda or 13:30 with Lindi. Braids start at R450. Which suits you?", time: "23:14" },
+      { from: "them", text: "13:30 please", time: "23:15" },
+      { from: "us", text: "You're booked for Saturday at 13:30 with Lindi. I'll send you a reminder on Friday.", time: "23:15" },
+    ],
+    note: "Friday 18:00 · Reminder sent",
+    eyebrow: "Your WhatsApp assistant",
+    heading: "Answers in seconds, even at 11 at night",
+    lead: "Most customers message on WhatsApp, and they book with whoever answers first. Your assistant answers for you, in your business's voice, and hands over to you when a person is needed.",
+    points: [
+      "Answers prices, hours, directions and availability",
+      "Takes bookings and orders straight into your system",
+      "Sends reminders that cut no-shows",
+      "Shows you every conversation, so nothing slips",
+    ],
+    button: "See plans and prices",
+    aria: "Example WhatsApp conversation between a salon's assistant and a customer",
+    status: "Assistant · online",
+    us: "Assistant: ",
+    them: "Customer: ",
+    caption: "Example conversation",
+  },
+  xh: {
+    messages: [
+      { from: "them", text: "Molo, ninalo ixesha lokwaluka iinwele ngoMgqibelo?", time: "23:14" },
+      { from: "us", text: "Molo Thandi! NgoMgqibelo sinexesha ngo-09:00 noAyanda okanye ngo-13:30 noLindi. Ukwaluka kuqala ku-R450. Leliphi ixesha elikulungeleyo?", time: "23:14" },
+      { from: "them", text: "Ngo-13:30 nceda", time: "23:15" },
+      { from: "us", text: "Ubhukishelwe uMgqibelo ngo-13:30 noLindi. Ndiza kukuthumelela isikhumbuzo ngoLwesihlanu.", time: "23:15" },
+    ],
+    note: "NgoLwesihlanu 18:00 · Isikhumbuzo sithunyelwe",
+    eyebrow: "I-WhatsApp assistant yakho",
+    heading: "Iphendula kwimizuzwana, nokuba kungentsimbi ye-11 ebusuku",
+    lead: "Uninzi lwabathengi lubhalela nge-WhatsApp, kwaye babhukisha kulowo uphendula kuqala. I-assistant yakho iphendula endaweni yakho, ngelizwi leshishini lakho, ize ikunikezele incoko xa kufuneka umntu.",
+    points: [
+      "Iphendula ngamaxabiso, iiyure, indlela yokufika namaxesha akhoyo",
+      "Ithatha ii-booking nee-oda ngqo kwinkqubo yakho",
+      "Ithumela izikhumbuzo ezinciphisa abangafikiyo",
+      "Ikubonisa yonke incoko, ukuze kungalahleki nto",
+    ],
+    button: "Jonga izicwangciso namaxabiso",
+    aria: "Umzekelo wencoko ye-WhatsApp phakathi kwe-assistant yesalon nomthengi",
+    status: "Assistant · ikhona",
+    us: "Assistant: ",
+    them: "Umthengi: ",
+    caption: "Umzekelo wencoko",
+  },
+});
+const messages = w.messages;
 ---
 
 <section class="assistant" aria-labelledby="assistant-heading">
   <div class="container inner">
     <div class="words">
-      <p class="eyebrow">Your WhatsApp assistant</p>
-      <h2 id="assistant-heading">Answers in seconds, even at 11 at night</h2>
-      <p class="lead">
-        Most customers message on WhatsApp, and they book with whoever answers first. Your assistant answers for you,
-        in your business's voice, and hands over to you when a person is needed.
-      </p>
+      <p class="eyebrow">{w.eyebrow}</p>
+      <h2 id="assistant-heading">{w.heading}</h2>
+      <p class="lead">{w.lead}</p>
       <ul class="points" data-reveal-group>
-        <li>Answers prices, hours, directions and availability</li>
-        <li>Takes bookings and orders straight into your system</li>
-        <li>Sends reminders that cut no-shows</li>
-        <li>Shows you every conversation, so nothing slips</li>
+        {w.points.map((p) => <li>{p}</li>)}
       </ul>
-      <a class="button" href="/services">See plans and prices <span class="arrow" aria-hidden="true">→</span></a>
+      <a class="button" href={localize("/services", lang)}>{w.button} <span class="arrow" aria-hidden="true">→</span></a>
     </div>
 
-    <figure class="phone" aria-label="Example WhatsApp conversation between a salon's assistant and a customer">
+    <figure class="phone" aria-label={w.aria}>
       <div class="bar">
         <span class="avatar" aria-hidden="true"></span>
         <span>
           <strong>Lindi's Hair Studio</strong>
-          <small>Assistant · online</small>
+          <small>{w.status}</small>
         </span>
       </div>
       <ol class="chat">
         {
           messages.map((m, i) => (
             <li class={`msg ${m.from}`} style={`--m: ${i}`}>
-              <span class="visually-hidden">{m.from === "us" ? "Assistant: " : "Customer: "}</span>
+              <span class="visually-hidden">{m.from === "us" ? w.us : w.them}</span>
               {m.text}
               <time>{m.time}</time>
             </li>
           ))
         }
-        <li class="msg note" style={`--m: ${messages.length}`}>Friday 18:00 · Reminder sent</li>
+        <li class="msg note" style={`--m: ${messages.length}`}>{w.note}</li>
       </ol>
-      <figcaption>Example conversation</figcaption>
+      <figcaption>{w.caption}</figcaption>
     </figure>
   </div>
 </section>

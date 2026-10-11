@@ -1,0 +1,11 @@
+---
+// isiXhosa: the same pages as /solutions/<slug>, which read their language from the address.
+import Page from "../../solutions/[slug].astro";
+import { allSolutions } from "../../../data/industries";
+
+export function getStaticPaths() {
+  return allSolutions.map((industry) => ({ params: { slug: industry.slug }, props: { industry } }));
+}
+---
+
+<Page {...Astro.props} />

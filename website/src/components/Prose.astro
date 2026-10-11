@@ -1,6 +1,11 @@
 ---
 // Long-form text pages (privacy policy, terms).
 import { site } from "../site";
+import { langOf, pick } from "../i18n";
+const draft = pick(langOf(Astro.url), {
+  en: "Draft: this page will be reviewed before the website goes live.",
+  xh: "Uyilo: eli phepha liza kuhlolwa ngumcebisi wezomthetho.",
+});
 
 interface Props {
   title: string;
@@ -12,7 +17,7 @@ const { title } = Astro.props;
   <h1>{title}</h1>
   {
     !site.legalReviewed && (
-      <p class="draft">Draft: this page will be reviewed before the website goes live.</p>
+      <p class="draft">{draft}</p>
     )
   }
   <slot />

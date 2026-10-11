@@ -54,8 +54,35 @@ export const formConfig = {
 };
 
 export const nav = [
-  { href: "/solutions", label: "Solutions" },
-  { href: "/services", label: "Services and pricing" },
-  { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
+  { href: "/solutions", label: { en: "Solutions", xh: "Izisombululo" } },
+  { href: "/services", label: { en: "Services and pricing", xh: "Iinkonzo namaxabiso" } },
+  { href: "/about", label: { en: "About", xh: "Ngathi" } },
+  { href: "/contact", label: { en: "Contact", xh: "Qhagamshelana nathi" } },
 ];
+
+// The site's own words in each language. The English is the original; the
+// isiXhosa is reviewed by the founder before it goes live.
+export const siteText = {
+  en: {
+    tagline: site.tagline,
+    description: site.description,
+    areaServed: site.areaServed,
+    founderRole: site.founder.role,
+    founderIntro: site.founder.intro,
+    founderStory: site.founder.story,
+  },
+  xh: {
+    tagline: "Isango lakho eliya kwishishini elikrelekrele",
+    description:
+      "I-IsangoTech incedisa amashishini amancinci eMonti nangaphaya ukuba afumaneke, afumane abathengi, aqhube imisebenzi yawo, kwaye imisebenzi ephindaphindwayo yenzeke ngokuzenzekelayo.",
+    areaServed: "EMonti, eMpuma Koloni nakwiindawo ezisele zoMzantsi Afrika",
+    founderRole: "Umseki",
+    founderIntro:
+      "NdinguAnganathi, ndisuka eNgqamakhwe kwaye ndihlala eMonti. Ndaqalisa i-IsangoTech kuba amashishini aseMpuma Koloni afanelwe kukufumaneka, nokuphendulwa. Xa usebenza ne-IsangoTech, usebenza nam.",
+    founderStory: [
+      "Ndisuka eNgqamakhwe eMpuma Koloni, kwaye iMonti ilikhaya lam ukususela ngo-2022. Ndafumana iDiploma kwi-ICT Application Development kwiYunivesithi iWalter Sisulu apha ngo-2025, kwaye ngoku ndigqibezela iAdvanced Diploma yam ngoxa ndisakha i-software yabathengi bokwenyani.",
+      "Ndaqalisa i-IsangoTech kuba amashishini aseMpuma Koloni afanelwe kukufumaneka, nokuphendulwa. Iisalon ezininzi ezilungileyo, iindlu zeendwendwe, iirestyu nabapheki beminyhadala apha phantse abonakali kwi-intanethi, kwaye abo bafumanekayo bahlala bephulukana nabathengi kuba kungekho mntu uphendule ngexesha. Umyalezo olinda de kube ngokuhlwa yi-booking eye kwenye indawo. I-AI iyayitshintsha loo nto: ingaphendula umbuzo kwangoko xa ufika, ibhukishe idinga, ithumele isikhumbuzo, ngoxa umnini eqhubeka nomsebenzi anokuwenza yena kuphela. Ayiseyiyo eyeenkampani ezinkulu kuphela, kwaye ndifuna namashishini amancinci apha ayifumane.",
+      "Xa usebenza ne-IsangoTech, usebenza nam. Ndiza kuchaza izinto ngolwimi olucacileyo, ndikuxelele ngokunyaniseka xa ungekayidingi into ethile, kwaye ndihlale nawe emva kokuba inkqubo yakho iqalile ukusebenza.",
+    ],
+  },
+};

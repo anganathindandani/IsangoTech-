@@ -1,14 +1,25 @@
 ---
 import Beadwork from "./Beadwork.astro";
+import { langOf, localize, pick } from "../i18n";
 
 interface Props {
   heading?: string;
   text?: string;
 }
-const {
-  heading = "Let's get your admin off your plate",
-  text = "Tell us where your business is now. We'll get back to you with honest advice on what to do next, even if that's nothing yet.",
-} = Astro.props;
+const lang = langOf(Astro.url);
+const w = pick(lang, {
+  en: {
+    heading: "Let's get your admin off your plate",
+    text: "Tell us where your business is now. We'll get back to you with honest advice on what to do next, even if that's nothing yet.",
+    button: "Get started",
+  },
+  xh: {
+    heading: "Masikususele umthwalo we-admin",
+    text: "Sixelele apho ishishini lakho likhoyo ngoku. Siza kukuphendula ngengcebiso ethembekileyo ngento omele uyenze ngokulandelayo, nokuba okwangoku akukho nto.",
+    button: "Qalisa",
+  },
+});
+const { heading = w.heading, text = w.text } = Astro.props;
 ---
 
 <section class="cta">
@@ -16,7 +27,7 @@ const {
   <div class="container inner">
     <h2>{heading}</h2>
     <p>{text}</p>
-    <a class="button" href="/get-started">Get started <span class="arrow" aria-hidden="true">→</span></a>
+    <a class="button" href={localize("/get-started", lang)}>{w.button} <span class="arrow" aria-hidden="true">→</span></a>
   </div>
 </section>
 

@@ -3,25 +3,32 @@
 // draws itself as you scroll and each stage lights up as you reach it
 // (scripts/motion.ts sets --progress and .is-active). Each stage links to
 // Get started with the stage filled in.
-import { stages } from "../data/stages";
+import { stagesFor } from "../data/stages";
+import { langOf, localize, pick } from "../i18n";
+const lang = langOf(Astro.url);
+const stages = stagesFor(lang);
+const w = pick(lang, {
+  en: { eyebrow: "Your growth path", heading: "Where is your business now?", lead: "Pick the one that sounds most like you. We'll start there, and show you what comes next.", stage: "Stage", go: "Start here" },
+  xh: { eyebrow: "Indlela yakho yokukhula", heading: "Likweyiphi inqanaba ishishini lakho ngoku?", lead: "Khetha elivakala ngathi lelakho. Siza kuqala apho, sikubonise okulandelayo.", stage: "Inqanaba", go: "Qala apha" },
+});
 ---
 
 <section class="picker" aria-labelledby="picker-heading">
   <div class="container">
-    <p class="eyebrow">Your growth path</p>
-    <h2 id="picker-heading">Where is your business now?</h2>
-    <p class="lead">Pick the one that sounds most like you. We'll start there, and show you what comes next.</p>
+    <p class="eyebrow">{w.eyebrow}</p>
+    <h2 id="picker-heading">{w.heading}</h2>
+    <p class="lead">{w.lead}</p>
     <ol class="path" data-path>
       {
         stages.map((s) => (
           <li class="path-step">
             <span class="node" aria-hidden="true">{s.number}</span>
-            <a href={`/get-started?stage=${s.number}`} class="stage">
-              <span class="num">Stage {s.number}</span>
+            <a href={`${localize("/get-started", lang)}?stage=${s.number}`} class="stage">
+              <span class="num">{w.stage} {s.number}</span>
               <span class="name">{s.name}</span>
               <span class="quote">"{s.whereYouAre}"</span>
               <span class="go">
-                Start here <span class="arrow" aria-hidden="true">→</span>
+                {w.go} <span class="arrow" aria-hidden="true">→</span>
               </span>
             </a>
           </li>

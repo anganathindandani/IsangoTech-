@@ -2,48 +2,94 @@
 import Base from "../layouts/Base.astro";
 import CallToAction from "../components/CallToAction.astro";
 import FoundingOffer from "../components/FoundingOffer.astro";
-import { formatPrice, packages } from "../data/packages";
+import { formatPrice, packagesFor } from "../data/packages";
 import { stageByNumber } from "../data/stages";
 import { site } from "../site";
+import { langOf, localize, pick } from "../i18n";
+
+const lang = langOf(Astro.url);
+const L = (path: string) => localize(path, lang);
+const packages = packagesFor(lang);
+const w = pick(lang, {
+  en: {
+    title: "Services and pricing",
+    searchTitle: "Packages and prices for websites and automation",
+    description: "Clear packages and starting prices for websites, booking systems, staff portals and AI automation for small businesses in East London and South Africa.",
+    lead: "Our packages follow the growth path. Find the stage your business is at, start there, and see what comes next. Prices are fixed in a written quote before any work starts, so you know the full cost upfront.",
+    chatHeading: "Not sure where you fit? Start with a free chat.",
+    chatText: "Tell us about your business and we'll recommend where to start, even if the honest answer is \"you don't need this yet\".",
+    chatButton: "Book a free chat",
+    packagesLabel: "Packages by growth stage",
+    stage: "Stage",
+    start: "Get started",
+    next: "Next step:",
+    extrasLabel: "Custom work and care",
+    fixes: "30 days of free fixes",
+    fixesText: "After every handover, we fix anything that doesn't work as agreed, at no cost.",
+    help: "Help when you need it: R400 an hour",
+    helpText: "No care plan? Ask for help any time. We tell you the cost before we start.",
+    note: "Prices are in South African rand. Websites and custom software are yours to keep, with no monthly fee unless you choose the care plan. The WhatsApp assistant and portal run on our platform, so their monthly fee covers hosting, WhatsApp and AI usage (up to a fair limit, set out in your agreement), updates and support.",
+    vatYes: "Prices include VAT.",
+    vatNo: "IsangoTech is not yet a registered VAT vendor, so no VAT is charged.",
+    ctaHeading: "Not sure which one fits?",
+    ctaText: "Tell us a bit about your business and we'll recommend where to start. No pressure, no jargon.",
+  },
+  xh: {
+    title: "Iinkonzo namaxabiso",
+    searchTitle: "Iiphakheji namaxabiso ee-website ne-automation",
+    description: "Iiphakheji ezicacileyo namaxabiso okuqala ee-website, ii-booking, ii-portal zabasebenzi ne-AI automation zamashishini amancinci eMonti naseMzantsi Afrika.",
+    lead: "Iiphakheji zethu zilandela indlela yokukhula. Fumana inqanaba elikulo ishishini lakho, uqale apho, ubone okulandelayo. Amaxabiso amiselwa kwikowuti ebhaliweyo ngaphambi kokuba kuqalwe umsebenzi, ngoko uyazi iindleko zonke kwangaphambili.",
+    chatHeading: "Awuqinisekanga ukuba ukweliphi inqanaba? Qala ngencoko yasimahla.",
+    chatText: "Sixelele ngeshishini lakho kwaye siza kucebisa apho ungaqala khona, nokuba impendulo enyanisekileyo ithi \"awukayidingi le nto okwangoku\".",
+    chatButton: "Cela incoko yasimahla",
+    packagesLabel: "Iiphakheji ngokwenqanaba lokukhula",
+    stage: "Inqanaba",
+    start: "Qalisa",
+    next: "Inyathelo elilandelayo:",
+    extrasLabel: "Umsebenzi owenzelwe wena nokhathalelo",
+    fixes: "Iintsuku ezingama-30 zokulungisa simahla",
+    fixesText: "Emva kokunikezela ngomsebenzi, silungisa nantoni na engasebenziyo njengoko kuvunyelwene, ngaphandle kwentlawulo.",
+    help: "Uncedo xa ulufuna: R400 ngeyure",
+    helpText: "Akunayo i-care plan? Cela uncedo nanini na. Sikuxelela ixabiso ngaphambi kokuba siqale.",
+    note: "Amaxabiso akwiirandi zaseMzantsi Afrika. Ii-website ne-software eyenzelwe wena zezakho, akukho ntlawulo yenyanga ngaphandle kokuba ukhetha i-care plan. I-WhatsApp assistant ne-portal zisebenza kwiqonga lethu, ngoko intlawulo yazo yenyanga ihlawulela i-hosting, ukusetyenziswa kwe-WhatsApp ne-AI (ukuya kumda ofanelekileyo, obhalwe kwisivumelwano sakho), uhlaziyo nenkxaso.",
+    vatYes: "Amaxabiso aquka i-VAT.",
+    vatNo: "I-IsangoTech ayikabhaliswa njengomthengisi we-VAT, ngoko akuhlawuliswa VAT.",
+    ctaHeading: "Awuqinisekanga ukuba yeyiphi ekulungeleyo?",
+    ctaText: "Sixelele kancinci ngeshishini lakho kwaye siza kucebisa apho ungaqala khona. Akukho xinzelelo, akukho magama anzima.",
+  },
+});
 
 const staged = packages.filter((p) => p.stage !== null);
 const everyStage = packages.filter((p) => p.stage === null);
 ---
 
-<Base title="Services and pricing" searchTitle="Packages and prices for websites and automation"
-  description="Clear packages and starting prices for websites, booking systems, staff portals and AI automation for small businesses in East London and South Africa.">
+<Base title={w.title} searchTitle={w.searchTitle} description={w.description}>
   <section class="container intro">
-    <h1>Services and pricing</h1>
-    <p>
-      Our packages follow the growth path. Find the stage your business is at, start there, and see what comes next.
-      Prices are fixed in a written quote before any work starts, so you know the full cost upfront.
-    </p>
+    <h1>{w.title}</h1>
+    <p>{w.lead}</p>
     <div class="free-chat">
       <div>
-        <h2>Not sure where you fit? Start with a free chat.</h2>
-        <p>
-          Tell us about your business and we'll recommend where to start, even if the honest answer is "you don't need
-          this yet".
-        </p>
+        <h2>{w.chatHeading}</h2>
+        <p>{w.chatText}</p>
       </div>
-      <a class="button" href="/get-started">Book a free chat <span class="arrow" aria-hidden="true">→</span></a>
+      <a class="button" href={L("/get-started")}>{w.chatButton} <span class="arrow" aria-hidden="true">→</span></a>
     </div>
   </section>
 
   <FoundingOffer />
 
-  <section class="container" aria-label="Packages by growth stage">
+  <section class="container" aria-label={w.packagesLabel}>
     <ol class="packages">
       {
         staged.map((p) => {
-          const stage = stageByNumber(p.stage!);
+          const stage = stageByNumber(p.stage!, lang);
           return (
             <li class="package">
               <p class="stage">
-                Stage {p.stage} · {stage?.name}
+                {w.stage} {p.stage} · {stage?.name}
               </p>
               <h2>{p.name}</h2>
-              <p class="price">{formatPrice(p)}</p>
+              <p class="price">{formatPrice(p, lang)}</p>
               {p.priceDetail && <p class="price-detail">{p.priceDetail}</p>}
               <p>{p.summary}</p>
               <ul>
@@ -51,12 +97,12 @@ const everyStage = packages.filter((p) => p.stage === null);
                   <li>{i}</li>
                 ))}
               </ul>
-              <a class="button" href={`/get-started?stage=${p.stage}`}>
-                Get started <span class="arrow" aria-hidden="true">→</span>
+              <a class="button" href={`${L("/get-started")}?stage=${p.stage}`}>
+                {w.start} <span class="arrow" aria-hidden="true">→</span>
               </a>
               {p.nextStep && (
                 <p class="next">
-                  <strong>Next step:</strong> {p.nextStep}
+                  <strong>{w.next}</strong> {p.nextStep}
                 </p>
               )}
             </li>
@@ -66,13 +112,13 @@ const everyStage = packages.filter((p) => p.stage === null);
     </ol>
   </section>
 
-  <section class="container extras" aria-label="Custom work and care">
+  <section class="container extras" aria-label={w.extrasLabel}>
     {
       everyStage.map((p) => (
         <div class="package care">
           <p class="stage">{p.label}</p>
           <h2>{p.name}</h2>
-          <p class="price">{formatPrice(p)}</p>
+          <p class="price">{formatPrice(p, lang)}</p>
           {p.priceDetail && <p class="price-detail">{p.priceDetail}</p>}
           <p>{p.summary}</p>
           <ul>
@@ -85,27 +131,21 @@ const everyStage = packages.filter((p) => p.stage === null);
     }
     <ul class="promises">
       <li>
-        <strong>30 days of free fixes</strong>
-        <span>After every handover, we fix anything that doesn't work as agreed, at no cost.</span>
+        <strong>{w.fixes}</strong>
+        <span>{w.fixesText}</span>
       </li>
       <li>
-        <strong>Help when you need it: R400 an hour</strong>
-        <span>No care plan? Ask for help any time. We tell you the cost before we start.</span>
+        <strong>{w.help}</strong>
+        <span>{w.helpText}</span>
       </li>
     </ul>
     <p class="note">
-      Prices are in South African rand. Websites and custom software are yours to keep, with no monthly fee unless
-      you choose the care plan. The WhatsApp assistant and portal run on our platform, so their monthly fee covers
-      hosting, WhatsApp and AI usage (up to a fair limit, set out in your agreement), updates and support.
-      {
-        site.vatRegistered
-          ? "Prices include VAT."
-          : "IsangoTech is not yet a registered VAT vendor, so no VAT is charged."
-      }
+      {w.note}
+      {site.vatRegistered ? w.vatYes : w.vatNo}
     </p>
   </section>
 
-  <CallToAction heading="Not sure which one fits?" text="Tell us a bit about your business and we'll recommend where to start. No pressure, no jargon." />
+  <CallToAction heading={w.ctaHeading} text={w.ctaText} />
 </Base>
 
 <style>

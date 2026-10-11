@@ -1,5 +1,9 @@
 ---
-import { allSolutions } from "../data/industries";
+import { solutionsFor } from "../data/industries";
+import { langOf, localize, pick } from "../i18n";
+const lang = langOf(Astro.url);
+const allSolutions = solutionsFor(lang);
+const more = pick(lang, { en: "See how we help", xh: "Bona indlela esinceda ngayo" });
 
 // Simple geometric icons in the brand colours, one per industry.
 const icons: Record<string, string> = {
@@ -25,12 +29,12 @@ const icons: Record<string, string> = {
   {
     allSolutions.map((i) => (
       <li>
-        <a href={`/solutions/${i.slug}`}>
+        <a href={localize(`/solutions/${i.slug}`, lang)}>
           {icons[i.slug] && <svg viewBox="0 0 48 48" width="44" height="44" aria-hidden="true" set:html={icons[i.slug]} />}
           <span class="name">{i.name}</span>
           <span class="tagline">{i.tagline}</span>
           <span class="more">
-            See how we help <span class="arrow" aria-hidden="true">→</span>
+            {more} <span class="arrow" aria-hidden="true">→</span>
           </span>
         </a>
       </li>

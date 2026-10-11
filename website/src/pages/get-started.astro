@@ -1,12 +1,17 @@
 ---
 import Base from "../layouts/Base.astro";
-import { stages } from "../data/stages";
+import { stagesFor } from "../data/stages";
 import { formConfig, site } from "../site";
+import { langOf, localize, pick } from "../i18n";
 
+const lang = langOf(Astro.url);
+const L = (path: string) => localize(path, lang);
+const stages = stagesFor(lang);
 const whatsappLink = site.whatsappNumber ? `https://wa.me/${site.whatsappNumber}` : null;
 
-// Quick picks for step 2. The ones ticked are sent in the "biggest headache" text.
-const pains = [
+// Quick picks for step 2. The ones ticked are sent in the "biggest headache"
+// text, always in English so the portal's leads read the same.
+const painsEn = [
   "Missed calls and messages",
   "No-shows and late cancellations",
   "People can't find us online",
@@ -14,17 +19,112 @@ const pains = [
   "Too much paperwork and spreadsheets",
   "Juggling staff, stock or bookings",
 ];
+const painsXh = [
+  "Iminxeba nemiyalezo ephosiweyo",
+  "Abangafikiyo nabarhoxisa emva kwexesha",
+  "Abantu abasifumani kwi-intanethi",
+  "Iikowuti nee-invoyisi zithatha ixesha elide",
+  "Amaphepha amaninzi nee-spreadsheet",
+  "Ukulawula abasebenzi, isitokhwe okanye ii-booking",
+];
+const pains = painsEn.map((value, i) => ({ value, label: lang === "xh" ? painsXh.at(i)! : value }));
+
+const w = pick(lang, {
+  en: {
+    title: "Get started",
+    description: "Tell us about your business in four quick steps. We'll get back to you with honest advice on where to start.",
+    lead: "Tell us a little about your business. We'll get back to you with honest advice on where to start, in plain language.",
+    chat: "Prefer to chat?",
+    chatLink: "Message us on WhatsApp",
+    founding: "You're asking about the <strong>founding client offer</strong>: up to 40% off setup for our first five clients.",
+    stepBusiness: "Your business",
+    whereNow: "Where is your business now?",
+    pickOne: "Pick the one that sounds most like you.",
+    notSure: "I'm not sure yet",
+    notSureHelp: "We'll help you work it out",
+    industry: "What kind of business is it?",
+    stepHeadache: "Your headache",
+    headache: "What's giving you the biggest headache?",
+    tapAny: "Tap any that sound familiar.",
+    anythingElse: "Anything else? Tell us in your own words (optional)",
+    stepAssessment: "Assessment",
+    assessment: "Want an AI Readiness Assessment?",
+    assessmentHint: "For businesses already running on a website or system that want to automate. R1 500, credited against your project if you go ahead. Pick a time and we'll come to you, or meet online.",
+    notNow: "Not now, thanks",
+    later: "You can always book one later",
+    stepDetails: "Your details",
+    reach: "How can we reach you?",
+    name: "Your name",
+    required: "required",
+    business: "Business name",
+    phone: "Phone or WhatsApp number",
+    email: "Email",
+    consent: `I agree that IsangoTech may use these details to reply to my enquiry, as explained in the <a href="${L("/privacy")}" target="_blank">privacy policy</a>.`,
+    whatsappOk: "You may contact me on WhatsApp.",
+    honeypot: "Leave this empty",
+    back: "← Back",
+    next: "Next",
+    send: "Send",
+    thanks: "Thank you, we've got it.",
+    soon: "We'll be in touch soon.",
+    home: "Back to the home page",
+    unavailable: "The form isn't available right now",
+    unavailableWa: "Please <a href=\"%WA%\">message us on WhatsApp</a> instead, and we'll help you from there.",
+    unavailableLater: "Please try again a little later.",
+  },
+  xh: {
+    title: "Qalisa",
+    description: "Sixelele ngeshishini lakho ngamanyathelo amane akhawulezayo. Siza kukuphendula ngengcebiso ethembekileyo malunga nendawo yokuqala.",
+    lead: "Sixelele kancinci ngeshishini lakho. Siza kukuphendula ngengcebiso ethembekileyo malunga nendawo yokuqala, ngolwimi olucacileyo.",
+    chat: "Ukhetha ukuncokola?",
+    chatLink: "Sithumelele umyalezo kwi-WhatsApp",
+    founding: "Ubuza <strong>ngesaphulelo sabathengi bokuqala</strong>: ukuya kwi-40% kwintlawulo yokuseta kubathengi bethu abahlanu bokuqala.",
+    stepBusiness: "Ishishini lakho",
+    whereNow: "Likweyiphi inqanaba ishishini lakho ngoku?",
+    pickOne: "Khetha elivakala ngathi lelakho.",
+    notSure: "Andiqinisekanga okwangoku",
+    notSureHelp: "Siza kukunceda ufumanise",
+    industry: "Lishishini lohlobo luni?",
+    stepHeadache: "Ingxaki yakho",
+    headache: "Yeyiphi eyona ngxaki ikukhathazayo?",
+    tapAny: "Cofa nayiphi na evakala iqhelekile kuwe.",
+    anythingElse: "Ikhona enye into? Sixelele ngamazwi akho (ukuba uyathanda)",
+    stepAssessment: "Uvavanyo",
+    assessment: "Ufuna i-AI Readiness Assessment?",
+    assessmentHint: "Yamashishini asele esebenzisa i-website okanye inkqubo afuna i-automation. Yi-R1 500, ibalelwa kwiprojekthi yakho ukuba uyaqhubeka. Khetha ixesha kwaye siza kuza kuwe, okanye sidibane kwi-intanethi.",
+    notNow: "Hayi okwangoku, enkosi",
+    later: "Ungabhukisha kamva nanini na",
+    stepDetails: "Iinkcukacha zakho",
+    reach: "Singakufumana njani?",
+    name: "Igama lakho",
+    required: "iyafuneka",
+    business: "Igama leshishini",
+    phone: "Inombolo yefowuni okanye ye-WhatsApp",
+    email: "I-imeyile",
+    consent: `Ndiyavuma ukuba i-IsangoTech ingasebenzisa ezi nkcukacha ukuphendula umbuzo wam, njengoko kuchaziwe <a href="${L("/privacy")}" target="_blank">kumgaqo-nkqubo wabucala</a>.`,
+    whatsappOk: "Ningaqhagamshelana nam kwi-WhatsApp.",
+    honeypot: "Shiya oku kungenanto",
+    back: "← Buyela umva",
+    next: "Okulandelayo",
+    send: "Thumela",
+    thanks: "Enkosi, siyifumene.",
+    soon: "Siza kuqhagamshelana nawe kungekudala.",
+    home: "Buyela ekhaya",
+    unavailable: "Ifomu ayifumaneki okwangoku",
+    unavailableWa: "Nceda <a href=\"%WA%\">usithumelele umyalezo kwi-WhatsApp</a> endaweni yoko, kwaye siza kukunceda ukusuka apho.",
+    unavailableLater: "Nceda uzame kwakhona emva kwexesha elincinci.",
+  },
+});
 ---
 
-<Base title="Get started" description="Tell us about your business in four quick steps. We'll get back to you with honest advice on where to start, and you can book a free AI Readiness Assessment.">
+<Base title={w.title} description={w.description}>
   <section class="container intro">
-    <h1>Get started</h1>
+    <h1>{w.title}</h1>
     <p>
-      Tell us a little about your business. We'll get back to you with honest advice on where to start, in plain
-      language.
+      {w.lead}
       {whatsappLink && (
         <>
-          Prefer to chat? <a href={whatsappLink}>Message us on WhatsApp</a>.
+          {w.chat} <a href={whatsappLink}>{w.chatLink}</a>.
         </>
       )}
     </p>
@@ -38,16 +138,14 @@ const pains = [
       data-functions-url={formConfig.functionsUrl}
       data-turnstile-site-key={formConfig.turnstileSiteKey}
     >
-      <p class="founding-note" id="founding-note" hidden>
-        You're asking about the <strong>founding client offer</strong>: up to 40% off setup for our first five clients.
-      </p>
+      <p class="founding-note" id="founding-note" hidden set:html={w.founding} />
       <!-- Filled in by the script; without JavaScript every step shows at once. -->
       <ol class="progress" id="progress" hidden></ol>
       <p class="visually-hidden" id="step-status" aria-live="polite"></p>
 
-      <fieldset class="step" data-step="Your business">
-        <legend tabindex="-1"><span class="step-num"></span>Where is your business now?</legend>
-        <p class="hint">Pick the one that sounds most like you.</p>
+      <fieldset class="step" data-step={w.stepBusiness}>
+        <legend tabindex="-1"><span class="step-num"></span>{w.whereNow}</legend>
+        <p class="hint">{w.pickOne}</p>
         <div class="choices stages">
           {
             stages.map((s) => (
@@ -64,68 +162,65 @@ const pains = [
           <label class="choice">
             <input type="radio" name="stage_needed" value="" checked />
             <span class="choice-num" aria-hidden="true">?</span>
-            <span><strong>I'm not sure yet</strong><small>We'll help you work it out</small></span>
+            <span><strong>{w.notSure}</strong><small>{w.notSureHelp}</small></span>
           </label>
         </div>
 
         <div class="field" id="industry-field" hidden>
-          <p class="label" id="industry-label">What kind of business is it?</p>
+          <p class="label" id="industry-label">{w.industry}</p>
           <div class="pills" role="radiogroup" aria-labelledby="industry-label" id="industries"></div>
         </div>
       </fieldset>
 
-      <fieldset class="step" data-step="Your headache">
-        <legend tabindex="-1"><span class="step-num"></span>What's giving you the biggest headache?</legend>
-        <p class="hint">Tap any that sound familiar.</p>
+      <fieldset class="step" data-step={w.stepHeadache}>
+        <legend tabindex="-1"><span class="step-num"></span>{w.headache}</legend>
+        <p class="hint">{w.tapAny}</p>
         <div class="pills" id="pains">
           {
             pains.map((p) => (
               <label class="pill">
-                <input type="checkbox" name="pain" value={p} />
-                <span>{p}</span>
+                <input type="checkbox" name="pain" value={p.value} />
+                <span>{p.label}</span>
               </label>
             ))
           }
         </div>
         <div class="field">
-          <label for="biggest_pain">Anything else? Tell us in your own words (optional)</label>
+          <label for="biggest_pain">{w.anythingElse}</label>
           <textarea id="biggest_pain" name="biggest_pain" rows="3" maxlength="1500"></textarea>
         </div>
       </fieldset>
 
-      <fieldset class="step" data-step="Assessment" id="slots-field" hidden data-skip>
-        <legend tabindex="-1"><span class="step-num"></span>Want a free AI Readiness Assessment?</legend>
-        <p class="hint">
-          Best for businesses that already run on a system and want to automate. Pick a time and we'll come to you, or
-          meet online.
-        </p>
+      <fieldset class="step" data-step={w.stepAssessment} id="slots-field" hidden data-skip>
+        <legend tabindex="-1"><span class="step-num"></span>{w.assessment}</legend>
+        <p class="hint">{w.assessmentHint}</p>
         <div class="choices slots" id="slots">
           <label class="choice">
             <input type="radio" name="booking_slot_id" value="" checked />
-            <span><strong>Not now, thanks</strong><small>You can always book one later</small></span>
+            <span><strong>{w.notNow}</strong><small>{w.later}</small></span>
           </label>
         </div>
       </fieldset>
 
-      <fieldset class="step" data-step="Your details">
-        <legend tabindex="-1"><span class="step-num"></span>How can we reach you?</legend>
+      <fieldset class="step" data-step={w.stepDetails}>
+        <legend tabindex="-1"><span class="step-num"></span>{w.reach}</legend>
         <div class="field">
-          <label for="full_name">Your name <span class="req">required</span></label>
+          <label for="full_name">{w.name} <span class="req">{w.required}</span></label>
           <input id="full_name" name="full_name" autocomplete="name" required maxlength="120" />
         </div>
 
         <div class="field">
-          <label for="business_name">Business name</label>
+          <label for="business_name">{w.business}</label>
           <input id="business_name" name="business_name" autocomplete="organization" maxlength="160" />
         </div>
 
         <div class="row">
           <div class="field">
-            <label for="phone">Phone or WhatsApp number <span class="req">required</span></label>
+            <label for="phone">{w.phone} <span class="req">{w.required}</span></label>
             <input id="phone" name="phone" type="tel" autocomplete="tel" required inputmode="tel" />
           </div>
           <div class="field">
-            <label for="email">Email</label>
+            <label for="email">{w.email}</label>
             <input id="email" name="email" type="email" autocomplete="email" />
           </div>
         </div>
@@ -134,19 +229,18 @@ const pains = [
           <label class="check">
             <input type="checkbox" name="consent" required />
             <span>
-              I agree that IsangoTech may use these details to reply to my enquiry, as explained in the
-              <a href="/privacy" target="_blank">privacy policy</a>. <span class="req">required</span>
+              <Fragment set:html={w.consent} /> <span class="req">{w.required}</span>
             </span>
           </label>
           <label class="check">
             <input type="checkbox" name="whatsapp_opt_in" />
-            <span>You may contact me on WhatsApp.</span>
+            <span>{w.whatsappOk}</span>
           </label>
         </div>
 
         <!-- Honeypot: hidden from people, filled in by bots. -->
         <div class="hp" aria-hidden="true">
-          <label for="website">Leave this empty</label>
+          <label for="website">{w.honeypot}</label>
           <input id="website" name="website" tabindex="-1" autocomplete="off" />
         </div>
 
@@ -156,9 +250,9 @@ const pains = [
       <p id="form-error" class="error" role="alert" tabindex="-1" hidden></p>
 
       <div class="nav">
-        <button class="back" type="button" id="back" hidden>← Back</button>
-        <button class="button" type="button" id="next" hidden>Next <span class="arrow" aria-hidden="true">→</span></button>
-        <button class="button" type="submit" id="submit">Send</button>
+        <button class="back" type="button" id="back" hidden>{w.back}</button>
+        <button class="button" type="button" id="next" hidden>{w.next} <span class="arrow" aria-hidden="true">→</span></button>
+        <button class="button" type="submit" id="submit">{w.send}</button>
       </div>
     </form>
 
@@ -167,24 +261,14 @@ const pains = [
         <circle cx="32" cy="32" r="28" fill="none" stroke="#2BA8A0" stroke-width="4" />
         <path d="M20 33l8 8 16-18" fill="none" stroke="#E07A1F" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
       </svg>
-      <h2>Thank you, we've got it.</h2>
-      <p id="success-text">We'll be in touch soon.</p>
-      <p><a href="/">Back to the home page</a></p>
+      <h2>{w.thanks}</h2>
+      <p id="success-text">{w.soon}</p>
+      <p><a href={L("/")}>{w.home}</a></p>
     </div>
 
     <div id="unavailable" class="card" hidden>
-      <h2>The form isn't available right now</h2>
-      <p>
-        {
-          whatsappLink ? (
-            <>
-              Please <a href={whatsappLink}>message us on WhatsApp</a> instead, and we'll help you from there.
-            </>
-          ) : (
-            <>Please try again a little later.</>
-          )
-        }
-      </p>
+      <h2>{w.unavailable}</h2>
+      <p set:html={whatsappLink ? w.unavailableWa.replace("%WA%", whatsappLink) : w.unavailableLater} />
     </div>
   </section>
 </Base>
@@ -214,7 +298,61 @@ const pains = [
   let turnstileToken = "";
   let turnstileLoaded = false;
 
-  const timeFormat = new Intl.DateTimeFormat("en-ZA", {
+  // The page's language decides the words the script shows.
+  const xh = document.documentElement.lang.startsWith("xh");
+  const t = xh
+    ? {
+        step: (i: number, n: number) => `Inyathelo ${i}/${n}`,
+        online: "Kwi-intanethi",
+        inPerson: "Ebusweni",
+        noName: "Nceda usixelele igama lakho.",
+        noPhone: "Nceda unike inombolo yefowuni esinokukufumana kuyo.",
+        badEmail: "Le dilesi ye-imeyile ayibonakali ichanekile.",
+        noConsent: "Nceda uvume umgaqo-nkqubo wabucala ukuze sikwazi ukukuphendula.",
+        noSpamCheck: "Nceda ugqibe uvavanyo lwe-spam.",
+        sending: "Iyathumela…",
+        send: "Thumela",
+        booked: (when: string) => `I-AI Readiness Assessment yakho ibhukishelwe ${when}. Siza kuqinisekisa iinkcukacha nawe ngaphambi koko.`,
+        failed: "Kukho into engahambanga kakuhle. Nceda uzame kwakhona.",
+        offline: "Asikwazanga ukuthumela iinkcukacha zakho. Nceda ujonge uqhagamshelwano lwakho uzame kwakhona.",
+      }
+    : {
+        step: (i: number, n: number) => `Step ${i} of ${n}`,
+        online: "Online",
+        inPerson: "In person",
+        noName: "Please tell us your name.",
+        noPhone: "Please give a phone number we can reach you on.",
+        badEmail: "That email address doesn't look right.",
+        noConsent: "Please agree to the privacy policy so we can reply to you.",
+        noSpamCheck: "Please complete the spam check.",
+        sending: "Sending…",
+        send: "Send",
+        booked: (when: string) => `Your AI Readiness Assessment is booked for ${when}. We'll confirm the details with you before then.`,
+        failed: "Something went wrong. Please try again.",
+        offline: "We couldn't send your details. Please check your connection and try again.",
+      };
+  // Industry names come from the database in English.
+  const industryXh: Record<string, string> = {
+    "Salons and beauty": "Iisalon nezobuhle",
+    "Restaurants and food businesses": "Iirestyu namashishini okutya",
+    Caterers: "Abapheki beminyhadala",
+    "Guesthouses and B&Bs": "Iindlu zeendwendwe nee-B&B",
+    "Construction and trades": "Ukwakha nezakhono zezandla",
+    "Professional services": "Iinkonzo zobungcali",
+    Retail: "Iivenkile",
+    "Other small business": "Elinye ishishini elincinci",
+  };
+
+  // Browsers have no isiXhosa dates built in, so isiXhosa times are written here,
+  // in South African time (UTC+2, no daylight saving): "ngoLwesithathu, 14 kweyeDwarha ngo-10:00".
+  const xhDays = ["ngeCawe", "ngoMvulo", "ngoLwesibini", "ngoLwesithathu", "ngoLwesine", "ngoLwesihlanu", "ngoMgqibelo"];
+  const xhMonths = ["kweyoMqungu", "kweyoMdumba", "kweyoKwindla", "kweyoTshazimpuzi", "kweyoCanzibe", "kweyeSilimela", "kweyeKhala", "kweyeThupha", "kweyoMsintsi", "kweyeDwarha", "kweyeNkanga", "kweyoMnga"];
+  const xhTime = (d: Date) => {
+    const sa = new Date(d.getTime() + 2 * 3600e3);
+    const hh = String(sa.getUTCHours()).padStart(2, "0"), mm = String(sa.getUTCMinutes()).padStart(2, "0");
+    return `${xhDays.at(sa.getUTCDay())}, ${sa.getUTCDate()} ${xhMonths.at(sa.getUTCMonth())} ngo-${hh}:${mm}`;
+  };
+  const enFormat = new Intl.DateTimeFormat("en-ZA", {
     timeZone: "Africa/Johannesburg",
     weekday: "long",
     day: "numeric",
@@ -222,6 +360,7 @@ const pains = [
     hour: "2-digit",
     minute: "2-digit",
   });
+  const timeFormat = { format: (d: Date) => (xh ? xhTime(d) : enFormat.format(d)) };
 
   function showError(message: string) {
     errorBox.textContent = message;
@@ -270,7 +409,7 @@ const pains = [
     }
     list.forEach((s, i) => {
       const num = s.querySelector(".step-num");
-      if (num) num.textContent = `Step ${i + 1} of ${list.length}`;
+      if (num) num.textContent = t.step(i + 1, list.length);
     });
     const last = current === list.length - 1;
     back.hidden = current === 0;
@@ -278,7 +417,7 @@ const pains = [
     submit.hidden = !last;
     errorBox.hidden = true;
     renderProgress();
-    status.textContent = `Step ${current + 1} of ${list.length}: ${list[current].dataset.step}`;
+    status.textContent = `${t.step(current + 1, list.length)}: ${list[current].dataset.step}`;
     if (last && siteKey && !turnstileLoaded) loadTurnstile();
     if (focus) {
       // Bring the top of the form back into view if the person had scrolled past it.
@@ -342,7 +481,7 @@ const pains = [
 
     const industries = $("industries");
     if (!industries.childElementCount) {
-      for (const i of options.industries) industries.append(choice("industry_id", i.id, i.name));
+      for (const i of options.industries) industries.append(choice("industry_id", i.id, (xh && industryXh[i.name]) || i.name));
     }
     $("industry-field").hidden = options.industries.length === 0;
 
@@ -351,7 +490,7 @@ const pains = [
     const none = slots.querySelector<HTMLInputElement>("input")!;
     none.checked = true;
     for (const s of options.slots) {
-      const where = s.mode === "online" ? "Online" : "In person";
+      const where = s.mode === "online" ? t.online : t.inPerson;
       slots.append(choice("booking_slot_id", s.id, timeFormat.format(new Date(s.starts_at)), where, "choice slot"));
     }
     const slotStep = $("slots-field");
@@ -385,13 +524,13 @@ const pains = [
   // ---- Sending -------------------------------------------------------------
   function validate(): string | null {
     const data = new FormData(form);
-    if (!String(data.get("full_name") ?? "").trim()) return "Please tell us your name.";
+    if (!String(data.get("full_name") ?? "").trim()) return t.noName;
     const phoneDigits = String(data.get("phone") ?? "").replace(/[^0-9+]/g, "");
-    if (phoneDigits.length < 9) return "Please give a phone number we can reach you on.";
+    if (phoneDigits.length < 9) return t.noPhone;
     const email = String(data.get("email") ?? "").trim();
-    if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return "That email address doesn't look right.";
-    if (!data.get("consent")) return "Please agree to the privacy policy so we can reply to you.";
-    if (siteKey && !turnstileToken) return "Please complete the spam check.";
+    if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return t.badEmail;
+    if (!data.get("consent")) return t.noConsent;
+    if (siteKey && !turnstileToken) return t.noSpamCheck;
     return null;
   }
 
@@ -403,7 +542,8 @@ const pains = [
   function biggestPain(data: FormData) {
     const picks = data.getAll("pain").map(String);
     const own = String(data.get("biggest_pain") ?? "").trim();
-    return [founding ? "Interested in the founding client offer." : "", picks.length ? picks.join("; ") + "." : "", own]
+    // Notes for the team, in English: an isiXhosa form means reply in isiXhosa.
+    return [xh ? "Filled in in isiXhosa." : "", founding ? "Interested in the founding client offer." : "", picks.length ? picks.join("; ") + "." : "", own]
       .filter(Boolean)
       .join(" ")
       .slice(0, 2000);
@@ -435,7 +575,7 @@ const pains = [
     };
 
     submit.disabled = true;
-    submit.textContent = "Sending…";
+    submit.textContent = t.sending;
     try {
       const res = await fetch(`${functionsUrl}/submit-enquiry`, {
         method: "POST",
@@ -448,8 +588,7 @@ const pains = [
         const success = $("success");
         if (result.assessment_starts_at) {
           $("success-text").textContent =
-            `Your AI Readiness Assessment is booked for ${timeFormat.format(new Date(result.assessment_starts_at))}. ` +
-            "We'll confirm the details with you before then.";
+            t.booked(timeFormat.format(new Date(result.assessment_starts_at)));
         }
         success.hidden = false;
         success.focus({ preventScroll: true });
@@ -462,12 +601,12 @@ const pains = [
         const slotStep = steps().indexOf($("slots-field") as HTMLFieldSetElement);
         if (slotStep >= 0) show(slotStep);
       }
-      showError(result.error ?? "Something went wrong. Please try again.");
+      showError(result.error ?? t.failed);
     } catch {
-      showError("We couldn't send your details. Please check your connection and try again.");
+      showError(t.offline);
     } finally {
       submit.disabled = false;
-      submit.textContent = "Send";
+      submit.textContent = t.send;
       // Only once the Turnstile script is in: before that, window.turnstile is the #turnstile element.
       if (turnstileLoaded && typeof window.turnstile?.reset === "function") window.turnstile.reset("#turnstile");
       turnstileToken = "";

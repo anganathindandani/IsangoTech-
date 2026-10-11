@@ -49,6 +49,47 @@ export const stages: Stage[] = [
   },
 ];
 
-export function stageByNumber(n: number): Stage | undefined {
-  return stages.find((s) => s.number === n);
+// isiXhosa, reviewed by the founder before it goes live.
+const stagesXh: Record<number, Omit<Stage, "number">> = {
+  1: {
+    name: "Fumaneka",
+    whereYouAre: "Abantu abasifumani kwi-intanethi, okanye oko bakufumanayo akubonisi thina.",
+    need: "Bonakala kwaye uthembeke",
+    offer: "I-website, i-Google Business Profile yakho isetwe kakuhle, neqhosha le-WhatsApp ukuze abantu bakufumane ngokucofa kanye.",
+    package: "I-website yokuqalisa",
+    nextStep: "Bamba imibuzo ngendlela efanelekileyo",
+  },
+  2: {
+    name: "Bamba uphendule",
+    whereYouAre: "Imibuzo iyangena, kodwa eminye iyalahleka.",
+    need: "Yeka ukuphulukana nemibuzo",
+    offer: "I-WhatsApp assistant ephendula wonke umbuzo ngoko nangoko xa ufika, kunye nezikhumbuzo ukuze abathengi bafike.",
+    package: "Core Starter",
+    nextStep: "Qhuba imisebenzi yemihla ngemihla kwinkqubo enye",
+  },
+  3: {
+    name: "Qhuba imisebenzi",
+    whereYouAre: "Siqhuba ishishini ngee-spreadsheet, amaphepha namaqela e-WhatsApp.",
+    need: "Tshintsha ii-spreadsheet nemicu ye-WhatsApp",
+    offer: "Ii-booking nee-oda kwinkqubo enye, ne-dashboard ebonisa intengiso yakho, amaxesha axakekileyo nabathengi abaqhelekileyo.",
+    package: "Core Business",
+    nextStep: "Yenza imisebenzi ephindaphindwayo ngokuzenzekelayo",
+  },
+  4: {
+    name: "Yenza ngokuzenzekelayo",
+    whereYouAre: "Iinkqubo zethu ziyasebenza, kodwa imisebenzi efanayo itya iiyure veki nganye.",
+    need: "Onga ixesha, ukhonze abathengi abaninzi",
+    offer: "I-AI Readiness Assessment yokufumanisa into efanele ukwenziwa ngokuzenzekelayo, emva koko i-automation ekususela imisebenzi ephindaphindwayo.",
+    package: "I-AI Readiness Assessment, emva koko ii-automation add-ons",
+    nextStep: "Ukuphucula okuqhubekayo",
+  },
+};
+
+/** The stages in the page's language. */
+export function stagesFor(lang: "en" | "xh"): Stage[] {
+  return lang === "en" ? stages : stages.map((s) => ({ number: s.number, ...stagesXh[s.number] }));
+}
+
+export function stageByNumber(n: number, lang: "en" | "xh" = "en"): Stage | undefined {
+  return stagesFor(lang).find((s) => s.number === n);
 }

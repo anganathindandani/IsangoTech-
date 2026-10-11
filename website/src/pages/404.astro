@@ -2,10 +2,15 @@
 import Base from "../layouts/Base.astro";
 ---
 
+<!-- One page for both languages: the server shows it for any missing address. -->
 <Base title="Page not found" noindex>
   <section class="container" style="padding-block: 4rem;">
     <h1>This door doesn't lead anywhere</h1>
     <p>The page you're looking for has moved or doesn't exist.</p>
-    <p><a class="button" href="/">Go to the home page</a></p>
+    <p lang="xh-ZA"><strong>Lo mnyango awukhokeli ndawo.</strong> Iphepha olikhangelayo lisusiwe okanye alikho.</p>
+    <p>
+      <a class="button" href="/">Go to the home page</a>
+      <a class="button" href="/xh/" lang="xh-ZA" style="margin-left: 0.5rem;">Buyela ekhaya</a>
+    </p>
   </section>
 </Base>

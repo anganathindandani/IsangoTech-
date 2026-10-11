@@ -1,8 +1,9 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CallToAction from "../../components/CallToAction.astro";
-import { allSolutions, type Industry } from "../../data/industries";
-import { stages } from "../../data/stages";
+import { allSolutions, industryFor, type Industry } from "../../data/industries";
+import { stagesFor } from "../../data/stages";
+import { langOf, localize, pick } from "../../i18n";
 
 export function getStaticPaths() {
   return allSolutions.map((industry) => ({ params: { slug: industry.slug }, props: { industry } }));
@@ -12,46 +13,84 @@ interface Props {
   industry: Industry;
 }
 
-const { industry } = Astro.props;
+const lang = langOf(Astro.url);
+const L = (path: string) => localize(path, lang);
+const industry = industryFor(Astro.props.industry, lang);
+const stages = stagesFor(lang);
 
 // What people type into Google, with the place.
-const searchTitles: Record<string, string> = {
-  salons: "Salon websites and bookings in East London",
-  restaurants: "Restaurant websites and bookings, East London",
-  caterers: "Websites and quoting for caterers, East London",
-  guesthouses: "Guesthouse bookings on WhatsApp, East London",
-  "other-small-businesses": "Small business automation in East London",
-};
+const searchTitles: Record<string, string> = pick(lang, {
+  en: {
+    salons: "Salon websites and bookings in East London",
+    restaurants: "Restaurant websites and bookings, East London",
+    caterers: "Websites and quoting for caterers, East London",
+    guesthouses: "Guesthouse bookings on WhatsApp, East London",
+    "other-small-businesses": "Small business automation in East London",
+  },
+  xh: {
+    salons: "Ii-website nee-booking zeesalon eMonti",
+    restaurants: "Ii-website nee-booking zeerestyu, eMonti",
+    caterers: "Ii-website neekowuti zabapheki beminyhadala, eMonti",
+    guesthouses: "Ii-booking ze-WhatsApp zeendlu zeendwendwe, eMonti",
+    "other-small-businesses": "I-automation yamashishini amancinci eMonti",
+  },
+});
+const w = pick(lang, {
+  en: {
+    description: `${industry.tagline} How IsangoTech helps ${industry.name.toLowerCase()} in East London and the Eastern Cape, from a website to booking systems and AI automation.`,
+    crumb: "Solutions",
+    familiar: "Sound familiar?",
+    path: "What we do at each stage",
+    pathLead: "Start where you are. Each step builds on the last, so nothing you pay for gets thrown away.",
+    stage: "Stage",
+    startAt: (n: number) => `Start at stage ${n} →`,
+    demo: "See it working",
+    watch: "Watch the demo",
+    talk: `Let's talk about your ${industry.noun}`,
+  },
+  xh: {
+    description: `${industry.tagline} I-IsangoTech incedisa amashishini anje eMonti naseMpuma Koloni, ukusuka kwi-website ukuya kwii-booking nakwi-AI automation.`,
+    crumb: "Izisombululo",
+    familiar: "Ingaba oku kuyaqhelekile kuwe?",
+    path: "Esikwenzayo kwinqanaba ngalinye",
+    pathLead: "Qala apho ukhoyo. Inyathelo ngalinye lakhela kwelingaphambili, ngoko akukho nto oyihlawulelayo elahlwayo.",
+    stage: "Inqanaba",
+    startAt: (n: number) => `Qala kwinqanaba ${n} →`,
+    demo: "Yibone isebenza",
+    watch: "Bukela umboniso",
+    talk: industry.talkAbout ?? "Masithethe ngeshishini lakho",
+  },
+});
 ---
 
 <Base
   title={industry.name}
   searchTitle={searchTitles[industry.slug]}
-  description={`${industry.tagline} How IsangoTech helps ${industry.name.toLowerCase()} in East London and the Eastern Cape, from a website to booking systems and AI automation.`}
+  description={w.description}
 >
   <section class="hero">
     <div class="container">
-      <p class="crumb"><a href="/solutions">Solutions</a></p>
+      <p class="crumb"><a href={L("/solutions")}>{w.crumb}</a></p>
       <h1>{industry.name}</h1>
       <p class="tagline">{industry.tagline}</p>
     </div>
   </section>
 
   <section class="container pains" aria-labelledby="pains-heading">
-    <h2 id="pains-heading">Sound familiar?</h2>
+    <h2 id="pains-heading">{w.familiar}</h2>
     <ul>{industry.pains.map((p) => <li>{p}</li>)}</ul>
   </section>
 
   <section class="container" aria-labelledby="path-heading">
-    <h2 id="path-heading">What we do at each stage</h2>
-    <p>Start where you are. Each step builds on the last, so nothing you pay for gets thrown away.</p>
+    <h2 id="path-heading">{w.path}</h2>
+    <p>{w.pathLead}</p>
     <ol class="path">
       {
         stages.map((s) => (
           <li>
-            <span class="num">Stage {s.number} · {s.name}</span>
+            <span class="num">{w.stage} {s.number} · {s.name}</span>
             <p>{industry.byStage[s.number]}</p>
-            <a href={`/get-started?stage=${s.number}`}>Start at stage {s.number} →</a>
+            <a href={`${L("/get-started")}?stage=${s.number}`}>{w.startAt(s.number)}</a>
           </li>
         ))
       }
@@ -61,15 +100,15 @@ const searchTitles: Record<string, string> = {
   {
     industry.demoVideo && (
       <section class="container demo" aria-labelledby="demo-heading">
-        <h2 id="demo-heading">See it working</h2>
+        <h2 id="demo-heading">{w.demo}</h2>
         <a class="button" href={industry.demoVideo}>
-          Watch the demo
+          {w.watch}
         </a>
       </section>
     )
   }
 
-  <CallToAction heading={`Let's talk about your ${industry.noun}`} />
+  <CallToAction heading={w.talk} />
 </Base>
 
 <style>

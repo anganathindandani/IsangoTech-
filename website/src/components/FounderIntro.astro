@@ -1,7 +1,14 @@
 ---
 // Home page: a short introduction to the founder, linking to the full story on About.
-import { site } from "../site";
+import { site, siteText } from "../site";
+import { langOf, localize, pick } from "../i18n";
 const f = site.founder;
+const lang = langOf(Astro.url);
+const t = siteText[lang];
+const w = pick(lang, {
+  en: { eyebrow: "Meet the founder", more: "See more", alt: `${f.name}, ${f.role} of IsangoTech` },
+  xh: { eyebrow: "Dibana nomseki", more: "Funda ngakumbi", alt: `${f.name}, umseki we-IsangoTech` },
+});
 ---
 
 {
@@ -15,15 +22,15 @@ const f = site.founder;
           width="480"
           height="480"
           loading="lazy"
-          alt={`${f.name}, ${f.role} of IsangoTech`}
+          alt={w.alt}
         />
       </figure>
       <div class="words">
-        <p class="eyebrow">Meet the founder</p>
+        <p class="eyebrow">{w.eyebrow}</p>
         <h2 id="intro-heading">{f.name}</h2>
-        <p>{f.intro}</p>
-        <a class="more" href="/about/#founder">
-          See more <span class="arrow" aria-hidden="true">→</span>
+        <p>{t.founderIntro}</p>
+        <a class="more" href={`${localize("/about", lang)}/#founder`}>
+          {w.more} <span class="arrow" aria-hidden="true">→</span>
         </a>
       </div>
     </section>

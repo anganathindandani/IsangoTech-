@@ -2,53 +2,90 @@
 import Base from "../layouts/Base.astro";
 import CallToAction from "../components/CallToAction.astro";
 import Beadwork from "../components/Beadwork.astro";
-import { site } from "../site";
+import { site, siteText } from "../site";
+import { langOf, pick } from "../i18n";
 
-const values = [
-  { name: "Results over hype", text: "We measure our work by time saved and customers won, not by buzzwords." },
-  { name: "Honesty", text: "If you don't need something yet, we'll tell you. Clear prices, no surprises." },
-  { name: "Responsibility", text: "We look after your data and your customers' data as carefully as our own." },
-  { name: "Partnership", text: "We grow with you, one stage at a time, and stay around after go-live." },
-];
+const lang = langOf(Astro.url);
+const t = siteText[lang];
+const w = pick(lang, {
+  en: {
+    title: "About",
+    searchTitle: "Our story and founder, East London",
+    description: "IsangoTech is an East London technology business founded by Anganathi Ndandani, helping Eastern Cape small businesses get found, answer every enquiry and automate admin.",
+    h1: "About IsangoTech",
+    lead: "<em>Isango</em> means gate. We named the business for what we want to be for small businesses: the way through to smarter, simpler ways of working.",
+    why: "Why we exist",
+    why1: "Small businesses are the heart of East London and the Eastern Cape, but most software is built for big companies with big budgets. Owners end up running their business from WhatsApp threads, notebooks and spreadsheets, and losing customers and hours along the way.",
+    why2: "We build the tools that close that gap: a website that gets you found, simple systems that catch every enquiry, a portal that runs your day, and automation that takes the repetitive work off your plate. We start where your business is today and grow with you.",
+    vision: "Our vision",
+    visionText: "Every small business in South Africa running on tools that work as hard as its owner does.",
+    mission: "Our mission",
+    missionText: "Help small businesses get found, capture customers, run their operations and automate repetitive work, in plain language and at a fair price.",
+    meet: "Meet the founder",
+    role: `${site.founder.role}, IsangoTech`,
+    alt: `${site.founder.name}, ${site.founder.role} of IsangoTech`,
+    valuesHeading: "What we stand for",
+    values: [
+      { name: "Results over hype", text: "We measure our work by time saved and customers won, not by buzzwords." },
+      { name: "Honesty", text: "If you don't need something yet, we'll tell you. Clear prices, no surprises." },
+      { name: "Responsibility", text: "We look after your data and your customers' data as carefully as our own." },
+      { name: "Partnership", text: "We grow with you, one stage at a time, and stay around after go-live." },
+    ],
+    roots: "Proudly African, rooted in East London",
+    rootsText: "We started in East London and we're building for the Eastern Cape and the rest of South Africa. We work in person when it helps and online when it's quicker, and we understand the businesses we serve because they're our neighbours.",
+  },
+  xh: {
+    title: "Ngathi",
+    searchTitle: "Ibali lethu nomseki, eMonti",
+    description: "I-IsangoTech lishishini lobuchwepheshe laseMonti elasekwa nguAnganathi Ndandani, elincedisa amashishini amancinci aseMpuma Koloni ukuba afumaneke, aphendule wonke umbuzo, kwaye i-admin yenzeke ngokuzenzekelayo.",
+    h1: "Malunga ne-IsangoTech",
+    lead: "Ishishini salinika igama elithi <em>isango</em> ngenxa yento esifuna ukuba yiyo kumashishini amancinci: indlela yokungena kwiindlela zokusebenza ezikrelekrele nezilula.",
+    why: "Kutheni sikhona",
+    why1: "Amashishini amancinci yintliziyo yaseMonti naseMpuma Koloni, kodwa uninzi lwe-software lwenzelwe iinkampani ezinkulu ezinemali eninzi. Abanini bagqibela beqhuba amashishini abo ngemicu ye-WhatsApp, iincwadana nee-spreadsheet, bephulukana nabathengi neeyure endleleni.",
+    why2: "Sakha izixhobo ezivala eso sithuba: i-website ekwenza ufumaneke, iinkqubo ezilula ezibamba wonke umbuzo, i-portal eqhuba usuku lwakho, ne-automation ekususela imisebenzi ephindaphindwayo. Siqala apho ishishini lakho likhoyo namhlanje, size sikhule nawe.",
+    vision: "Umbono wethu",
+    visionText: "Lonke ishishini elincinci eMzantsi Afrika lisebenzisa izixhobo ezisebenza nzima njengomnini walo.",
+    mission: "Injongo yethu",
+    missionText: "Ukunceda amashishini amancinci afumaneke, afumane abathengi, aqhube imisebenzi yawo, kwaye imisebenzi ephindaphindwayo yenzeke ngokuzenzekelayo, ngolwimi olucacileyo nangexabiso elifanelekileyo.",
+    meet: "Dibana nomseki",
+    role: "Umseki we-IsangoTech",
+    alt: `${site.founder.name}, umseki we-IsangoTech`,
+    valuesHeading: "Esimela kuko",
+    values: [
+      { name: "Iziphumo ngaphezu kwengxolo", text: "Silinganisa umsebenzi wethu ngexesha elongiweyo nabathengi abafunyenweyo, hayi ngamagama amnandi." },
+      { name: "Ukunyaniseka", text: "Ukuba awukayidingi into, siza kukuxelela. Amaxabiso acacileyo, akukho zimanga." },
+      { name: "Uxanduva", text: "Sikhathalela idatha yakho nedatha yabathengi bakho ngononophelo njengeyethu." },
+      { name: "Intsebenziswano", text: "Sikhula nawe, inqanaba ngenqanaba, kwaye sihlala nawe emva kokuba inkqubo iqalile ukusebenza." },
+    ],
+    roots: "Simi ngobu-Afrika, sineengcambu eMonti",
+    rootsText: "Saqala eMonti kwaye sakhela iMpuma Koloni nawo wonke uMzantsi Afrika. Sidibana ebusweni xa kunceda nakwi-intanethi xa kukhawuleza ngakumbi, kwaye siyawaqonda amashishini esiwakhonzayo kuba ngabamelwane bethu.",
+  },
+});
+const values = w.values;
 ---
 
-<Base title="About" searchTitle="Our story and founder, East London"
-  description="IsangoTech is an East London technology business founded by Anganathi Ndandani, helping Eastern Cape small businesses get found, answer every enquiry and automate admin.">
+<Base title={w.title} searchTitle={w.searchTitle} description={w.description}>
   <section class="hero">
     <div class="container">
-      <h1>About IsangoTech</h1>
-      <p class="lead">
-        <em>Isango</em> means gate. We named the business for what we want to be for small businesses: the way through
-        to smarter, simpler ways of working.
-      </p>
+      <h1>{w.h1}</h1>
+      <p class="lead" set:html={w.lead} />
     </div>
   </section>
   <Beadwork />
 
   <section class="container story">
-    <h2>Why we exist</h2>
-    <p>
-      Small businesses are the heart of East London and the Eastern Cape, but most software is built for big companies
-      with big budgets. Owners end up running their business from WhatsApp threads, notebooks and spreadsheets, and
-      losing customers and hours along the way.
-    </p>
-    <p>
-      We build the tools that close that gap: a website that gets you found, simple systems that catch every enquiry,
-      a portal that runs your day, and automation that takes the repetitive work off your plate. We start where your
-      business is today and grow with you.
-    </p>
+    <h2>{w.why}</h2>
+    <p>{w.why1}</p>
+    <p>{w.why2}</p>
 
     <div class="pair">
       <div>
-        <h2>Our vision</h2>
-        <p>Every small business in South Africa running on tools that work as hard as its owner does.</p>
+        <h2>{w.vision}</h2>
+        <p>{w.visionText}</p>
       </div>
       <div>
-        <h2>Our mission</h2>
-        <p>
-          Help small businesses get found, capture customers, run their operations and automate repetitive work, in
-          plain language and at a fair price.
-        </p>
+        <h2>{w.mission}</h2>
+        <p>{w.missionText}</p>
       </div>
     </div>
   </section>
@@ -64,21 +101,21 @@ const values = [
             width="960"
             height="960"
             loading="lazy"
-            alt={`${site.founder.name}, ${site.founder.role} of IsangoTech`}
+            alt={w.alt}
           />
         </figure>
         <div class="words">
-          <p class="eyebrow">Meet the founder</p>
+          <p class="eyebrow">{w.meet}</p>
           <h2 id="founder-heading">{site.founder.name}</h2>
-          <p class="role">{site.founder.role}, IsangoTech</p>
-          {site.founder.story.map((paragraph) => <p>{paragraph}</p>)}
+          <p class="role">{w.role}</p>
+          {t.founderStory.map((paragraph) => <p>{paragraph}</p>)}
         </div>
       </section>
     )
   }
 
   <section class="container values-section" aria-labelledby="values-heading">
-    <h2 id="values-heading">What we stand for</h2>
+    <h2 id="values-heading">{w.valuesHeading}</h2>
     <ul class="values">
       {
         values.map((v) => (
@@ -92,12 +129,8 @@ const values = [
   </section>
 
   <section class="container roots">
-    <h2>Proudly African, rooted in East London</h2>
-    <p>
-      We started in East London and we're building for the Eastern Cape and the rest of South Africa. We work in person
-      when it helps and online when it's quicker, and we understand the businesses we serve because they're our
-      neighbours.
-    </p>
+    <h2>{w.roots}</h2>
+    <p>{w.rootsText}</p>
   </section>
 
   <CallToAction />

@@ -2,22 +2,37 @@
 // The business plan's founding-client offer: a discount for the first clients in
 // exchange for a testimonial and a case study. Remove this component once the
 // five spots are taken.
+import { langOf, localize, pick } from "../i18n";
+const lang = langOf(Astro.url);
+const w = pick(lang, {
+  en: {
+    eyebrow: "Founding client offer",
+    heading: "Up to 40% off setup for our first five clients",
+    text: "We're choosing five East London businesses to grow with. You get up to 40% off your setup fee. In return, we ask for a short testimonial and permission to share your results as a case study.",
+    small: "Applies to setup fees. Monthly fees are the standard price.",
+    button: "Ask about a founding spot",
+  },
+  xh: {
+    eyebrow: "Isaphulelo sabathengi bokuqala",
+    heading: "Ukuya kwi-40% isaphulelo sokuseta kubathengi bethu abahlanu bokuqala",
+    text: "Sikhetha amashishini amahlanu aseMonti esiza kukhula nawo. Ufumana isaphulelo ukuya kwi-40% kwintlawulo yokuseta. Nathi sicela ubungqina obufutshane nemvume yokwabelana ngeziphumo zakho njengomzekelo womsebenzi wethu.",
+    small: "Kusebenza kwiintlawulo zokuseta. Iintlawulo zenyanga zixabiso eliqhelekileyo.",
+    button: "Buza ngendawo yabathengi bokuqala",
+  },
+});
 ---
 
 <section class="founding" aria-labelledby="founding-heading">
   <div class="container">
     <div class="card" data-reveal-group>
       <div class="words">
-        <p class="eyebrow">Founding client offer</p>
-        <h2 id="founding-heading">Up to 40% off setup for our first five clients</h2>
-        <p>
-          We're choosing five East London businesses to grow with. You get up to 40% off your setup fee. In return, we
-          ask for a short testimonial and permission to share your results as a case study.
-        </p>
-        <p class="small">Applies to setup fees. Monthly fees are the standard price.</p>
+        <p class="eyebrow">{w.eyebrow}</p>
+        <h2 id="founding-heading">{w.heading}</h2>
+        <p>{w.text}</p>
+        <p class="small">{w.small}</p>
       </div>
-      <a class="button" href="/get-started?founding=1">
-        Ask about a founding spot <span class="arrow" aria-hidden="true">→</span>
+      <a class="button" href={`${localize("/get-started", lang)}?founding=1`}>
+        {w.button} <span class="arrow" aria-hidden="true">→</span>
       </a>
     </div>
   </div>

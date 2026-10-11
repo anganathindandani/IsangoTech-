@@ -5,7 +5,8 @@ import "@fontsource/dm-sans/latin-400.css";
 import "@fontsource/dm-sans/latin-500.css";
 import "../styles/global.css";
 import Beadwork from "../components/Beadwork.astro";
-import { nav, site } from "../site";
+import { nav, site, siteText } from "../site";
+import { counterpart, langNames, langOf, localize, pick, type Lang } from "../i18n";
 
 interface Props {
   title?: string;
@@ -16,13 +17,23 @@ interface Props {
   noindex?: boolean;
 }
 
-const { title, searchTitle, description = site.description, noindex = false } = Astro.props;
+const lang = langOf(Astro.url);
+const other: Lang = lang === "en" ? "xh" : "en";
+const words = siteText[lang];
+const L = (path: string) => localize(path, lang);
+const { title, searchTitle, description = words.description, noindex = false } = Astro.props;
 const pageTitle = searchTitle
   ? `${searchTitle} · ${site.name}`
   : title
     ? `${title} · ${site.name}`
-    : `${site.name} · ${site.tagline}`;
+    : `${site.name} · ${words.tagline}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
+// The same page in each language, for the switcher and for search engines.
+const alternates = { en: new URL(counterpart(Astro.url.pathname, "en"), Astro.site), xh: new URL(counterpart(Astro.url.pathname, "xh"), Astro.site) };
+const ui = pick(lang, {
+  en: { skip: "Skip to content", home: `${site.name} home`, menu: "Menu", main: "Main", footer: "Footer", getStarted: "Get started", privacy: "Privacy policy", terms: "Terms", reg: "Reg. no.", whatsapp: "WhatsApp us", whatsappLabel: "Chat with us on WhatsApp", switchLabel: "Read this page in isiXhosa", language: "Language" },
+  xh: { skip: "Tsiba uye kumxholo", home: `Ikhaya le-${site.name}`, menu: "Imenyu", main: "Okuphambili", footer: "Ezantsi", getStarted: "Qalisa", privacy: "Umgaqo-nkqubo wabucala", terms: "Imiqathango", reg: "Inombolo yobhaliso", whatsapp: "Sithumelele i-WhatsApp", whatsappLabel: "Ncokola nathi kwi-WhatsApp", switchLabel: "Read this page in English", language: "Ulwimi" },
+});
 const shareImage = new URL("/share.png", Astro.site);
 
 // What Google shows for the business in search and Maps. Empty details are left out.
@@ -31,8 +42,8 @@ const business = {
   "@type": "ProfessionalService",
   "@id": new URL("/#business", Astro.site).href,
   name: site.name,
-  slogan: site.tagline,
-  description: site.description,
+  slogan: words.tagline,
+  description: words.description,
   url: new URL("/", Astro.site).href,
   logo: new URL("/apple-touch-icon.png", Astro.site).href,
   image: shareImage.href,
@@ -50,7 +61,7 @@ const business = {
 };
 const whatsappLink = site.whatsappNumber ? `https://wa.me/${site.whatsappNumber}` : null;
 const current = Astro.url.pathname.replace(/\/$/, "") || "/";
-const isCurrent = (href: string) => current === href || current.startsWith(`${href}/`);
+const isCurrentPath = (href: string) => current === L(href) || current.startsWith(`${L(href)}/`);
 const socialLinks = [
   { href: site.social.facebook, label: "Facebook" },
   { href: site.social.instagram, label: "Instagram" },
@@ -61,17 +72,26 @@ const year = new Date().getFullYear();
 ---
 
 <!doctype html>
-<html lang="en-ZA">
+<html lang={lang === "xh" ? "xh-ZA" : "en-ZA"}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {
+      !noindex && (
+        <>
+          <link rel="alternate" hreflang="en-ZA" href={alternates.en} />
+          <link rel="alternate" hreflang="xh-ZA" href={alternates.xh} />
+          <link rel="alternate" hreflang="x-default" href={alternates.en} />
+        </>
+      )
+    }
     {noindex && <meta name="robots" content="noindex" />}
     <link rel="sitemap" href="/sitemap.xml" />
     <meta property="og:site_name" content={site.name} />
-    <meta property="og:locale" content="en_ZA" />
+    <meta property="og:locale" content={lang === "xh" ? "xh_ZA" : "en_ZA"} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonical} />
     <meta property="og:title" content={pageTitle} />
@@ -79,7 +99,7 @@ const year = new Date().getFullYear();
     <meta property="og:image" content={shareImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content={`${site.name}: ${site.tagline}`} />
+    <meta property="og:image:alt" content={`${site.name}: ${words.tagline}`} />
     <meta name="twitter:card" content="summary_large_image" />
     <script type="application/ld+json" set:html={JSON.stringify(business)} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -99,33 +119,36 @@ const year = new Date().getFullYear();
     </script>
   </head>
   <body>
-    <a class="skip" href="#main">Skip to content</a>
+    <a class="skip" href="#main">{ui.skip}</a>
     <header class="site-header">
       <div class="container header-inner">
-        <a href="/" class="logo" aria-label={`${site.name} home`}>
+        <a href={L("/")} class="logo" aria-label={ui.home}>
           <img src="/brand/isangotech-logo.svg" alt={site.name} width="150" height="32" />
         </a>
-        <nav class="desktop-nav" aria-label="Main">
+        <nav class="desktop-nav" aria-label={ui.main}>
           {
             nav.map((item) => (
-              <a href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>
-                {item.label}
+              <a href={L(item.href)} aria-current={isCurrentPath(item.href) ? "page" : undefined}>
+                {item.label[lang]}
               </a>
             ))
           }
         </nav>
-        <a class="button header-cta" href="/get-started">Get started</a>
+        <a class="lang-switch" href={counterpart(Astro.url.pathname, other)} hreflang={other === "xh" ? "xh-ZA" : "en-ZA"} lang={other === "xh" ? "xh-ZA" : "en-ZA"} aria-label={ui.switchLabel}>
+          {langNames[other]}
+        </a>
+        <a class="button header-cta" href={L("/get-started")}>{ui.getStarted}</a>
         <details class="mobile-nav">
-          <summary aria-label="Menu">Menu</summary>
-          <nav aria-label="Main">
+          <summary aria-label={ui.menu}>{ui.menu}</summary>
+          <nav aria-label={ui.main}>
             {
               nav.map((item) => (
-                <a href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>
-                  {item.label}
+                <a href={L(item.href)} aria-current={isCurrentPath(item.href) ? "page" : undefined}>
+                  {item.label[lang]}
                 </a>
               ))
             }
-            <a href="/get-started">Get started</a>
+            <a href={L("/get-started")}>{ui.getStarted}</a>
           </nav>
         </details>
       </div>
@@ -140,11 +163,14 @@ const year = new Date().getFullYear();
       <div class="container footer-inner">
         <div>
           <img src="/brand/isangotech-logo-reversed.svg" alt={site.name} width="160" height="34" loading="lazy" />
-          <p class="tagline">{site.tagline}</p>
+          <p class="tagline">{words.tagline}</p>
         </div>
-        <nav aria-label="Footer">
-          {nav.map((item) => <a href={item.href}>{item.label}</a>)}
-          <a href="/get-started">Get started</a>
+        <nav aria-label={ui.footer}>
+          {nav.map((item) => <a href={L(item.href)}>{item.label[lang]}</a>)}
+          <a href={L("/get-started")}>{ui.getStarted}</a>
+          <a href={counterpart(Astro.url.pathname, other)} hreflang={other === "xh" ? "xh-ZA" : "en-ZA"} lang={other === "xh" ? "xh-ZA" : "en-ZA"}>
+            {ui.language}: {langNames[other]}
+          </a>
         </nav>
         <div class="contact">
           {whatsappLink && <a href={whatsappLink}>WhatsApp</a>}
@@ -153,11 +179,11 @@ const year = new Date().getFullYear();
           {socialLinks.map((l) => <a href={l.href}>{l.label}</a>)}
         </div>
         <p class="legal">
-          <a href="/privacy">Privacy policy</a>
-          <a href="/terms">Terms</a>
+          <a href={L("/privacy")}>{ui.privacy}</a>
+          <a href={L("/terms")}>{ui.terms}</a>
           <span>
             © {year}
-            {site.name}{site.companyRegistrationNumber && ` · Reg. no. ${site.companyRegistrationNumber}`}
+            {site.name}{site.companyRegistrationNumber && ` · ${ui.reg} ${site.companyRegistrationNumber}`}
           </span>
         </p>
       </div>
@@ -165,8 +191,8 @@ const year = new Date().getFullYear();
 
     {
       whatsappLink && (
-        <a class="whatsapp" href={whatsappLink} aria-label="Chat with us on WhatsApp">
-          WhatsApp us
+        <a class="whatsapp" href={whatsappLink} aria-label={ui.whatsappLabel}>
+          {ui.whatsapp}
         </a>
       )
     }
@@ -254,6 +280,23 @@ const year = new Date().getFullYear();
   }
   .header-cta {
     display: none;
+  }
+  /* The other language, as a small pill beside the menu. */
+  .lang-switch {
+    padding: 0.3rem 0.75rem;
+    border: 1.5px solid rgb(27 42 74 / 0.2);
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--indigo);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .lang-switch:hover,
+  .lang-switch:focus-visible {
+    border-color: var(--turquoise);
+    color: var(--turquoise-text);
   }
   .mobile-nav summary {
     cursor: pointer;
