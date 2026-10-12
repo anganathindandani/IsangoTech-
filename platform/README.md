@@ -75,6 +75,7 @@ PGHOST=localhost PGUSER=postgres platform/supabase/tests/run.sh
 - `04_assistant.sql`: recording messages, free times and every tool, including that a conversation can't reach another business's services or another customer's bookings.
 - `05_dashboard.sql`: the business app's summary for each role, answering questions, and replying in person only within WhatsApp's 24-hour window.
 - `06_onboarding.sql`: only admins onboard, a new business starts switched off, and admins never see customers or chats.
+- `07_team.sql`: owners add managers and staff, staff are linked to their bookings, and setup links only for logins that belong to the business alone.
 
 The edge function's tests use a fake database, AI and WhatsApp, so they cost nothing:
 
@@ -185,6 +186,20 @@ One-time setup:
 3. **Let the setup link open the app:** in Authentication → URL Configuration, set the Site URL to `https://app.isangotech.co.za` and add `https://app.isangotech.co.za/set-password` to the Redirect URLs.
 4. **Optional: give owners longer to open the link.** By default a setup link works for an hour. Raise the expiry under Authentication → Providers → Email (up to 24 hours), so owners have time to open it.
 
+## Owners' teams
+
+Owners add managers and staff themselves on the business app's **Team** page:
+- Each person gets their own login and a setup link, which the owner shares on WhatsApp.
+- Staff are linked to a staff record, so they see their own bookings. That's either an existing one or a new one in their name.
+- Owners can change someone's role, remove them (they're locked out at once) or add them back.
+
+A setup link lets whoever opens it set the password. So owners only get links for managers and staff whose login belongs to their business alone: never for another owner, an IsangoTech admin, or someone who's also in another business. If an owner adds the email of someone who already has a login, that person gets access to the business and keeps their own password.
+
+Deploy the function once:
+
+```sh
+npx supabase functions deploy team-member --workdir platform
+```
+
 Coming next:
-- owners adding their own team;
 - booking reminders, which need message templates Meta has approved.

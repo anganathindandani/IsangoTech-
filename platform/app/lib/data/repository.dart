@@ -178,4 +178,42 @@ class Repository {
   }
 
   Future<void> setPassword(String password) => db.auth.updateUser(UserAttributes(password: password));
+
+  // Team (owners) --------------------------------------------------------------
+
+  Future<List<TeamMember>> team(String businessId) async {
+    final rows = (await db.rpc('team_members', params: {'p_business': businessId}) as List)
+        .cast<Map<String, dynamic>>();
+    return [for (final r in rows) TeamMember.fromJson(r)];
+  }
+
+  /// Adds a manager or staff member; returns their setup link, or null if they already have their own login.
+  Future<({String? setupLink, bool newLogin})> addTeamMember(
+    String businessId, {
+    required String fullName,
+    required String email,
+    required String role,
+    String? staffId,
+  }) async {
+    final res = await db.functions.invoke(
+      'team-member',
+      body: {'business_id': businessId, 'full_name': fullName, 'email': email, 'role': role, 'staff_id': staffId},
+    );
+    final data = res.data as Map<String, dynamic>;
+    return (setupLink: data['setup_link'] as String?, newLogin: data['new_login'] as bool);
+  }
+
+  Future<String> teamSetupLink(String businessId, String email) async {
+    final res = await db.functions.invoke(
+      'team-member',
+      body: {'action': 'link', 'business_id': businessId, 'email': email},
+    );
+    return (res.data as Map<String, dynamic>)['setup_link'] as String;
+  }
+
+  Future<void> updateTeamMember(String businessId, String userId, {String? role, bool? active}) => db
+      .from('business_members')
+      .update({'role': ?role, 'active': ?active})
+      .eq('business_id', businessId)
+      .eq('user_id', userId);
 }

@@ -15,7 +15,8 @@ grant usage on schema auth to anon, authenticated, service_role;
 
 create table auth.users (
   id uuid primary key default gen_random_uuid(),
-  email text
+  email text,
+  last_sign_in_at timestamptz
 );
 
 -- Authenticator apps people have set up for two-step sign-in.

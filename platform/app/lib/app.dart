@@ -16,6 +16,7 @@ import 'pages/bookings_page.dart';
 import 'pages/chat_page.dart';
 import 'pages/chats_page.dart';
 import 'pages/questions_page.dart';
+import 'pages/team_page.dart';
 import 'pages/today_page.dart';
 import 'theme.dart';
 
@@ -153,6 +154,7 @@ GoRouter buildRouter(AuthState auth) {
       // Admins who belong to no business only have the Businesses screen.
       if (auth.current == null) return here.startsWith('/admin') ? null : '/admin';
       if (here.startsWith('/admin') && !auth.isPlatformAdmin) return '/';
+      if (here.startsWith('/team') && !auth.current!.isOwner) return '/';
       // Staff only see their own bookings; the rest is for owners and managers.
       if (!auth.current!.isManager &&
           !here.startsWith('/admin') &&
@@ -186,6 +188,7 @@ GoRouter buildRouter(AuthState auth) {
           GoRoute(path: '/questions', builder: (_, _) => const QuestionsPage()),
           GoRoute(path: '/bookings', builder: (_, _) => const BookingsPage()),
           GoRoute(path: '/assistant', builder: (_, _) => const AssistantPage()),
+          GoRoute(path: '/team', builder: (_, _) => const TeamPage()),
           GoRoute(path: '/account', builder: (_, _) => const AccountPage()),
           GoRoute(path: '/admin', builder: (_, _) => const AdminPage()),
         ],
@@ -209,6 +212,7 @@ const _destinations = [
   _Dest('/questions', 'Questions', Icons.help_outline),
   _Dest('/bookings', 'Bookings', Icons.event_outlined),
   _Dest('/assistant', 'Assistant', Icons.smart_toy_outlined),
+  _Dest('/team', 'Team', Icons.group_outlined),
   _Dest('/account', 'Account', Icons.person_outline),
 ];
 
@@ -232,7 +236,7 @@ class AppShell extends StatelessWidget {
     final dests = [
       if (me != null)
         for (final d in _destinations)
-          if (me.isManager || _staffPages.contains(d.path)) d,
+          if ((me.isManager || _staffPages.contains(d.path)) && (d.path != '/team' || me.isOwner)) d,
       if (auth.isPlatformAdmin) const _Dest('/admin', 'Businesses', Icons.storefront_outlined),
       if (me == null) const _Dest('/account-signout', 'Sign out', Icons.logout),
     ];

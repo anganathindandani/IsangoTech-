@@ -294,13 +294,20 @@ class Service {
 }
 
 class StaffMember {
-  StaffMember({this.id, required this.fullName, this.active = true});
+  StaffMember({this.id, required this.fullName, this.active = true, this.hasLogin = false});
   final String? id;
   String fullName;
   bool active;
 
-  factory StaffMember.fromJson(Map<String, dynamic> j) =>
-      StaffMember(id: j['id'] as String, fullName: j['full_name'] as String, active: j['active'] as bool);
+  /// Linked to someone's login, so they see their own bookings.
+  final bool hasLogin;
+
+  factory StaffMember.fromJson(Map<String, dynamic> j) => StaffMember(
+    id: j['id'] as String,
+    fullName: j['full_name'] as String,
+    active: j['active'] as bool,
+    hasLogin: j['user_id'] != null,
+  );
 }
 
 class KnowledgeItem {
@@ -368,4 +375,36 @@ class AdminBusiness {
     'whatsapp_phone_number_id': (whatsappPhoneNumberId ?? '').trim(),
     'whatsapp_display_number': (whatsappDisplayNumber ?? '').trim(),
   };
+}
+
+/// Someone who signs in to this business.
+class TeamMember {
+  TeamMember({
+    required this.userId,
+    required this.fullName,
+    required this.email,
+    required this.role,
+    required this.active,
+    required this.signedIn,
+    this.staffName,
+  });
+  final String userId;
+  final String fullName;
+  final String email;
+  final String role;
+  final bool active;
+
+  /// Whether they've ever signed in (if not, they may still need their setup link).
+  final bool signedIn;
+  final String? staffName;
+
+  factory TeamMember.fromJson(Map<String, dynamic> j) => TeamMember(
+    userId: j['user_id'] as String,
+    fullName: j['full_name'] as String,
+    email: j['email'] as String? ?? '',
+    role: j['role'] as String,
+    active: j['active'] as bool,
+    signedIn: j['signed_in'] as bool,
+    staffName: j['staff_name'] as String?,
+  );
 }

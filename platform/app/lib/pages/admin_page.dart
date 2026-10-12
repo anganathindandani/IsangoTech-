@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../app.dart';
 import '../data/models.dart';
+import '../widgets/setup_link.dart';
 import '../widgets/ui.dart';
 
 const _industries = {
@@ -32,7 +33,7 @@ class _AdminPageState extends State<AdminPage> {
     final result = await showDialog<_Created>(context: context, builder: (_) => const _BusinessDialog());
     if (result == null || !mounted) return;
     _reload();
-    await _showLink(
+    await showSetupLink(
       context,
       title: '${result.businessName} is set up',
       intro: result.newLogin
@@ -56,7 +57,7 @@ class _AdminPageState extends State<AdminPage> {
     String? link;
     final ok = await run(context, () async => link = await repo.setupLink(email));
     if (!ok || !mounted) return;
-    await _showLink(
+    await showSetupLink(
       context,
       title: 'New setup link for $name',
       intro: 'It signs them in once so they can choose a new password.',
@@ -146,59 +147,6 @@ Color? _statusColor(String status) => switch (status) {
   'paused' || 'closed' => StatusChip.colorFor('cancelled'),
   _ => null,
 };
-
-/// Shows a setup link with buttons to copy it, or a ready-to-send WhatsApp message.
-Future<void> _showLink(
-  BuildContext context, {
-  required String title,
-  required String intro,
-  required String ownerName,
-  required String link,
-}) {
-  final message =
-      'Hi ${ownerName.split(' ').first}, welcome to IsangoTech! Open this link to choose your password for your '
-      'business dashboard: $link\n\nThe link works once, so open it soon. After that, sign in at app.isangotech.co.za.';
-  return showDialog(
-    context: context,
-    builder: (ctx) => AlertDialog(
-      title: Text(title),
-      content: SizedBox(
-        width: 520,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(intro),
-            const SizedBox(height: 12),
-            SelectableText(link, style: const TextStyle(fontSize: 12.5)),
-            const SizedBox(height: 12),
-            const Text(
-              'The link works once and expires after an hour, unless you set a longer time in Supabase.',
-              style: TextStyle(color: Colors.black54, fontSize: 13),
-            ),
-          ],
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () {
-            Clipboard.setData(ClipboardData(text: link));
-            showDone(ctx, 'Link copied.');
-          },
-          child: const Text('Copy link'),
-        ),
-        FilledButton(
-          onPressed: () {
-            Clipboard.setData(ClipboardData(text: message));
-            showDone(ctx, 'Message copied. Paste it into WhatsApp.');
-          },
-          child: const Text('Copy WhatsApp message'),
-        ),
-        TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Done')),
-      ],
-    ),
-  );
-}
 
 class _Created {
   _Created(this.businessName, this.ownerName, this.link, this.newLogin);
@@ -348,6 +296,7 @@ class _BusinessDialogState extends State<_BusinessDialog> {
                     decoration: const InputDecoration(
                       labelText: "Owner's email",
                       helperText: 'They sign in with this. No email is sent; you share a setup link on WhatsApp.',
+                      helperMaxLines: 2,
                     ),
                     keyboardType: TextInputType.emailAddress,
                     validator: (v) => RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$').hasMatch((v ?? '').trim())
