@@ -1,7 +1,7 @@
 {
   "tasks": {
-    "check": "deno check whatsapp-webhook/index.ts send-message/index.ts onboard-business/index.ts team-member/index.ts",
-    "test": "deno test whatsapp-webhook/ send-message/ onboard-business/ team-member/"
+    "check": "deno check whatsapp-webhook/index.ts send-message/index.ts onboard-business/index.ts team-member/index.ts send-reminders/index.ts",
+    "test": "deno test whatsapp-webhook/ send-message/ onboard-business/ team-member/ send-reminders/"
   },
   "fmt": {
     "lineWidth": 120

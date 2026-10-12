@@ -208,6 +208,10 @@ class AssistantSettings {
     required this.privacyNoticeUrl,
     required this.messageRetentionMonths,
     required this.assistantEnabled,
+    this.remindersEnabled = false,
+    this.reminderHoursBefore = 24,
+    this.reminderTemplate,
+    this.reminderTemplateLanguage = 'en',
   });
   Hours openingHours;
   List<String> languages;
@@ -221,6 +225,12 @@ class AssistantSettings {
   String? privacyNoticeUrl;
   int messageRetentionMonths;
   bool assistantEnabled;
+  bool remindersEnabled;
+  int reminderHoursBefore;
+
+  /// The name of the reminder template Meta approved for this business.
+  String? reminderTemplate;
+  String reminderTemplateLanguage;
 
   factory AssistantSettings.fromJson(Map<String, dynamic> j) => AssistantSettings(
     openingHours: hoursFromJson(j['opening_hours']),
@@ -235,6 +245,10 @@ class AssistantSettings {
     privacyNoticeUrl: j['privacy_notice_url'] as String?,
     messageRetentionMonths: (j['message_retention_months'] as num).toInt(),
     assistantEnabled: j['assistant_enabled'] as bool,
+    remindersEnabled: j['reminders_enabled'] as bool? ?? false,
+    reminderHoursBefore: (j['reminder_hours_before'] as num?)?.toInt() ?? 24,
+    reminderTemplate: j['reminder_template'] as String?,
+    reminderTemplateLanguage: j['reminder_template_language'] as String? ?? 'en',
   );
 
   Map<String, dynamic> toJson() => {
@@ -250,6 +264,10 @@ class AssistantSettings {
     'privacy_notice_url': (privacyNoticeUrl ?? '').trim().isEmpty ? null : privacyNoticeUrl!.trim(),
     'message_retention_months': messageRetentionMonths,
     'assistant_enabled': assistantEnabled,
+    'reminders_enabled': remindersEnabled,
+    'reminder_hours_before': reminderHoursBefore,
+    'reminder_template': (reminderTemplate ?? '').trim().isEmpty ? null : reminderTemplate!.trim(),
+    'reminder_template_language': reminderTemplateLanguage.trim(),
   };
 }
 

@@ -68,5 +68,8 @@ void main() {
     });
     expect(j['deposit_percent'], 20);
     expect(j['privacy_notice_url'], isNull);
+    expect(j['reminders_enabled'], isFalse, reason: 'reminders default to off');
+    s.reminderTemplate = '  ';
+    expect(s.toJson()['reminder_template'], isNull, reason: 'an empty template name is saved as none');
   });
 }

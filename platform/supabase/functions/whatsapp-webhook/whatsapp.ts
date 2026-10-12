@@ -95,3 +95,30 @@ export async function sendText(
   if (!res.ok) throw new Error(`WhatsApp send failed (${res.status}): ${data?.error?.message ?? "unknown error"}`);
   return String(data?.messages?.[0]?.id ?? "");
 }
+
+/** Sends an approved message template with body parameters ({{1}}, {{2}}, ...); returns WhatsApp's message id. */
+export async function sendTemplate(
+  config: { accessToken: string; graphVersion: string },
+  phoneNumberId: string,
+  to: string,
+  template: { name: string; language: string; parameters: string[] },
+  fetcher: typeof fetch = fetch,
+): Promise<string> {
+  const res = await fetcher(`https://graph.facebook.com/${config.graphVersion}/${phoneNumberId}/messages`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${config.accessToken}`, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      messaging_product: "whatsapp",
+      to,
+      type: "template",
+      template: {
+        name: template.name,
+        language: { code: template.language },
+        components: [{ type: "body", parameters: template.parameters.map((text) => ({ type: "text", text })) }],
+      },
+    }),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(`WhatsApp template failed (${res.status}): ${data?.error?.message ?? "unknown error"}`);
+  return String(data?.messages?.[0]?.id ?? "");
+}

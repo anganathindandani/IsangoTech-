@@ -76,6 +76,7 @@ PGHOST=localhost PGUSER=postgres platform/supabase/tests/run.sh
 - `05_dashboard.sql`: the business app's summary for each role, answering questions, and replying in person only within WhatsApp's 24-hour window.
 - `06_onboarding.sql`: only admins onboard, a new business starts switched off, and admins never see customers or chats.
 - `07_team.sql`: owners add managers and staff, staff are linked to their bookings, and setup links only for logins that belong to the business alone.
+- `08_reminders.sql`: which bookings are due, each claimed once, retries, and a moved booking re-armed.
 
 The edge function's tests use a fake database, AI and WhatsApp, so they cost nothing:
 
@@ -201,5 +202,41 @@ Deploy the function once:
 npx supabase functions deploy team-member --workdir platform
 ```
 
+## Booking reminders
+
+Outside WhatsApp's 24-hour window, a business may only send message templates Meta has approved. Reminders work like this:
+
+1. **The owner switches them on** under Assistant → Reminders. They set how many hours before (24 by default) and the name of their approved template. The page shows the exact template text to submit to Meta: category **Utility**, name `booking_reminder`, with `{{1}}` first name, `{{2}}` service, `{{3}}` business, `{{4}}` day and `{{5}}` time.
+2. **Every 15 minutes**, `send-reminders` claims the reminders due and sends them. Due means:
+   - a pending or confirmed booking;
+   - starting within the window, and more than an hour away;
+   - for a customer who booked on WhatsApp or agreed to WhatsApp updates.
+3. **Each reminder is recorded** in the customer's chat, and counted as a template message in usage.
+4. **Each booking is reminded once.**
+   - A claim holds for 10 minutes, so runs never send the same one twice.
+   - A failed send is retried after 10 minutes, at most three times.
+   - Moving a booking re-arms its reminder.
+
+One-time setup:
+1. `npx supabase db push --workdir platform`.
+2. Make up a long random secret: `openssl rand -hex 32`.
+3. Deploy the function with that secret:
+   ```sh
+   npx supabase secrets set --workdir platform REMINDERS_SECRET=<the secret>
+   npx supabase functions deploy send-reminders --workdir platform --no-verify-jwt
+   ```
+4. **Schedule it** in the SQL editor. First switch on the `pg_net` extension under Database → Extensions; `pg_cron` is already on. Then run:
+   ```sql
+   select cron.schedule('send-reminders', '*/15 * * * *', $$
+     select net.http_post(
+       url := 'https://<platform ref>.supabase.co/functions/v1/send-reminders',
+       headers := jsonb_build_object('Content-Type', 'application/json', 'X-Cron-Secret', '<the secret>'),
+       body := '{}'::jsonb
+     )
+   $$);
+   ```
+5. **Optional:** set `WHATSAPP_TEMPLATE_COST_ZAR` to what Meta charges per template message, so usage shows the cost. Check Meta's current rate card for South Africa.
+6. **For each business,** create the template in that business's WhatsApp Manager. Once Meta approves it, switch reminders on in the app.
+
 Coming next:
-- booking reminders, which need message templates Meta has approved.
+- deposits paid by link, and sending the deposit request with the booking confirmation.

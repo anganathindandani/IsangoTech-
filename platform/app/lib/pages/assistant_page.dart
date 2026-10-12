@@ -51,6 +51,10 @@ class _SettingsSectionState extends State<_SettingsSection> {
       showError(context, StateError('Choose at least one language.'));
       return;
     }
+    if (s.remindersEnabled && (s.reminderTemplate ?? '').trim().isEmpty) {
+      showError(context, StateError("Add your reminder template's name, or switch reminders off."));
+      return;
+    }
     setState(() => _saving = true);
     await run(
       context,
@@ -229,6 +233,56 @@ class _SettingsSectionState extends State<_SettingsSection> {
                   onChanged: (v) => s.depositPercent = v,
                 ),
               const Divider(height: 32),
+              Text('Reminders', style: Theme.of(context).textTheme.titleSmall),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('Send booking reminders on WhatsApp'),
+                subtitle: const Text(
+                  'To customers who booked on WhatsApp or agreed to updates. One reminder per booking; a moved '
+                  'booking gets a new one.',
+                ),
+                value: s.remindersEnabled,
+                onChanged: (v) => setState(() => s.remindersEnabled = v),
+              ),
+              if (s.remindersEnabled) ...[
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 16,
+                  runSpacing: 12,
+                  children: [
+                    _NumberField(
+                      label: 'Hours before the booking',
+                      value: s.reminderHoursBefore,
+                      min: 1,
+                      max: 72,
+                      onChanged: (v) => s.reminderHoursBefore = v,
+                    ),
+                    SizedBox(
+                      width: 260,
+                      child: TextFormField(
+                        initialValue: s.reminderTemplate ?? '',
+                        decoration: const InputDecoration(labelText: 'Template name, as approved by Meta'),
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (v) => (v ?? '').trim().isEmpty || RegExp(r'^[a-z0-9_]+$').hasMatch(v!.trim())
+                            ? null
+                            : 'Small letters, numbers and _ only',
+                        onChanged: (v) => s.reminderTemplate = v,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 120,
+                      child: TextFormField(
+                        initialValue: s.reminderTemplateLanguage,
+                        decoration: const InputDecoration(labelText: 'Language', helperText: 'e.g. en'),
+                        onChanged: (v) => s.reminderTemplateLanguage = v,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                const _TemplateHelp(),
+              ],
+              const Divider(height: 32),
               Text('Privacy', style: Theme.of(context).textTheme.titleSmall),
               const SizedBox(height: 8),
               TextFormField(
@@ -252,6 +306,48 @@ class _SettingsSectionState extends State<_SettingsSection> {
           ),
         );
       },
+    );
+  }
+}
+
+/// The reminder template to submit to Meta, so its {{1}} to {{5}} match what the reminders fill in.
+class _TemplateHelp extends StatelessWidget {
+  const _TemplateHelp();
+
+  static const body =
+      'Hi {{1}}, this is a reminder of your {{2}} at {{3}} on {{4}} at {{5}}. '
+      'Reply to this message if you need to change or cancel.';
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(color: const Color(0xFFF5EBDD), borderRadius: BorderRadius.circular(8)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "WhatsApp only allows reminders that Meta has approved. In Meta's WhatsApp Manager, create a template "
+            'named booking_reminder, category Utility, with this text:',
+          ),
+          const SizedBox(height: 8),
+          const SelectableText(body, style: TextStyle(fontWeight: FontWeight.w500)),
+          const SizedBox(height: 4),
+          const Text(
+            '{{1}} is the customer\'s first name, {{2}} the service, {{3}} your business, {{4}} the day and {{5}} '
+            'the time. Approval usually takes minutes to a day.',
+            style: TextStyle(fontSize: 13, color: Colors.black54),
+          ),
+          TextButton.icon(
+            onPressed: () {
+              Clipboard.setData(const ClipboardData(text: body));
+              showDone(context, 'Template text copied.');
+            },
+            icon: const Icon(Icons.copy, size: 18),
+            label: const Text('Copy the text'),
+          ),
+        ],
+      ),
     );
   }
 }
