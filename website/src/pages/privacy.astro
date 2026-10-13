@@ -4,6 +4,7 @@ import Prose from "../components/Prose.astro";
 import { site } from "../site";
 
 const officer = site.informationOfficer;
+const deleteEmail = officer.email || site.email;
 ---
 
 <Base title="Privacy policy" description="How IsangoTech collects, uses and protects personal information under POPIA.">
@@ -61,6 +62,38 @@ const officer = site.informationOfficer;
       Only our staff can see your information. Each person signs in with their own password, with the option of a
       second check on their phone, and sees only what their work needs. We keep a record of who changes or exports information, and access is
       removed the day someone leaves.
+    </p>
+
+    <h2 id="whatsapp-assistant">The WhatsApp Assistant</h2>
+    <p>
+      Some of our clients use our WhatsApp Assistant to answer their customers and take bookings. If you message one of
+      those businesses on WhatsApp, the business is the responsible party for your information and we process it on its
+      behalf, only to provide the service it asked for.
+    </p>
+    <p>To do that we receive, through WhatsApp's own Business Platform (run by Meta):</p>
+    <ul>
+      <li>your WhatsApp number and the name on your WhatsApp profile</li>
+      <li>the messages you send the business, and the replies sent to you</li>
+      <li>any bookings you make, change or cancel</li>
+    </ul>
+    <p>
+      We use this only to reply to you, manage your bookings and send the reminders you agreed to. Your messages are
+      passed to an AI model (through OpenRouter, which connects us to providers such as Anthropic) to write the
+      Assistant's replies. Those providers may process data outside South Africa, and we use them only on terms that
+      stop them keeping your messages or training their models on them. We never sell this information, use it for
+      advertising, or share it with any business other than the one you messaged.
+    </p>
+    <p>
+      Chat messages are deleted automatically after the period the business chooses, 12 months unless it sets a shorter
+      one. Bookings are kept as part of the business's records.
+    </p>
+
+    <h2 id="delete-your-data">Deleting your data</h2>
+    <p>
+      To have your information deleted, email <a href={`mailto:${deleteEmail}`}>{deleteEmail}</a> from your own address,
+      or send a WhatsApp message to the business you dealt with, saying "Delete my data". Tell us the phone number you
+      used. We'll confirm who you are, delete your messages, contact details and bookings (or remove your name and number
+      from records the business must keep by law, such as invoices), and confirm in writing within 30 days.
     </p>
 
     <h2>Your rights</h2>

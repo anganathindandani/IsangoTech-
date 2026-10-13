@@ -62,6 +62,9 @@ export function openRouter(
           reasoning: { effort: "low" },
           // Asks OpenRouter to report what each call cost.
           usage: { include: true },
+          // Only providers that don't store customers' messages or train on them,
+          // as the privacy policy promises.
+          provider: { data_collection: "deny" },
         }),
         signal: AbortSignal.timeout(45_000),
       });

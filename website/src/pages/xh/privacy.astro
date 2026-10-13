@@ -5,6 +5,7 @@ import Prose from "../../components/Prose.astro";
 import { site } from "../../site";
 
 const officer = site.informationOfficer;
+const deleteEmail = officer.email || site.email;
 ---
 
 <Base title="Umgaqo-nkqubo wabucala" description="Isishwankathelo sendlela i-IsangoTech eqokelela, esebenzisa nekhusela ngayo iinkcukacha zakho ngokwe-POPIA.">
@@ -38,6 +39,25 @@ const officer = site.informationOfficer;
     <p>
       Ukuba awubi ngumthengi, siyazicima iinkcukacha zakho emva kweenyanga ezili-12 ungaqhagamshelani nathi. Ukuba uba
       ngumthengi, sizigcina ixesha lonke sisebenza kunye, nangexesha elifunwa ngumthetho kwiirekhodi zezimali.
+    </p>
+
+    <h2 id="whatsapp-assistant">I-WhatsApp Assistant</h2>
+    <p>
+      Abanye babathengi bethu basebenzisa i-WhatsApp Assistant yethu ukuphendula abathengi babo nokuthatha ii-booking.
+      Ukuba uthumela umyalezo kwelo shishini kwi-WhatsApp, ishishini linoxanduva lweenkcukacha zakho, thina sizisebenzisa
+      egameni lalo kuphela. Sifumana inombolo yakho ye-WhatsApp, igama elikwiprofayili yakho, imiyalezo yakho nee-booking
+      zakho, ngeqonga le-WhatsApp Business (eliqhutywa yiMeta). Imiyalezo yakho idlula kwimodeli ye-AI (nge-OpenRouter)
+      ukubhala iimpendulo, kubaboneleli abangayigcini imiyalezo yakho okanye bafundise iimodeli zabo ngayo. Asizithengisi
+      kwaye asizisebenzisi kwizibhengezo. Imiyalezo icinywa ngokuzenzekelayo emva kweenyanga ezili-12, okanye kwangoko
+      ukuba ishishini likhetha njalo.
+    </p>
+
+    <h2 id="delete-your-data">Ukucima iinkcukacha zakho</h2>
+    <p>
+      Ukuze kucinywe iinkcukacha zakho, thumela i-imeyile ku-<a href={`mailto:${deleteEmail}`}>{deleteEmail}</a>, okanye
+      uthumele umyalezo we-WhatsApp kwishishini obusebenzisana nalo uthi "Cima iinkcukacha zam". Sixelele inombolo
+      yefowuni oyisebenzisileyo. Siza kuqinisekisa ukuba nguwe, sicime imiyalezo yakho, iinkcukacha zakho nee-booking
+      zakho, kwaye sikuqinisekisele ngokubhaliweyo kwiintsuku ezingama-30.
     </p>
 
     <h2>Amalungelo akho</h2>
