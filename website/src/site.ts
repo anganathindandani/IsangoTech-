@@ -8,7 +8,7 @@ export const site = {
   // International format without "+" or spaces, e.g. "27821234567".
   whatsappNumber: "",
   phone: "",
-  email: "anga@isangotech.co.za",
+  email: "anganathindandani@isangotech.co.za",
   // The registered company behind the IsangoTech brand (CIPC, 13 October 2026).
   legalName: "Isango Tech (Pty) Ltd",
   companyRegistrationNumber: "2026/817716/07",
