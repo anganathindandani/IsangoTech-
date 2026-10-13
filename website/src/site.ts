@@ -9,8 +9,9 @@ export const site = {
   whatsappNumber: "",
   phone: "",
   email: "",
-  // Shown in the footer once the business is registered.
-  companyRegistrationNumber: "",
+  // The registered company behind the IsangoTech brand (CIPC, 13 October 2026).
+  legalName: "Isango Tech (Pty) Ltd",
+  companyRegistrationNumber: "2026/817716/07",
   areaServed: "East London, the Eastern Cape and the rest of South Africa",
   googleBusinessProfileUrl: "",
   social: {

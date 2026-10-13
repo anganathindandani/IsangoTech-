@@ -7,6 +7,15 @@ import { site } from "../site";
 <Base title="Terms" description="The terms for using the IsangoTech website.">
   <Prose title="Terms of use">
     <p>These terms apply to your use of the {site.name} website. Our services are covered by a separate written agreement.</p>
+    {
+      site.legalName && (
+        <p>
+          This website is run by {site.legalName}
+          {site.companyRegistrationNumber && ` (registration number ${site.companyRegistrationNumber})`}, trading as
+          {" "}{site.name}, East London, South Africa.
+        </p>
+      )
+    }
 
     <h2>Information on this site</h2>
     <p>

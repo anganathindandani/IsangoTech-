@@ -12,6 +12,15 @@ const officer = site.informationOfficer;
       Version {site.privacyPolicyVersion}{site.privacyPolicyDate && `, ${site.privacyPolicyDate}`}. This policy explains
       how {site.name} handles your personal information under the Protection of Personal Information Act (POPIA).
     </p>
+    {
+      site.legalName && (
+        <p>
+          {site.name} is {site.legalName}, a private company registered in South Africa
+          {site.companyRegistrationNumber && ` (registration number ${site.companyRegistrationNumber})`}, based in East
+          London. We are the responsible party for the personal information described here.
+        </p>
+      )
+    }
 
     <h2>What we collect</h2>
     <p>When you contact us or fill in a form, we collect only what we need to help you:</p>

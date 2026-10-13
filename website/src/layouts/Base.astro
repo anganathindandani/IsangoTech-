@@ -42,6 +42,10 @@ const business = {
   "@type": "ProfessionalService",
   "@id": new URL("/#business", Astro.site).href,
   name: site.name,
+  ...(site.legalName && { legalName: site.legalName }),
+  ...(site.companyRegistrationNumber && {
+    identifier: { "@type": "PropertyValue", propertyID: "CIPC registration number", value: site.companyRegistrationNumber },
+  }),
   slogan: words.tagline,
   description: words.description,
   url: new URL("/", Astro.site).href,
@@ -183,7 +187,7 @@ const year = new Date().getFullYear();
           <a href={L("/terms")}>{ui.terms}</a>
           <span>
             © {year}
-            {site.name}{site.companyRegistrationNumber && ` · ${ui.reg} ${site.companyRegistrationNumber}`}
+            {site.name}{site.legalName && ` · ${site.legalName}`}{site.companyRegistrationNumber && ` · ${ui.reg} ${site.companyRegistrationNumber}`}
           </span>
         </p>
       </div>
