@@ -6,8 +6,8 @@ export const site = {
   description:
     "IsangoTech helps small businesses in East London and beyond get found, capture customers, run their operations and automate repetitive work.",
   // International format without "+" or spaces, e.g. "27821234567".
-  whatsappNumber: "",
-  phone: "",
+  whatsappNumber: "27753458192",
+  phone: "075 345 8192",
   email: "anganathindandani@isangotech.co.za",
   // The registered company behind the IsangoTech brand (CIPC, 13 October 2026).
   legalName: "Isango Tech (Pty) Ltd",
@@ -15,8 +15,9 @@ export const site = {
   areaServed: "East London, the Eastern Cape and the rest of South Africa",
   googleBusinessProfileUrl: "",
   social: {
-    facebook: "",
-    instagram: "",
+    facebook: "https://www.facebook.com/profile.php?id=61595463777309",
+    instagram: "https://www.instagram.com/isangotech",
+    tiktok: "https://www.tiktok.com/@isangotech",
     linkedin: "",
   },
   // Only becomes true once IsangoTech is a registered VAT vendor.

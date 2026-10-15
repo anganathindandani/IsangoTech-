@@ -48,3 +48,18 @@ Sand and indigo carry the layout. Ochre, turquoise and terracotta are highlights
 - Body: **DM Sans**
 
 Both are free Google Fonts under the SIL Open Font License.
+
+## Social media
+
+Ready-to-upload images in `social/`. Upload the PNG as it is; each platform crops it as described.
+
+| File | Size | Use |
+| --- | --- | --- |
+| `social/isangotech-avatar.png` | 1080 × 1080 | Profile picture on WhatsApp Business, Facebook, Instagram and LinkedIn. Platforms crop it to a circle; the door stays inside it. |
+| `social/isangotech-facebook-cover.png` | 1640 × 624 | Facebook page cover. Phones crop the sides, so the text sits in the middle. |
+| `social/isangotech-linkedin-cover.png` | 2256 × 382 | LinkedIn company page cover (1128 × 191 at double resolution). The text starts right of where the logo sits. |
+| `social/isangotech-linkedin-profile-banner.png` | 1584 × 396 | The founder's personal LinkedIn banner. The text starts right of the profile photo. |
+
+WhatsApp Business and Instagram have no cover image; they use the profile picture only.
+
+To change the wording or colours, edit `social/render.mjs` and run `node brand/social/render.mjs` from the repo root (needs `npm ci` in `website/` for the fonts, and Playwright).
