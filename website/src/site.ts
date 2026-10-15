@@ -24,9 +24,9 @@ export const site = {
   vatRegistered: false,
   // The privacy policy and terms are drafts until a legal review; they show a
   // notice while this is false.
-  legalReviewed: false,
+  legalReviewed: true,
   privacyPolicyVersion: "1",
-  privacyPolicyDate: "",
+  privacyPolicyDate: "10 October 2026",
   // Name and email of the Information Officer registered with the Information Regulator.
   informationOfficer: { name: "Anganathi Ndandani", email: "privacy@isangotech.co.za" },
   // The About page's "Meet the founder" section stays hidden until name is set.
