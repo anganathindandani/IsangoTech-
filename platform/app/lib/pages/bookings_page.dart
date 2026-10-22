@@ -113,8 +113,12 @@ class BookingTile extends StatelessWidget {
       subtitle: Text(
         [
           details,
-          if (b.depositStatus == 'requested') 'Deposit of ${money(b.depositAmount)} due',
-          if (b.depositStatus == 'paid') 'Deposit paid',
+          if (b.depositStatus == 'requested')
+            'Deposit of ${money(b.depositAmount)} due'
+                '${b.depositDueBy == null ? '' : ' by ${dateTime(b.depositDueBy)}'}'
+                ' · ref ${b.depositReference}',
+          if (b.depositStatus == 'paid') 'Deposit of ${money(b.depositAmount)} paid',
+          if (b.depositStatus == 'waived') 'Deposit waived',
           if (b.notes.isNotEmpty) b.notes,
         ].where((s) => s.isNotEmpty).join('\n'),
       ),
@@ -126,16 +130,27 @@ class BookingTile extends StatelessWidget {
           PopupMenuButton<String>(
             tooltip: 'Change',
             onSelected: (v) async {
-              final ok = v == 'deposit_paid'
-                  ? await run(context, () => repo.setDepositStatus(b.id, 'paid'), done: 'Deposit marked as paid.')
-                  : await run(context, () => repo.setBookingStatus(b.id, v), done: 'Booking updated.');
+              final (Future<void> Function() action, String done) = switch (v) {
+                'deposit_paid' => (
+                  () => repo.setDepositStatus(b.id, 'paid'),
+                  'Deposit received. The booking is confirmed.',
+                ),
+                'deposit_waived' => (
+                  () => repo.setDepositStatus(b.id, 'waived'),
+                  'Deposit waived. The booking is confirmed.',
+                ),
+                _ => (() => repo.setBookingStatus(b.id, v), 'Booking updated.'),
+              };
+              final ok = await run(context, action, done: done);
               if (ok) onChanged();
             },
             itemBuilder: (_) => [
               for (final s in ['confirmed', 'completed', 'no_show', 'cancelled'])
                 if (s != b.status) PopupMenuItem(value: s, child: Text('Mark as ${bookingStatuses[s]!.toLowerCase()}')),
-              if (b.depositStatus == 'requested')
+              if (b.depositStatus == 'requested' && Session.of(context).isManager) ...[
                 const PopupMenuItem(value: 'deposit_paid', child: Text('Deposit received')),
+                const PopupMenuItem(value: 'deposit_waived', child: Text('Waive the deposit')),
+              ],
             ],
           ),
         ],

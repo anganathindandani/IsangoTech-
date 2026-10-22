@@ -14,7 +14,7 @@ Both products share one set of tables. A booking the Assistant takes on WhatsApp
 | `staff`, `services`, `service_staff` | Who delivers what, at what price and for how long |
 | `knowledge_items` | Facts the Assistant may quote |
 | `customers` | The business's customers, with their WhatsApp opt-in |
-| `bookings` | Customer, service, staff, times, status, deposit, source (WhatsApp, portal, walk-in) |
+| `bookings` | Customer, service, staff, times, status, deposit (amount, status, pay-by time), source (WhatsApp, portal, walk-in) |
 | `conversations`, `messages` | One WhatsApp chat per customer, who took over, and the 24-hour reply window |
 | `unanswered_questions` | Questions the Assistant handed over, for the owner to answer |
 | `usage_events` | WhatsApp conversations, template messages and AI calls, with their cost |
@@ -238,5 +238,28 @@ One-time setup:
 5. **Optional:** set `WHATSAPP_TEMPLATE_COST_ZAR` to what Meta charges per template message, so usage shows the cost. Check Meta's current rate card for South Africa.
 6. **For each business,** create the template in that business's WhatsApp Manager. Once Meta approves it, switch reminders on in the app.
 
+## Deposits
+
+A business can ask for a deposit to secure WhatsApp bookings. The money goes straight to the business, through its own payment link or EFT; IsangoTech never holds it.
+
+1. **The owner sets it up** under Assistant → Bookings → Ask for a deposit:
+   - the percentage of the price;
+   - how long to hold an unpaid booking (1 to 72 hours, 24 by default);
+   - their payment link (Yoco, SnapScan, PayFast, Zapper or their bank; `https://` only);
+   - other ways to pay, such as EFT details (optional).
+2. **When the Assistant books,** the booking is **pending** and the customer gets:
+   - the amount and how to pay;
+   - a reference: the first six characters of the booking's id, also shown in the app;
+   - the pay-by time.
+
+   The slot stays taken, and no reminder is sent while the deposit is due.
+3. **When the money arrives,** a manager or owner marks it **Deposit received** in Bookings, which confirms the booking. They can also **waive** it, which confirms it too. Staff can't change deposits.
+4. **If it isn't paid by the pay-by time,** `send-reminders` releases the booking within 15 minutes and the time is free again. If the customer's 24-hour window is still open, they get a message saying so; otherwise the release is silent.
+5. **A paid deposit is never cancelled by the Assistant:** it hands the chat to a person, who deals with the money under the business's own policy.
+
+The pay-by time is the hold period from booking, but always at least an hour before the appointment and never less than 30 minutes away.
+
+Setup: `npx supabase db push --workdir platform`, then redeploy `whatsapp-webhook` and `send-reminders`. Releasing unpaid bookings rides on the `send-reminders` schedule above, so nothing else needs scheduling.
+
 Coming next:
-- deposits paid by link, and sending the deposit request with the booking confirmation.
+- confirming deposits automatically when a Yoco payment comes in (needs each business's Yoco account connected), instead of marking them by hand.

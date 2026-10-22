@@ -1,5 +1,5 @@
 import { assertEquals } from "jsr:@std/assert@1";
-import { type Deps, handleReminders, type Reminder, reminderText } from "./handler.ts";
+import { type Deps, handleReminders, type Release, type Reminder, reminderText } from "./handler.ts";
 import { sendTemplate } from "../whatsapp-webhook/whatsapp.ts";
 
 const reminder = (id: string): Reminder => ({
@@ -18,7 +18,7 @@ const call = (secret?: string) =>
   });
 
 function deps(overrides: Partial<Deps> = {}) {
-  const log = { sent: [] as string[], recorded: [] as unknown[] };
+  const log = { sent: [] as string[], recorded: [] as unknown[], texts: [] as unknown[], messages: [] as unknown[] };
   const d: Deps = {
     secret: "cron-secret",
     claim: () => Promise.resolve([reminder("b1"), reminder("b2")]),
@@ -30,6 +30,15 @@ function deps(overrides: Partial<Deps> = {}) {
       log.recorded.push(args);
       return Promise.resolve();
     },
+    release: () => Promise.resolve([]),
+    sendText: (...args) => {
+      log.texts.push(args);
+      return Promise.resolve("wamid-text");
+    },
+    recordMessage: (...args) => {
+      log.messages.push(args);
+      return Promise.resolve();
+    },
     templateCostZar: 0.3,
     ...overrides,
   };
@@ -39,7 +48,7 @@ function deps(overrides: Partial<Deps> = {}) {
 Deno.test("sends each due reminder and records it", async () => {
   const { d, log } = deps();
   const res = await handleReminders(call("cron-secret"), d);
-  assertEquals(await res.json(), { due: 2, sent: 2, failed: 0 });
+  assertEquals(await res.json(), { released: 0, notified: 0, due: 2, sent: 2, failed: 0 });
   assertEquals(log.recorded[0], [
     "b1",
     "wamid-b1",
@@ -62,7 +71,7 @@ Deno.test("one failed send doesn't stop the rest, and isn't recorded as sent", a
     send: (r) => r.booking_id === "b1" ? Promise.reject(new Error("template not approved")) : Promise.resolve("w2"),
   });
   const res = await handleReminders(call("cron-secret"), d);
-  assertEquals(await res.json(), { due: 2, sent: 1, failed: 1 });
+  assertEquals(await res.json(), { released: 0, notified: 0, due: 2, sent: 1, failed: 1 });
   assertEquals(log.recorded.map((r) => (r as string[])[0]), ["b2"]);
 });
 
@@ -93,4 +102,33 @@ Deno.test("the template goes to WhatsApp with its parameters in order", async ()
     },
   });
   assertEquals(reminderText(r).startsWith("Reminder to Thandi"), true);
+});
+
+const release = (id: string, message: string | null): Release => ({
+  booking_id: id,
+  conversation_id: `conv-${id}`,
+  phone_number_id: "pn-1",
+  to: "27825550001",
+  message,
+});
+
+Deno.test("released bookings: the customer is told when the chat window is open, and it shows in the chat", async () => {
+  const { d, log } = deps({
+    release: () => Promise.resolve([release("r1", "Hi Thandi, the time has been released."), release("r2", null)]),
+    claim: () => Promise.resolve([]),
+  });
+  const res = await handleReminders(call("cron-secret"), d);
+  assertEquals(await res.json(), { released: 2, notified: 1, due: 0, sent: 0, failed: 0 });
+  assertEquals(log.texts, [["pn-1", "27825550001", "Hi Thandi, the time has been released."]]);
+  assertEquals(log.messages, [["conv-r1", "Hi Thandi, the time has been released.", "wamid-text"]]);
+});
+
+Deno.test("a failed release notice doesn't stop the reminders", async () => {
+  const { d, log } = deps({
+    release: () => Promise.resolve([release("r1", "Released.")]),
+    sendText: () => Promise.reject(new Error("outside the window")),
+  });
+  const res = await handleReminders(call("cron-secret"), d);
+  assertEquals(await res.json(), { released: 1, notified: 0, due: 2, sent: 2, failed: 0 });
+  assertEquals(log.messages, []);
 });

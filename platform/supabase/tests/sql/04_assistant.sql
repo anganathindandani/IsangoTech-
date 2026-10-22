@@ -106,7 +106,8 @@ declare r jsonb := public.assistant_tool(current_setting('t.conv')::uuid, 'creat
 begin
   assert r ->> 'ok' = 'true', 'booking made: ' || r::text;
   assert r -> 'booking' ->> 'staff' = 'Stylist', 'with the stylist who does braids';
-  assert r -> 'booking' ->> 'deposit_due' = 'R90.00', '20% deposit of R450';
+  assert r -> 'booking' -> 'deposit' ->> 'amount' = 'R90.00', '20% deposit of R450';
+  assert r -> 'booking' ->> 'status' = 'pending', 'held until the deposit is paid';
   perform set_config('t.booking', r -> 'booking' ->> 'booking_id', true);
 end $$;
 do $$

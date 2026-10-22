@@ -71,5 +71,25 @@ void main() {
     expect(j['reminders_enabled'], isFalse, reason: 'reminders default to off');
     s.reminderTemplate = '  ';
     expect(s.toJson()['reminder_template'], isNull, reason: 'an empty template name is saved as none');
+    expect(j['deposit_hold_hours'], 24, reason: 'an unpaid booking is held a day by default');
+    expect(j['deposit_payment_link'], isNull);
+    s.depositPaymentLink = ' https://pay.yoco.com/salon ';
+    s.depositPaymentInstructions = ' EFT to FNB 620000 ';
+    expect(s.toJson()['deposit_payment_link'], 'https://pay.yoco.com/salon');
+    expect(s.toJson()['deposit_payment_instructions'], 'EFT to FNB 620000');
+  });
+
+  test('the deposit reference matches what the Assistant gives the customer', () {
+    final b = Booking.fromJson({
+      'id': 'ea371613-d71b-4509-9401-af6f5caf21c4',
+      'starts_at': '2026-10-24T08:00:00+00:00',
+      'ends_at': '2026-10-24T10:00:00+00:00',
+      'status': 'pending',
+      'deposit_amount': '90.00',
+      'deposit_status': 'requested',
+      'deposit_due_by': '2026-10-23T08:00:00+00:00',
+    });
+    expect(b.depositReference, 'EA3716');
+    expect(dateTime(b.depositDueBy), 'Fri 23 Oct, 10:00', reason: 'shown in business time');
   });
 }

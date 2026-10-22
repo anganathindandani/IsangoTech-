@@ -9,8 +9,8 @@ Row-level security in the database decides what each person sees, so the app has
 | Today | Today's bookings, chats waiting for a person, questions to answer, and WhatsApp conversations this month against the plan (owners) |
 | Chats | Every WhatsApp chat, newest first. Open one to read it, take it over from the Assistant, reply on WhatsApp (within WhatsApp's 24-hour window) and hand it back |
 | Questions | What the Assistant couldn't answer. **Answer** adds it to the Assistant's answers, so it knows next time |
-| Bookings | Two weeks at a time, by day. Mark completed, no-show or cancelled; record a deposit as received |
-| Assistant | Switch it on or off, opening hours, languages, tone, policies, topics to always hand over, notice and deposit rules, privacy link, how long chats are kept, services and prices, staff, and answers |
+| Bookings | Two weeks at a time, by day. Mark completed, no-show or cancelled. See what deposit is due, by when and its reference; mark it received or waive it, which confirms the booking |
+| Assistant | Switch it on or off, opening hours, languages, tone, policies, topics to always hand over, notice rules, deposits (percentage, how long to hold an unpaid booking, payment link and EFT details), privacy link, how long chats are kept, services and prices, staff, and answers |
 | Team | Owners only: add managers and staff (each gets a setup link), change roles, remove or add back |
 | Account | Your details, change password, sign out, and two-step sign-in (optional, off by default; once on, the database requires it) |
 | Businesses | IsangoTech admins only: every client business, **Add a business** with its owner, edit the plan, and setup links |

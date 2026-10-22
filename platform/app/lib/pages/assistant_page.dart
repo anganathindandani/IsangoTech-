@@ -225,13 +225,62 @@ class _SettingsSectionState extends State<_SettingsSection> {
                 value: s.depositRequired,
                 onChanged: (v) => setState(() => s.depositRequired = v),
               ),
-              if (s.depositRequired)
-                _NumberField(
-                  label: 'Deposit (% of the price)',
-                  value: s.depositPercent.toInt(),
-                  max: 100,
-                  onChanged: (v) => s.depositPercent = v,
+              if (s.depositRequired) ...[
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 16,
+                  runSpacing: 12,
+                  children: [
+                    _NumberField(
+                      label: 'Deposit (% of the price)',
+                      value: s.depositPercent.toInt(),
+                      min: 1,
+                      max: 100,
+                      onChanged: (v) => s.depositPercent = v,
+                    ),
+                    _NumberField(
+                      label: 'Hold an unpaid booking for (hours)',
+                      value: s.depositHoldHours,
+                      min: 1,
+                      max: 72,
+                      onChanged: (v) => s.depositHoldHours = v,
+                    ),
+                  ],
                 ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  initialValue: s.depositPaymentLink ?? '',
+                  decoration: const InputDecoration(
+                    labelText: 'Your payment link',
+                    helperText: 'From Yoco, SnapScan, PayFast, Zapper or your bank. The money goes straight to you.',
+                    helperMaxLines: 2,
+                  ),
+                  keyboardType: TextInputType.url,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (v) => (v ?? '').trim().isEmpty || RegExp(r'^https://\S+$').hasMatch(v!.trim())
+                      ? null
+                      : 'A web address starting with https://',
+                  onChanged: (v) => s.depositPaymentLink = v,
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  initialValue: s.depositPaymentInstructions,
+                  decoration: const InputDecoration(
+                    labelText: 'Other ways to pay (optional)',
+                    helperText: 'For example your EFT details',
+                  ),
+                  maxLines: 3,
+                  maxLength: 600,
+                  onChanged: (v) => s.depositPaymentInstructions = v,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Customers are given their booking reference to pay with. Bookings stay pending until you mark the '
+                  'deposit received in Bookings. If it isn\'t paid in time, the booking is released and the time opens '
+                  'up again.',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
               const Divider(height: 32),
               Text('Reminders', style: Theme.of(context).textTheme.titleSmall),
               SwitchListTile(

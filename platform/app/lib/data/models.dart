@@ -82,6 +82,7 @@ class Booking {
     this.source,
     this.depositAmount = 0,
     this.depositStatus = 'not_required',
+    this.depositDueBy,
     this.notes = '',
   });
   final String id;
@@ -95,7 +96,14 @@ class Booking {
   final String? source;
   final num depositAmount;
   final String depositStatus;
+
+  /// When an unpaid deposit is due; the booking is released after this.
+  final DateTime? depositDueBy;
   final String notes;
+
+  /// What the customer quotes when paying: the first six characters of the
+  /// booking's id, as the Assistant gives it.
+  String get depositReference => id.replaceAll('-', '').substring(0, 6).toUpperCase();
 
   factory Booking.fromJson(Map<String, dynamic> j) {
     final c = j['customer'] as Map<String, dynamic>?;
@@ -111,6 +119,7 @@ class Booking {
       source: j['source'] as String?,
       depositAmount: parseNum(j['deposit_amount']) ?? 0,
       depositStatus: j['deposit_status'] as String? ?? 'not_required',
+      depositDueBy: parseTime(j['deposit_due_by']),
       notes: j['notes'] as String? ?? '',
     );
   }
@@ -205,6 +214,9 @@ class AssistantSettings {
     required this.changeNoticeHours,
     required this.depositRequired,
     required this.depositPercent,
+    this.depositPaymentLink,
+    this.depositPaymentInstructions = '',
+    this.depositHoldHours = 24,
     required this.privacyNoticeUrl,
     required this.messageRetentionMonths,
     required this.assistantEnabled,
@@ -222,6 +234,15 @@ class AssistantSettings {
   int changeNoticeHours;
   bool depositRequired;
   num depositPercent;
+
+  /// The business's own payment page (Yoco, SnapScan, PayFast and so on).
+  String? depositPaymentLink;
+
+  /// Other ways to pay, such as EFT details.
+  String depositPaymentInstructions;
+
+  /// How long an unpaid booking is held before it's released.
+  int depositHoldHours;
   String? privacyNoticeUrl;
   int messageRetentionMonths;
   bool assistantEnabled;
@@ -242,6 +263,9 @@ class AssistantSettings {
     changeNoticeHours: (j['change_notice_hours'] as num).toInt(),
     depositRequired: j['deposit_required'] as bool,
     depositPercent: parseNum(j['deposit_percent']) ?? 0,
+    depositPaymentLink: j['deposit_payment_link'] as String?,
+    depositPaymentInstructions: j['deposit_payment_instructions'] as String? ?? '',
+    depositHoldHours: (j['deposit_hold_hours'] as num?)?.toInt() ?? 24,
     privacyNoticeUrl: j['privacy_notice_url'] as String?,
     messageRetentionMonths: (j['message_retention_months'] as num).toInt(),
     assistantEnabled: j['assistant_enabled'] as bool,
@@ -261,6 +285,9 @@ class AssistantSettings {
     'change_notice_hours': changeNoticeHours,
     'deposit_required': depositRequired,
     'deposit_percent': depositPercent,
+    'deposit_payment_link': (depositPaymentLink ?? '').trim().isEmpty ? null : depositPaymentLink!.trim(),
+    'deposit_payment_instructions': depositPaymentInstructions.trim(),
+    'deposit_hold_hours': depositHoldHours,
     'privacy_notice_url': (privacyNoticeUrl ?? '').trim().isEmpty ? null : privacyNoticeUrl!.trim(),
     'message_retention_months': messageRetentionMonths,
     'assistant_enabled': assistantEnabled,

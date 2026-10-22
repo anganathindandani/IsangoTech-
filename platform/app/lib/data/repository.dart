@@ -82,7 +82,7 @@ class Repository {
     final rows = await db
         .from('bookings')
         .select(
-          'id, starts_at, ends_at, status, source, deposit_amount, deposit_status, notes, '
+          'id, starts_at, ends_at, status, source, deposit_amount, deposit_status, deposit_due_by, notes, '
           'customer:customers(full_name, whatsapp_number), service:services(name), staff:staff(full_name)',
         )
         .eq('business_id', businessId)
