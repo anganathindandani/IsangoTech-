@@ -19,6 +19,18 @@ const icons: Record<string, string> = {
   // House with a door of light
   guesthouses:
     '<path d="M6 22L24 8l18 14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 19v21h26V19" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><rect x="20" y="27" width="8" height="13" fill="#E07A1F"/>',
+  // Spanner
+  "auto-repair":
+    '<path d="M30 8a9 9 0 0 0-8 12L8 34a4 4 0 0 0 6 6l14-14a9 9 0 0 0 12-8l-6 4-5-1-1-5z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><circle cx="11" cy="37" r="2" fill="#E07A1F"/>',
+  // Shield with a tick
+  "cleaning-security":
+    '<path d="M24 6l15 6v10c0 9-6 16-15 20C15 38 9 31 9 22V12z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><path d="M17 24l5 5 9-10" fill="none" stroke="#E07A1F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>',
+  // Open book
+  tutoring:
+    '<path d="M24 13c-5-4-11-4-17-2v25c6-2 12-2 17 2 5-4 11-4 17-2V11c-6-2-12-2-17 2z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><path d="M24 13v25" stroke="#E07A1F" stroke-width="3"/>',
+  // Dumbbell
+  gyms:
+    '<path d="M16 24h16" stroke="#E07A1F" stroke-width="4" stroke-linecap="round"/><rect x="9" y="14" width="7" height="20" rx="2" fill="none" stroke="currentColor" stroke-width="3"/><rect x="32" y="14" width="7" height="20" rx="2" fill="none" stroke="currentColor" stroke-width="3"/><path d="M5 20v8M43 20v8" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>',
   // Shopfront
   "other-small-businesses":
     '<path d="M8 20v20h32V20" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><path d="M6 20l4-12h28l4 12z" fill="#E07A1F"/><rect x="20" y="28" width="8" height="12" fill="none" stroke="currentColor" stroke-width="3"/>',
@@ -51,8 +63,8 @@ const icons: Record<string, string> = {
     gap: 1rem;
     grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
   }
-  /* Wide screens: three across, then the rest share the next row evenly
-     (five tiles become 3 + 2, with no empty gap). */
+  /* Wide screens: three across. A last row of two shares the width evenly,
+     and a single last tile spans it, so there's never an empty gap. */
   @media (min-width: 46rem) {
     .tiles {
       grid-template-columns: repeat(6, 1fr);
@@ -60,9 +72,12 @@ const icons: Record<string, string> = {
     .tiles li {
       grid-column: span 2;
     }
-    .tiles li:nth-child(n + 4):nth-last-child(2),
-    .tiles li:nth-child(n + 4):nth-last-child(1):nth-child(5) {
+    .tiles li:nth-child(3n + 1):nth-last-child(2),
+    .tiles li:nth-child(3n + 2):last-child {
       grid-column: span 3;
+    }
+    .tiles li:nth-child(3n + 1):last-child {
+      grid-column: span 6;
     }
   }
   a {

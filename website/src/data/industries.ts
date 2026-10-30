@@ -52,8 +52,8 @@ export const industries: Industry[] = [
   },
   {
     slug: "caterers",
-    noun: "catering business",
-    name: "Caterers",
+    noun: "catering or events business",
+    name: "Caterers and event companies",
     tagline: "Quote faster, win more events.",
     pains: [
       "Event enquiries need quick quotes, and slow replies lose the job.",
@@ -82,6 +82,74 @@ export const industries: Industry[] = [
       2: "Direct WhatsApp bookings with availability answered instantly, and deposit requests sent for you.",
       3: "One booking calendar, check-in details sent automatically, and review requests after checkout.",
       4: "Follow-ups that bring past guests back, and reports on occupancy and income.",
+    },
+  },
+  {
+    slug: "auto-repair",
+    noun: "workshop",
+    name: "Auto repair shops",
+    tagline: "Fewer \"is my car ready?\" calls.",
+    pains: [
+      "Customers phone all day to ask if their car is ready.",
+      "Quotes are approved by phone or in person, and the details get lost.",
+      "Customers forget their next service, and so does the workshop.",
+    ],
+    byStage: {
+      1: "A website with your services and a WhatsApp button, and your workshop showing up on Google Maps.",
+      2: "A WhatsApp assistant that answers questions about services and prices, and books customers in.",
+      3: "Digital job cards, quotes approved on WhatsApp, and \"car ready\" updates sent for you.",
+      4: "Service-due reminders and invoices that go out by themselves.",
+    },
+  },
+  {
+    slug: "cleaning-security",
+    noun: "company",
+    name: "Cleaning and security firms",
+    tagline: "Rosters, check-ins and invoices in one place.",
+    pains: [
+      "Shift rosters change often, and staff hear about it late.",
+      "Site check-ins and incident reports live in WhatsApp groups and paper.",
+      "Monthly client invoices take days to put together.",
+    ],
+    byStage: {
+      1: "A website that shows your services and the areas you cover, with an easy way to ask for a quote.",
+      2: "Quote requests answered instantly on WhatsApp, with every lead tracked to a contract.",
+      3: "Shift rosters, site check-ins and incident reports in one system, with a dashboard for each client site.",
+      4: "Monthly client invoicing and incident summaries that put themselves together.",
+    },
+  },
+  {
+    slug: "tutoring",
+    noun: "tutoring centre",
+    name: "Tutoring centres",
+    tagline: "Fees paid on time, parents kept in the loop.",
+    pains: [
+      "Following up on school fees takes hours every month.",
+      "Timetables change, and parents hear about it too late.",
+      "Parents ask how their child is doing, and the answers live in notebooks.",
+    ],
+    byStage: {
+      1: "A website with your subjects, times and fees, and a WhatsApp button for parents.",
+      2: "Parents' questions about classes, times and fees answered instantly on WhatsApp, and every enquiry captured.",
+      3: "Class timetables, attendance, fee reminders and progress updates to parents, with learners' details kept safe under POPIA.",
+      4: "Fee reminders and monthly progress reports that send themselves.",
+    },
+  },
+  {
+    slug: "gyms",
+    noun: "gym",
+    name: "Gyms and fitness studios",
+    tagline: "Full classes, fewer missed fees.",
+    pains: [
+      "Memberships lapse because nobody reminded the member.",
+      "Fee arrears are chased by hand.",
+      "Class bookings happen in WhatsApp chats and on paper.",
+    ],
+    byStage: {
+      1: "A website with your classes, prices and timetable, and a proper Google listing.",
+      2: "Questions about classes, prices and times answered instantly on WhatsApp, with sign-ups captured.",
+      3: "Membership sign-ups and renewals, class bookings, arrears reminders and attendance tracking.",
+      4: "Renewals, arrears follow-ups and come-back messages to quiet members, running on their own.",
     },
   },
 ];
@@ -144,8 +212,8 @@ const industriesXh: Record<string, IndustryWords> = {
     },
   },
   caterers: {
-    noun: "ishishini lokupheka",
-    name: "Abapheki beminyhadala",
+    noun: "ishishini lokupheka okanye leminyhadala",
+    name: "Abapheki namashishini eminyhadala",
     tagline: "Nika iikowuti ngokukhawuleza, uphumelele iminyhadala emininzi.",
     talkAbout: "Masithethe ngeshishini lakho lokupheka",
     pains: [
@@ -175,6 +243,74 @@ const industriesXh: Record<string, IndustryWords> = {
       2: "Ii-booking ezithe ngqo nge-WhatsApp, imibuzo ngamagumbi akhoyo iphendulwa ngoko nangoko, kwaye izicelo zedipozithi zithunyelwa endaweni yakho.",
       3: "Ikhalenda enye yee-booking, iinkcukacha zokungena zithunyelwa ngokuzenzekelayo, nezicelo zezimvo emva kokuphuma.",
       4: "Ukulandelela okubuyisa iindwendwe zangaphambili, neengxelo zamagumbi asetyenzisiweyo nengeniso.",
+    },
+  },
+  "auto-repair": {
+    noun: "igaraji",
+    name: "Iigaraji zokulungisa iimoto",
+    tagline: "Iifowuni ezimbalwa zokubuza \"ingaba imoto yam ilungile?\"",
+    talkAbout: "Masithethe ngegaraji yakho",
+    pains: [
+      "Abathengi bafowuna imini yonke bebuza ukuba imoto yabo ilungile na.",
+      "Iikowuti zivunywa ngefowuni okanye ngobuqu, kwaye iinkcukacha ziyalahleka.",
+      "Abathengi bayalibala inkonzo yabo elandelayo, kwanegaraji iyalibala.",
+    ],
+    byStage: {
+      1: "I-website eneenkonzo zakho neqhosha le-WhatsApp, kwaye igaraji yakho ibonakale kwi-Google Maps.",
+      2: "I-WhatsApp assistant ephendula imibuzo ngeenkonzo namaxabiso, kwaye ibhukishe abathengi.",
+      3: "Iikhadi zemisebenzi zedijithali, iikowuti ezivunywa kwi-WhatsApp, nemiyalezo ethi \"imoto ilungile\" ethunyelwa endaweni yakho.",
+      4: "Izikhumbuzo zenkonzo elandelayo nee-invoyisi eziphuma zodwa.",
+    },
+  },
+  "cleaning-security": {
+    noun: "inkampani",
+    name: "Iinkampani zococeko nezokhuseleko",
+    tagline: "Iishifti, ukungena kwiisayithi nee-invoyisi kwindawo enye.",
+    talkAbout: "Masithethe ngenkampani yakho",
+    pains: [
+      "Iishifti zabasebenzi zitshintsha rhoqo, kwaye abasebenzi beva emva kwexesha.",
+      "Ukungena kwiisayithi neengxelo zeziganeko zigcinwe kumaqela e-WhatsApp nakumaphepha.",
+      "Ii-invoyisi zabathengi zenyanga zithatha iintsuku ukuzilungisa.",
+    ],
+    byStage: {
+      1: "I-website ebonisa iinkonzo zakho neendawo ozisebenzayo, enendlela elula yokucela ikowuti.",
+      2: "Izicelo zeekowuti ziphendulwa ngoko nangoko kwi-WhatsApp, kwaye umthengi ngamnye onokubakho ulandelwa ade abe sisivumelwano.",
+      3: "Iishifti zabasebenzi, ukungena kwiisayithi neengxelo zeziganeko kwinkqubo enye, ne-dashboard yesayithi nganye yomthengi.",
+      4: "Ii-invoyisi zenyanga zabathengi nezishwankathelo zeziganeko ezizilungiselelayo.",
+    },
+  },
+  tutoring: {
+    noun: "iziko lokufundisa",
+    name: "Amaziko okufundisa",
+    tagline: "Iimali zihlawulwa ngexesha, abazali bahlala besazi.",
+    talkAbout: "Masithethe ngeziko lakho lokufundisa",
+    pains: [
+      "Ukulandelela iimali zesikolo kuthatha iiyure inyanga nganye.",
+      "Amaxesha eeklasi ayatshintsha, kwaye abazali beva emva kwexesha.",
+      "Abazali babuza ukuba umntwana wabo uqhuba njani, kwaye iimpendulo zisezincwadini.",
+    ],
+    byStage: {
+      1: "I-website enezifundo zakho, amaxesha neemali, neqhosha le-WhatsApp labazali.",
+      2: "Imibuzo yabazali ngeeklasi, amaxesha neemali iphendulwa ngoko nangoko kwi-WhatsApp, kwaye wonke umbuzo ubhalwa.",
+      3: "Amaxesha eeklasi, ubukho, izikhumbuzo zemali neengxelo zenkqubela kubazali, neenkcukacha zabafundi zigcinwe zikhuselekile ngokwe-POPIA.",
+      4: "Izikhumbuzo zemali neengxelo zenkqubela zenyanga ezizithumelayo.",
+    },
+  },
+  gyms: {
+    noun: "ijim",
+    name: "Iijim nezitudiyo zokuzilolonga",
+    tagline: "Iiklasi ezigcweleyo, iimali ezimbalwa eziphosiweyo.",
+    talkAbout: "Masithethe ngejim yakho",
+    pains: [
+      "Ubulungu buyaphelelwa kuba akukho mntu ukhumbuze ilungu.",
+      "Amatyala eemali alandelwa ngesandla.",
+      "Ukubhukisha iiklasi kwenzeka kwiingxoxo ze-WhatsApp nakumaphepha.",
+    ],
+    byStage: {
+      1: "I-website eneeklasi zakho, amaxabiso nexesha, kunye noluhlu olufanelekileyo kwi-Google.",
+      2: "Imibuzo ngeeklasi, amaxabiso namaxesha iphendulwa ngoko nangoko kwi-WhatsApp, kwaye ababhalisayo babhalwa.",
+      3: "Ukubhalisa nokuhlaziya ubulungu, ukubhukisha iiklasi, izikhumbuzo zamatyala nokulandelela ubukho.",
+      4: "Ukuhlaziya, ukulandelela amatyala nemiyalezo yokubuya kumalungu angasafiki, kusebenza ngokwakho.",
     },
   },
   "other-small-businesses": {
