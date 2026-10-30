@@ -150,11 +150,12 @@ const outcomes = [
     gap: 2rem;
     align-items: center;
   }
+  /* On phones the headline and button come first; the door follows, smaller. */
   .hero-door {
     display: flex;
     justify-content: center;
-    padding-bottom: 2.5rem;
-    order: -1;
+    padding-bottom: 1.5rem;
+    --door-w: clamp(5.5rem, 24vw, 8rem);
   }
   @media (min-width: 52rem) {
     .hero {
@@ -164,8 +165,8 @@ const outcomes = [
       grid-template-columns: 1.25fr 1fr;
     }
     .hero-door {
-      order: 0;
       padding-bottom: 4rem;
+      --door-w: clamp(7.5rem, 30vw, 19rem);
     }
   }
   .hero h1 {

@@ -38,18 +38,40 @@ function setUpReveals() {
     return;
   }
 
+  const show = (el: Element) => {
+    el.classList.add("is-visible");
+    observer.unobserve(el);
+  };
+  // Starts a little before an item scrolls into view, so it's there by the time it's seen.
   const observer = new IntersectionObserver(
     (entries) => {
       for (const entry of entries) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("is-visible");
-          observer.unobserve(entry.target);
-        }
+        if (entry.isIntersecting || entry.boundingClientRect.top < 0) show(entry.target);
       }
     },
-    { rootMargin: "0px 0px -8% 0px", threshold: 0.12 },
+    { rootMargin: "0px 0px 15% 0px", threshold: 0 },
   );
   items.forEach((el) => observer.observe(el));
+
+  // A fast scroll can jump straight past an item without it ever intersecting:
+  // show everything above the bottom of the screen.
+  let pending = false;
+  const catchUp = () => {
+    pending = false;
+    for (const el of items) {
+      if (!el.classList.contains("is-visible") && el.getBoundingClientRect().top < window.innerHeight) show(el);
+    }
+  };
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (!pending) {
+        pending = true;
+        requestAnimationFrame(catchUp);
+      }
+    },
+    { passive: true },
+  );
 }
 
 function setUpHeader() {

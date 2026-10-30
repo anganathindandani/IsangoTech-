@@ -18,7 +18,7 @@
 <style>
   /* Proportions follow the logo mark: 560 × 900 frame, 84-unit border. */
   .scene {
-    --w: clamp(7.5rem, 30vw, 19rem);
+    --w: var(--door-w, clamp(7.5rem, 30vw, 19rem));
     position: relative;
     width: var(--w);
     aspect-ratio: 560 / 900;
