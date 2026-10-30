@@ -1,11 +1,14 @@
 import { supabase } from "../_shared/supabase.ts";
+import { databaseLookup, tokenFor } from "../_shared/whatsapp_token.ts";
 import { sendTemplate, sendText } from "../whatsapp-webhook/whatsapp.ts";
 import { handleReminders, type Release, type Reminder } from "./handler.ts";
 
-const whatsapp = {
-  accessToken: Deno.env.get("WHATSAPP_ACCESS_TOKEN") ?? "",
-  graphVersion: Deno.env.get("WHATSAPP_GRAPH_VERSION") ?? "v23.0",
-};
+const graphVersion = Deno.env.get("WHATSAPP_GRAPH_VERSION") ?? "v23.0";
+const accessToken = tokenFor(
+  databaseLookup((fn, args) => supabase.rpc(fn, args)),
+  Deno.env.get("WHATSAPP_ACCESS_TOKEN") ?? "",
+);
+const whatsapp = async (phoneNumberId: string) => ({ accessToken: await accessToken(phoneNumberId), graphVersion });
 
 Deno.serve((req) =>
   handleReminders(req, {
@@ -15,8 +18,8 @@ Deno.serve((req) =>
       if (error) throw new Error(error.message);
       return data as Reminder[];
     },
-    send: (r) =>
-      sendTemplate(whatsapp, r.phone_number_id, r.to, {
+    send: async (r) =>
+      sendTemplate(await whatsapp(r.phone_number_id), r.phone_number_id, r.to, {
         name: r.template,
         language: r.language,
         parameters: r.parameters,
@@ -35,7 +38,7 @@ Deno.serve((req) =>
       if (error) throw new Error(error.message);
       return data as Release[];
     },
-    sendText: (phoneNumberId, to, body) => sendText(whatsapp, phoneNumberId, to, body),
+    sendText: async (phoneNumberId, to, body) => sendText(await whatsapp(phoneNumberId), phoneNumberId, to, body),
     recordMessage: async (conversationId, body, wamid) => {
       const { error } = await supabase.rpc("assistant_record_reply", {
         p_conversation: conversationId,

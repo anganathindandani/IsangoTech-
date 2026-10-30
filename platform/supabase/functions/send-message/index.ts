@@ -1,11 +1,15 @@
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import { sendText } from "../whatsapp-webhook/whatsapp.ts";
+import { supabase } from "../_shared/supabase.ts";
+import { databaseLookup, tokenFor } from "../_shared/whatsapp_token.ts";
 import { handleSend } from "./handler.ts";
 
-const whatsapp = {
-  accessToken: Deno.env.get("WHATSAPP_ACCESS_TOKEN") ?? "",
-  graphVersion: Deno.env.get("WHATSAPP_GRAPH_VERSION") ?? "v23.0",
-};
+const graphVersion = Deno.env.get("WHATSAPP_GRAPH_VERSION") ?? "v23.0";
+// Only the token lookup uses the service role; everything else runs as the signed-in person.
+const accessToken = tokenFor(
+  databaseLookup((fn, args) => supabase.rpc(fn, args)),
+  Deno.env.get("WHATSAPP_ACCESS_TOKEN") ?? "",
+);
 const allowedOrigins = (Deno.env.get("APP_ORIGINS") ?? "https://app.isangotech.co.za")
   .split(",").map((o) => o.trim()).filter(Boolean);
 
@@ -22,7 +26,7 @@ Deno.serve((req) => {
   };
   return handleSend(req, {
     prepare: (id) => rpc("prepare_person_reply", { p_conversation: id }),
-    send: (from, to, body) => sendText(whatsapp, from, to, body),
+    send: async (from, to, body) => sendText({ accessToken: await accessToken(from), graphVersion }, from, to, body),
     record: async (id, body, wamid) => {
       await rpc("record_person_reply", { p_conversation: id, p_body: body, p_whatsapp_message_id: wamid });
     },

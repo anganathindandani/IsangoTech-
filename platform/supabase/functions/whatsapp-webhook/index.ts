@@ -1,4 +1,5 @@
 import { supabase } from "../_shared/supabase.ts";
+import { databaseLookup, tokenFor } from "../_shared/whatsapp_token.ts";
 import { openRouter } from "./ai.ts";
 import type { Db } from "./engine.ts";
 import { handleWebhook } from "./handler.ts";
@@ -41,10 +42,8 @@ const db: Db = {
     }),
 };
 
-const whatsapp = {
-  accessToken: env("WHATSAPP_ACCESS_TOKEN"),
-  graphVersion: env("WHATSAPP_GRAPH_VERSION", "v23.0"),
-};
+const graphVersion = env("WHATSAPP_GRAPH_VERSION", "v23.0");
+const accessToken = tokenFor(databaseLookup((fn, args) => supabase.rpc(fn, args)), env("WHATSAPP_ACCESS_TOKEN"));
 
 Deno.serve((req) =>
   handleWebhook(req, {
@@ -52,7 +51,8 @@ Deno.serve((req) =>
     appSecret: env("WHATSAPP_APP_SECRET"),
     db,
     ai: openRouter({ apiKey: env("OPENROUTER_API_KEY"), model: env("ASSISTANT_MODEL", "anthropic/claude-haiku-5.5") }),
-    send: (phoneNumberId, to, body) => sendText(whatsapp, phoneNumberId, to, body),
+    send: async (phoneNumberId, to, body) =>
+      sendText({ accessToken: await accessToken(phoneNumberId), graphVersion }, phoneNumberId, to, body),
     usdToZar: Number(env("USD_TO_ZAR", "18")),
     // deno-lint-ignore no-explicit-any
     waitUntil: (work) => (globalThis as any).EdgeRuntime?.waitUntil?.(work) ?? work,
