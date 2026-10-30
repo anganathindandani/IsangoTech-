@@ -26,7 +26,7 @@ export const stages: Stage[] = [
     whereYouAre: "Enquiries come in, but some slip through the cracks.",
     need: "Stop losing enquiries",
     offer: "A WhatsApp assistant that answers every enquiry the moment it arrives, with reminders so customers turn up.",
-    package: "Core Starter",
+    package: "WhatsApp Assistant",
     nextStep: "Run daily operations in one system",
   },
   {
@@ -35,7 +35,7 @@ export const stages: Stage[] = [
     whereYouAre: "We run the business on spreadsheets, paper and WhatsApp groups.",
     need: "Replace spreadsheets and WhatsApp threads",
     offer: "Bookings and orders in one system, with a dashboard that shows your sales, busy times and regulars.",
-    package: "Core Business",
+    package: "Business Portal",
     nextStep: "Automate repetitive work",
   },
   {
@@ -64,7 +64,7 @@ const stagesXh: Record<number, Omit<Stage, "number">> = {
     whereYouAre: "Imibuzo iyangena, kodwa eminye iyalahleka.",
     need: "Yeka ukuphulukana nemibuzo",
     offer: "I-WhatsApp assistant ephendula wonke umbuzo ngoko nangoko xa ufika, kunye nezikhumbuzo ukuze abathengi bafike.",
-    package: "Core Starter",
+    package: "WhatsApp Assistant",
     nextStep: "Qhuba imisebenzi yemihla ngemihla kwinkqubo enye",
   },
   3: {
@@ -72,7 +72,7 @@ const stagesXh: Record<number, Omit<Stage, "number">> = {
     whereYouAre: "Siqhuba ishishini ngee-spreadsheet, amaphepha namaqela e-WhatsApp.",
     need: "Tshintsha ii-spreadsheet nemicu ye-WhatsApp",
     offer: "Ii-booking nee-oda kwinkqubo enye, ne-dashboard ebonisa intengiso yakho, amaxesha axakekileyo nabathengi abaqhelekileyo.",
-    package: "Core Business",
+    package: "Business Portal",
     nextStep: "Yenza imisebenzi ephindaphindwayo ngokuzenzekelayo",
   },
   4: {

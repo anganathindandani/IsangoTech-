@@ -4,9 +4,15 @@
 // (scripts/motion.ts sets --progress and .is-active). Each stage links to
 // Get started with the stage filled in.
 import { stagesFor } from "../data/stages";
+import { formatPrice, packagesFor } from "../data/packages";
 import { langOf, localize, pick } from "../i18n";
 const lang = langOf(Astro.url);
 const stages = stagesFor(lang);
+// Each stage's starting price, from its package on the Services page.
+const priceOf = (n: number) => {
+  const p = packagesFor(lang).find((pkg) => pkg.stage === n);
+  return p ? formatPrice(p, lang) : null;
+};
 const w = pick(lang, {
   en: { eyebrow: "Your growth path", heading: "Where is your business now?", lead: "Pick the one that sounds most like you. We'll start there, and show you what comes next.", stage: "Stage", go: "Start here" },
   xh: { eyebrow: "Indlela yakho yokukhula", heading: "Likweyiphi inqanaba ishishini lakho ngoku?", lead: "Khetha elivakala ngathi lelakho. Siza kuqala apho, sikubonise okulandelayo.", stage: "Inqanaba", go: "Qala apha" },
@@ -27,6 +33,7 @@ const w = pick(lang, {
               <span class="num">{w.stage} {s.number}</span>
               <span class="name">{s.name}</span>
               <span class="quote">"{s.whereYouAre}"</span>
+              {priceOf(s.number) && <span class="price">{priceOf(s.number)}</span>}
               <span class="go">
                 {w.go} <span class="arrow" aria-hidden="true">→</span>
               </span>
@@ -179,6 +186,10 @@ const w = pick(lang, {
   }
   .quote {
     flex: 1;
+  }
+  .price {
+    font: 600 0.95rem/1.3 var(--font-heading);
+    color: var(--white);
   }
   .go {
     font-weight: 500;

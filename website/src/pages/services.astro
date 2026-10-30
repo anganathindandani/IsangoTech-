@@ -24,11 +24,13 @@ const w = pick(lang, {
     start: "Get started",
     next: "Next step:",
     extrasLabel: "Custom work and care",
+    addonsHeading: "Add-ons",
+    addonsLead: "Smaller jobs on their own, or added to any package.",
     fixes: "30 days of free fixes",
     fixesText: "After every handover, we fix anything that doesn't work as agreed, at no cost.",
     help: "Help when you need it: R400 an hour",
     helpText: "No care plan? Ask for help any time. We tell you the cost before we start.",
-    note: "Prices are in South African rand. Websites and custom software are yours to keep, with no monthly fee unless you choose the care plan. The WhatsApp assistant and portal run on our platform, so their monthly fee covers hosting, AI usage (up to a fair limit, set out in your agreement), updates and support. Replying to customers who message you on WhatsApp is free; WhatsApp's own charge for messages you send first, such as reminders, is billed to your business by Meta, usually a few cents each.",
+    note: "Prices are in South African rand. Websites and custom software are yours to keep, with no monthly fee to us unless you choose the care plan; their domain and hosting are in your name, and you pay those providers directly. The WhatsApp Assistant and Business Portal run on our platform, so their monthly fee covers hosting, AI usage (up to a fair limit, set out in your agreement), updates and support. All monthly plans are month to month, with no lock-in: cancel with 30 days' notice. Setup fees aren't refundable once work has started. Replying to customers who message you on WhatsApp is free; WhatsApp's own charge for messages you send first, such as reminders, is billed to your business by Meta, usually a few cents each.",
     vatYes: "Prices include VAT.",
     vatNo: "IsangoTech is not yet a registered VAT vendor, so no VAT is charged.",
     ctaHeading: "Not sure which one fits?",
@@ -47,11 +49,13 @@ const w = pick(lang, {
     start: "Qalisa",
     next: "Inyathelo elilandelayo:",
     extrasLabel: "Umsebenzi owenzelwe wena nokhathalelo",
+    addonsHeading: "Izongezo",
+    addonsLead: "Imisebenzi emincinci ngokwayo, okanye yongezwe kuyo nayiphi na iphakheji.",
     fixes: "Iintsuku ezingama-30 zokulungisa simahla",
     fixesText: "Emva kokunikezela ngomsebenzi, silungisa nantoni na engasebenziyo njengoko kuvunyelwene, ngaphandle kwentlawulo.",
     help: "Uncedo xa ulufuna: R400 ngeyure",
     helpText: "Akunayo i-care plan? Cela uncedo nanini na. Sikuxelela ixabiso ngaphambi kokuba siqale.",
-    note: "Amaxabiso akwiirandi zaseMzantsi Afrika. Ii-website ne-software eyenzelwe wena zezakho, akukho ntlawulo yenyanga ngaphandle kokuba ukhetha i-care plan. I-WhatsApp assistant ne-portal zisebenza kwiqonga lethu, ngoko intlawulo yazo yenyanga ihlawulela i-hosting, ukusetyenziswa kwe-AI (ukuya kumda ofanelekileyo, obhalwe kwisivumelwano sakho), uhlaziyo nenkxaso. Ukuphendula abathengi abakuthumelela umyalezo kwi-WhatsApp simahla; imali ye-WhatsApp yemiyalezo oyithumela kuqala, njengezikhumbuzo, ihlawuliswa ishishini lakho yiMeta, ngokuqhelekileyo ziisenti ezimbalwa umyalezo ngamnye.",
+    note: "Amaxabiso akwiirandi zaseMzantsi Afrika. Ii-website ne-software eyenzelwe wena zezakho, akukho ntlawulo yenyanga kuthi ngaphandle kokuba ukhetha i-care plan; i-domain ne-hosting zazo zisegameni lakho, kwaye uhlawula abo baboneleli ngqo. I-WhatsApp Assistant ne-Business Portal zisebenza kwiqonga lethu, ngoko intlawulo yazo yenyanga ihlawulela i-hosting, ukusetyenziswa kwe-AI (ukuya kumda ofanelekileyo, obhalwe kwisivumelwano sakho), uhlaziyo nenkxaso. Zonke izicwangciso zenyanga zingenyanga nenyanga, akukho sivumelwano sikubophelelayo: rhoxisa ngesaziso seentsuku ezingama-30. Iintlawulo zokuseta azibuyiswa xa umsebenzi sele uqalile. Ukuphendula abathengi abakuthumelela umyalezo kwi-WhatsApp simahla; imali ye-WhatsApp yemiyalezo oyithumela kuqala, njengezikhumbuzo, ihlawuliswa ishishini lakho yiMeta, ngokuqhelekileyo ziisenti ezimbalwa umyalezo ngamnye.",
     vatYes: "Amaxabiso aquka i-VAT.",
     vatNo: "I-IsangoTech ayikabhaliswa njengomthengisi we-VAT, ngoko akuhlawuliswa VAT.",
     ctaHeading: "Awuqinisekanga ukuba yeyiphi ekulungeleyo?",
@@ -60,7 +64,8 @@ const w = pick(lang, {
 });
 
 const staged = packages.filter((p) => p.stage !== null);
-const everyStage = packages.filter((p) => p.stage === null);
+const everyStage = packages.filter((p) => p.stage === null && !p.group);
+const addons = packages.filter((p) => p.group === "addon");
 ---
 
 <Base title={w.title} searchTitle={w.searchTitle} description={w.description}>
@@ -129,7 +134,7 @@ const everyStage = packages.filter((p) => p.stage === null);
         </div>
       ))
     }
-    <ul class="promises">
+    <ul class="promises" id="promises">
       <li>
         <strong>{w.fixes}</strong>
         <span>{w.fixesText}</span>
@@ -143,6 +148,29 @@ const everyStage = packages.filter((p) => p.stage === null);
       {w.note}
       {site.vatRegistered ? w.vatYes : w.vatNo}
     </p>
+  </section>
+
+  <section class="container addons" aria-labelledby="addons-heading">
+    <h2 id="addons-heading">{w.addonsHeading}</h2>
+    <p class="addons-lead">{w.addonsLead}</p>
+    <ul class="addon-list">
+      {
+        addons.map((p) => (
+          <li class="package addon">
+            <p class="stage">{p.label}</p>
+            <h3>{p.name}</h3>
+            <p class="price">{formatPrice(p, lang)}</p>
+            {p.priceDetail && <p class="price-detail">{p.priceDetail}</p>}
+            <p>{p.summary}</p>
+            <ul>
+              {p.includes.map((i) => (
+                <li>{i}</li>
+              ))}
+            </ul>
+          </li>
+        ))
+      }
+    </ul>
   </section>
 
   <CallToAction heading={w.ctaHeading} text={w.ctaText} />
@@ -276,5 +304,27 @@ const everyStage = packages.filter((p) => p.stage === null);
   .note {
     font-size: 0.9rem;
     opacity: 0.85;
+  }
+  .addons {
+    padding-block: 2.5rem 1rem;
+  }
+  .addons-lead {
+    margin-top: 0;
+    max-width: 40rem;
+  }
+  .addon-list {
+    list-style: none;
+    padding: 0;
+    margin: 1.25rem 0 0;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  }
+  .addon h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.25rem;
+  }
+  .addon ul {
+    margin-bottom: 0;
   }
 </style>

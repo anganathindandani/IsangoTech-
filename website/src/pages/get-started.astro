@@ -66,7 +66,8 @@ const w = pick(lang, {
     next: "Next",
     send: "Send",
     thanks: "Thank you, we've got it.",
-    soon: "We'll be in touch soon.",
+    soon: "We'll reply within 1 working day: on WhatsApp if you said we may, otherwise by phone or email.",
+    whatNext: "We reply within 1 working day.",
     home: "Back to the home page",
     unavailable: "The form isn't available right now",
     unavailableWa: "Please <a href=\"%WA%\">message us on WhatsApp</a> instead, and we'll help you from there.",
@@ -108,7 +109,8 @@ const w = pick(lang, {
     next: "Okulandelayo",
     send: "Thumela",
     thanks: "Enkosi, siyifumene.",
-    soon: "Siza kuqhagamshelana nawe kungekudala.",
+    soon: "Siza kuphendula kungadlulanga usuku olu-1 lomsebenzi: kwi-WhatsApp ukuba uvumile, kungenjalo ngomnxeba okanye nge-imeyile.",
+    whatNext: "Siphendula kungadlulanga usuku olu-1 lomsebenzi.",
     home: "Buyela ekhaya",
     unavailable: "Ifomu ayifumaneki okwangoku",
     unavailableWa: "Nceda <a href=\"%WA%\">usithumelele umyalezo kwi-WhatsApp</a> endaweni yoko, kwaye siza kukunceda ukusuka apho.",
@@ -121,7 +123,7 @@ const w = pick(lang, {
   <section class="container intro">
     <h1>{w.title}</h1>
     <p>
-      {w.lead}
+      {w.lead} {w.whatNext}
       {whatsappLink && (
         <>
           {w.chat} <a href={whatsappLink}>{w.chatLink}</a>.
