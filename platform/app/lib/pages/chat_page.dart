@@ -91,9 +91,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     final c = _conversation;
     if (c == null) {
-      return _error != null
-          ? Center(child: Text(errorMessage(_error!)))
-          : const Center(child: CircularProgressIndicator());
+      return _error != null ? Center(child: Text(errorMessage(_error!))) : const _ChatSkeleton();
     }
     final canReply = c.canReply(DateTime.now());
     final narrow = MediaQuery.sizeOf(context).width < 600;
@@ -226,4 +224,36 @@ class _Bubble extends StatelessWidget {
       ),
     );
   }
+}
+
+/// A chat's shape in grey while it loads: a header and alternating messages.
+class _ChatSkeleton extends StatelessWidget {
+  const _ChatSkeleton();
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    label: 'Loading',
+    child: ExcludeSemantics(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SkeletonBox(width: 200, height: 22),
+            const SizedBox(height: 8),
+            const SkeletonBox(width: 140, height: 12),
+            const SizedBox(height: 28),
+            for (final (mine, width) in const [(false, 220.0), (true, 260.0), (false, 180.0), (true, 200.0)])
+              Align(
+                alignment: mine ? Alignment.centerRight : Alignment.centerLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: SkeletonBox(width: width, height: 44, radius: 14),
+                ),
+              ),
+          ],
+        ),
+      ),
+    ),
+  );
 }

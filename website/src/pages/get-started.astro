@@ -487,6 +487,7 @@ const w = pick(lang, {
     const options = (await res.json()) as Options;
 
     const industries = $("industries");
+    clearSkeletons();
     if (!industries.childElementCount) {
       for (const i of options.industries) industries.append(choice("industry_id", i.id, (xh && industryXh[i.name]) || i.name));
     }
@@ -620,12 +621,36 @@ const w = pick(lang, {
     }
   });
 
+  // Grey pill shapes where the industry buttons will be, so the page doesn't
+  // jump when they arrive from the server.
+  function showSkeletons() {
+    const industries = $("industries");
+    if (industries.childElementCount) return;
+    industries.setAttribute("aria-busy", "true");
+    for (const width of [9, 11, 7, 12, 8, 10, 9, 13]) {
+      const pill = document.createElement("span");
+      pill.className = "pill-skeleton";
+      pill.style.width = `${width}rem`;
+      pill.setAttribute("aria-hidden", "true");
+      industries.append(pill);
+    }
+    $("industry-field").hidden = false;
+  }
+  function clearSkeletons() {
+    const industries = $("industries");
+    industries.querySelectorAll(".pill-skeleton").forEach((el) => el.remove());
+    industries.removeAttribute("aria-busy");
+  }
+
   if (!functionsUrl) {
     unavailable();
   } else {
     startSteps();
+    showSkeletons();
     loadOptions().catch(() => {
       // The form still works without industries and slots.
+      clearSkeletons();
+      $("industry-field").hidden = true;
     });
   }
 </script>
@@ -791,6 +816,13 @@ const w = pick(lang, {
       background 0.2s var(--ease-out),
       color 0.2s var(--ease-out),
       transform 0.2s var(--ease-out);
+  }
+  #enquiry :global(.pill-skeleton) {
+    display: block;
+    max-width: 100%;
+    height: 2.6rem;
+    border-radius: 999px;
+    background: rgb(27 42 74 / 0.08);
   }
   #enquiry :global(.pill:hover) {
     border-color: var(--turquoise);

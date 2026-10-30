@@ -100,7 +100,7 @@ class _SettingsSectionState extends State<_SettingsSection> {
             ),
           );
         }
-        if (!snap.hasData) return const Center(child: CircularProgressIndicator());
+        if (!snap.hasData) return const Section(title: 'Settings', child: SkeletonList(rows: 6, leading: false));
         final s = _s ??= snap.data!;
         final narrow = MediaQuery.sizeOf(context).width < 600;
         return Section(

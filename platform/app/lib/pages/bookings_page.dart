@@ -50,6 +50,7 @@ class _BookingsPageState extends State<BookingsPage> {
         ),
         Loader<List<Booking>>(
           key: ValueKey('${me.businessId}$_start$_key'),
+          placeholder: const Card(child: SkeletonList()),
           load: () => repo.bookings(
             me.businessId,
             businessDayStart(_start),

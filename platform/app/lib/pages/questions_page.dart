@@ -80,6 +80,7 @@ class _QuestionsPageState extends State<QuestionsPage> {
         ),
         Loader<List<Question>>(
           key: ValueKey('${me.businessId}$_key'),
+          placeholder: const Card(child: SkeletonList()),
           load: () => repo.openQuestions(me.businessId),
           builder: (context, list, _) => list.isEmpty
               ? const Card(child: EmptyState('Nothing to answer. The Assistant has handled everything so far.'))

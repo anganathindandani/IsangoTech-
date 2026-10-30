@@ -80,6 +80,7 @@ class _AdminPageState extends State<AdminPage> {
         ),
         Loader<List<AdminBusiness>>(
           key: _key,
+          placeholder: const Card(child: SkeletonList()),
           load: repo.adminBusinesses,
           builder: (context, list, _) => list.isEmpty
               ? const Card(child: EmptyState('No businesses yet. Add your first client.'))

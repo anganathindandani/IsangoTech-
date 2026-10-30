@@ -33,8 +33,42 @@
 
   <title>IsangoTech Business</title>
   <link rel="manifest" href="manifest.json">
+  <style>
+    /* Shown the moment the page opens, while the app starts (a few seconds on
+       a phone); removed when the app draws its first frame. */
+    html, body { margin: 0; background: #1B2A4A; }
+    #splash {
+      position: fixed; inset: 0; z-index: 10;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px;
+      background: #1B2A4A; color: #F5EBDD;
+      font: 600 20px/1.2 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      transition: opacity 0.35s ease;
+    }
+    #splash svg { width: 56px; height: 90px; animation: pulse 1.6s ease-in-out infinite; }
+    #splash.done { opacity: 0; pointer-events: none; }
+    @keyframes pulse { 50% { opacity: 0.55; transform: scale(0.96); } }
+    @media (prefers-reduced-motion: reduce) {
+      #splash svg { animation: none; }
+      #splash { transition: none; }
+    }
+  </style>
 </head>
 <body>
+  <div id="splash" role="status" aria-label="Loading IsangoTech Business">
+    <svg viewBox="0 -816 560 900" aria-hidden="true">
+      <rect x="0" y="-816" width="560" height="900" rx="56" fill="#2BA8A0"/>
+      <path d="M84 -732H476V0H304V-580Z" fill="#E07A1F"/>
+    </svg>
+    <span>IsangoTech</span>
+  </div>
+  <script>
+    window.addEventListener("flutter-first-frame", function () {
+      var splash = document.getElementById("splash");
+      if (!splash) return;
+      splash.classList.add("done");
+      setTimeout(function () { splash.remove(); }, 400);
+    });
+  </script>
   <!--
     You can customize the "flutter_bootstrap.js" script.
     This is useful to provide a custom configuration to the Flutter loader

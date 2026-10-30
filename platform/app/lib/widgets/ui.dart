@@ -67,11 +67,75 @@ Future<bool> confirm(BuildContext context, String title, String message, {String
   return ok ?? false;
 }
 
-/// Loads data and shows a spinner, an error with a retry button, or the result.
+/// A grey shape standing in for content that's still loading. Static, with no
+/// shimmer, so it suits phones set to reduce motion.
+class SkeletonBox extends StatelessWidget {
+  const SkeletonBox({super.key, this.width, this.height = 14, this.radius = 6});
+  final double? width;
+  final double height;
+  final double radius;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    width: width,
+    height: height,
+    decoration: BoxDecoration(color: Brand.indigo.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(radius)),
+  );
+}
+
+/// Rows shaped like the list that's loading, so the page keeps its layout.
+class SkeletonList extends StatelessWidget {
+  const SkeletonList({super.key, this.rows = 4, this.leading = true});
+  final int rows;
+
+  /// A round avatar (or time) at the start of each row.
+  final bool leading;
+
+  static const _titles = [180.0, 140.0, 200.0, 160.0];
+  static const _lines = [240.0, 190.0, 260.0, 210.0];
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    label: 'Loading',
+    child: ExcludeSemantics(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Column(
+          children: [
+            for (var i = 0; i < rows; i++)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Row(
+                  children: [
+                    if (leading) ...[const SkeletonBox(width: 40, height: 40, radius: 20), const SizedBox(width: 16)],
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SkeletonBox(width: _titles[i % 4]),
+                          const SizedBox(height: 8),
+                          SkeletonBox(width: _lines[i % 4], height: 12),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+/// Loads data and shows a skeleton of it, an error with a retry button, or the result.
 class Loader<T> extends StatefulWidget {
-  const Loader({super.key, required this.load, required this.builder});
+  const Loader({super.key, required this.load, required this.builder, this.placeholder = const SkeletonList()});
   final Future<T> Function() load;
   final Widget Function(BuildContext context, T data, VoidCallback reload) builder;
+
+  /// What shows while it loads: by default, rows shaped like a list.
+  final Widget placeholder;
 
   @override
   State<Loader<T>> createState() => _LoaderState<T>();
@@ -102,7 +166,7 @@ class _LoaderState<T> extends State<Loader<T>> {
             ),
           );
         }
-        if (!snap.hasData) return const Center(child: CircularProgressIndicator());
+        if (!snap.hasData) return widget.placeholder;
         return widget.builder(context, snap.data as T, _reload);
       },
     );

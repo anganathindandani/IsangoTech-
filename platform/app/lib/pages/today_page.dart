@@ -24,6 +24,7 @@ class _TodayPageState extends State<TodayPage> {
     return Loader<TodaySummary>(
       key: ValueKey('${me.businessId}$_key'),
       load: () => repo.today(me.businessId),
+      placeholder: _TodaySkeleton(manager: me.isManager),
       builder: (context, t, reload) => PageBody(
         children: [
           PageHeader(
@@ -81,6 +82,51 @@ class _TodayPageState extends State<TodayPage> {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Today's layout in grey while it loads: the header, the tiles and a few bookings.
+class _TodaySkeleton extends StatelessWidget {
+  const _TodaySkeleton({required this.manager});
+  final bool manager;
+
+  @override
+  Widget build(BuildContext context) {
+    final narrow = MediaQuery.sizeOf(context).width < 600;
+    return PageBody(
+      children: [
+        PageHeader('Today', subtitle: day(DateTime.now())),
+        if (manager)
+          ExcludeSemantics(
+            child: Wrap(
+              spacing: 16,
+              runSpacing: 16,
+              children: [
+                for (var i = 0; i < 3; i++)
+                  SizedBox(
+                    width: narrow ? double.infinity : 260,
+                    child: const Card(
+                      child: Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SkeletonBox(width: 150, height: 12),
+                            SizedBox(height: 12),
+                            SkeletonBox(width: 60, height: 28),
+                            SizedBox(height: 12),
+                            SkeletonBox(width: 190, height: 12),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        const Section(title: "Today's bookings", child: SkeletonList(rows: 3)),
+      ],
     );
   }
 }
