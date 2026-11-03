@@ -1,0 +1,4 @@
+# Demo sites made for prospects are never listed by search engines, so they
+# can't be mistaken for the real business's website.
+/demo/*
+  X-Robots-Tag: noindex, nofollow
