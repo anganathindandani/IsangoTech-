@@ -41,8 +41,9 @@ class _AssessmentsPageState extends State<AssessmentsPage> {
               child: Loader<List<Assessment>>(
                 key: ValueKey('a$_key'),
                 load: () => repo.assessments(upcomingOnly: true),
+                placeholder: const SkeletonList(rows: 3, trailing: true, padding: EdgeInsets.zero),
                 builder: (context, list, _) => list.isEmpty
-                    ? const EmptyState('Nothing booked.')
+                    ? const EmptyState('No upcoming assessments.', icon: Icons.event_available_outlined)
                     : Column(children: [for (final a in list) AssessmentTile(a, onChanged: _reload, showWho: true)]),
               ),
             ),
@@ -53,8 +54,9 @@ class _AssessmentsPageState extends State<AssessmentsPage> {
                 load: () async => (await repo.assessments())
                     .where((a) => a.status != 'booked' || (a.scheduledAt?.isBefore(DateTime.now()) ?? false))
                     .toList(),
+                placeholder: const SkeletonList(rows: 3, trailing: true, padding: EdgeInsets.zero),
                 builder: (context, list, _) => list.isEmpty
-                    ? const EmptyState('No past assessments.')
+                    ? const EmptyState('No past assessments yet.', icon: Icons.history)
                     : Column(
                         children: [for (final a in list.take(30)) AssessmentTile(a, onChanged: _reload, showWho: true)],
                       ),
@@ -67,15 +69,19 @@ class _AssessmentsPageState extends State<AssessmentsPage> {
               child: Loader<List<BookingSlot>>(
                 key: ValueKey('s$_key'),
                 load: () => repo.slots(),
+                placeholder: const SkeletonList(rows: 3, trailing: true, padding: EdgeInsets.zero),
                 builder: (context, slots, _) => slots.isEmpty
-                    ? const EmptyState('No upcoming slots. Add some so website visitors can book.')
+                    ? const EmptyState(
+                        'No upcoming slots. Add some so website visitors can book.',
+                        icon: Icons.calendar_month_outlined,
+                      )
                     : Column(
                         children: [
                           for (final s in slots)
-                            ListTile(
+                            DataTile(
                               contentPadding: EdgeInsets.zero,
-                              title: Text(dateTime(s.startsAt)),
-                              subtitle: Text(s.mode == 'online' ? 'Online' : s.location ?? 'In person'),
+                              title: dateTime(s.startsAt),
+                              subtitle: s.mode == 'online' ? 'Online' : s.location ?? 'In person',
                               trailing: s.status == 'open'
                                   ? TextButton(
                                       onPressed: () async {

@@ -41,9 +41,8 @@ class _ClientsPageState extends State<ClientsPage> {
             ),
           ],
         ),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
+        FilterBar(
+          label: 'Status',
           children: [
             ChoiceChip(
               label: const Text('All'),
@@ -58,29 +57,30 @@ class _ClientsPageState extends State<ClientsPage> {
               ),
           ],
         ),
-        TextField(
-          decoration: const InputDecoration(prefixIcon: Icon(Icons.search), hintText: 'Search business name'),
-          onSubmitted: (v) => setState(() => _search = v),
-        ),
+        SearchField(label: 'Search clients', hint: 'Business name', onSubmitted: (v) => setState(() => _search = v)),
         Card(
           semanticContainer: false,
 
           child: Loader<List<Client>>(
             key: ValueKey('$_key$_status$_search'),
             load: () => repo.clients(status: _status, search: _search),
+            placeholder: const SkeletonList(rows: 6, trailing: true),
             builder: (context, clients, _) => clients.isEmpty
-                ? const EmptyState('No clients yet. A client is created when you send a lead their first quote.')
+                ? EmptyState(
+                    _status == null && _search.trim().isEmpty
+                        ? 'No clients yet. A client is created when you send a lead their first quote.'
+                        : 'No clients match this status or search.',
+                    icon: Icons.storefront_outlined,
+                  )
                 : Column(
                     children: [
                       for (final c in clients)
-                        ListTile(
-                          title: Text(c.businessName),
-                          subtitle: Text(
-                            [
-                              c.industryName,
-                              c.growthStage == null ? null : stageLabel(c.growthStage),
-                            ].whereType<String>().join(' · '),
-                          ),
+                        DataTile(
+                          title: c.businessName,
+                          subtitle: [
+                            c.industryName,
+                            c.growthStage == null ? null : stageLabel(c.growthStage),
+                          ].whereType<String>().join(' · '),
                           trailing: StatusChip(
                             clientStatuses[c.status] ?? c.status,
                             color: StatusChip.colorFor(c.status),

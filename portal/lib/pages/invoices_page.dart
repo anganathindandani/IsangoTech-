@@ -49,9 +49,8 @@ class _InvoicesPageState extends State<InvoicesPage> {
             ),
           ],
         ),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
+        FilterBar(
+          label: 'Payment',
           children: [
             ChoiceChip(
               label: const Text('All'),
@@ -73,20 +72,22 @@ class _InvoicesPageState extends State<InvoicesPage> {
             key: ValueKey('$_key$_filter'),
             load: () =>
                 repo.invoices(paymentStatus: _filter == 'overdue' ? null : _filter, overdueOnly: _filter == 'overdue'),
+            placeholder: const SkeletonList(rows: 6, trailing: true),
             builder: (context, list, _) => list.isEmpty
-                ? const EmptyState('No invoices here.')
+                ? EmptyState(
+                    _filter == null ? 'No invoices yet.' : 'No invoices match this filter.',
+                    icon: Icons.receipt_long_outlined,
+                  )
                 : Column(
                     children: [
                       for (final i in list)
-                        ListTile(
-                          title: Text('${i.displayNumber} · ${i.clientName}'),
-                          subtitle: Text(
-                            [
-                              money(i.amount),
-                              if (i.paid > 0 && i.balance > 0) '${money(i.balance)} still owed',
-                              if (i.dueDate != null) 'due ${date(i.dueDate)}',
-                            ].join(' · '),
-                          ),
+                        DataTile(
+                          title: '${i.displayNumber} · ${i.clientName}',
+                          subtitle: [
+                            money(i.amount),
+                            if (i.paid > 0 && i.balance > 0) '${money(i.balance)} still owed',
+                            if (i.dueDate != null) 'due ${date(i.dueDate)}',
+                          ].join(' · '),
                           trailing: StatusChip(
                             i.isOverdue ? 'Overdue' : paymentStatuses[i.paymentStatus] ?? i.paymentStatus,
                             color: StatusChip.colorFor(i.isOverdue ? 'overdue' : i.paymentStatus),

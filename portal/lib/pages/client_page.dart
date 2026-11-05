@@ -57,6 +57,7 @@ class _ClientPageState extends State<ClientPage> {
     return Loader<_ClientData>(
       key: _key,
       load: _load,
+      placeholder: const DetailSkeleton(leftSections: 4, rightSections: 3),
       builder: (context, d, _) {
         final c = d.client;
         final reviewDue = c.nextStageReviewDate != null && !c.nextStageReviewDate!.isAfter(DateTime.now());
@@ -107,9 +108,12 @@ class _ClientPageState extends State<ClientPage> {
                       if (d.stages.isNotEmpty) ...[
                         const SizedBox(height: 4),
                         for (final s in d.stages.reversed)
-                          Text(
-                            '${date(s.changedAt)}: ${s.fromStage == null ? 'Started at' : 'Moved from ${growthStages[s.fromStage]} to'} ${growthStages[s.toStage] ?? 'not set'}',
-                            style: const TextStyle(color: Colors.black54),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 6),
+                            child: Text(
+                              '${date(s.changedAt)}: ${s.fromStage == null ? 'Started at' : 'Moved from ${growthStages[s.fromStage]} to'} ${growthStages[s.toStage] ?? 'not set'}',
+                              style: const TextStyle(color: Colors.black54, height: 1.35),
+                            ),
                           ),
                       ],
                     ],
@@ -118,16 +122,15 @@ class _ClientPageState extends State<ClientPage> {
                 Section(
                   title: 'Quotes',
                   child: d.quotes.isEmpty
-                      ? const EmptyState('No quotes yet.')
+                      ? const EmptyState('No quotes yet.', icon: Icons.request_quote_outlined)
                       : Column(
                           children: [
                             for (final q in d.quotes)
-                              ListTile(
+                              DataTile(
                                 contentPadding: EdgeInsets.zero,
-                                title: Text(q.number),
-                                subtitle: Text(
-                                  '${money(q.total)}${q.monthlyTotal > 0 ? ' + ${money(q.monthlyTotal)} / month' : ''} · ${date(q.createdAt)}',
-                                ),
+                                title: q.number,
+                                subtitle:
+                                    '${money(q.total)}${q.monthlyTotal > 0 ? ' + ${money(q.monthlyTotal)} / month' : ''} · ${date(q.createdAt)}',
                                 trailing: StatusChip(
                                   quoteStatuses[q.status] ?? q.status,
                                   color: StatusChip.colorFor(q.status),
@@ -140,14 +143,14 @@ class _ClientPageState extends State<ClientPage> {
                 Section(
                   title: 'Invoices',
                   child: d.invoices.isEmpty
-                      ? const EmptyState('No invoices yet.')
+                      ? const EmptyState('No invoices yet.', icon: Icons.receipt_long_outlined)
                       : Column(
                           children: [
                             for (final i in d.invoices)
-                              ListTile(
+                              DataTile(
                                 contentPadding: EdgeInsets.zero,
-                                title: Text('${i.displayNumber} · ${money(i.amount)}'),
-                                subtitle: Text(i.dueDate == null ? invoiceTypes[i.type]! : 'Due ${date(i.dueDate)}'),
+                                title: '${i.displayNumber} · ${money(i.amount)}',
+                                subtitle: i.dueDate == null ? invoiceTypes[i.type]! : 'Due ${date(i.dueDate)}',
                                 trailing: StatusChip(
                                   i.isOverdue ? 'Overdue' : paymentStatuses[i.paymentStatus] ?? i.paymentStatus,
                                   color: StatusChip.colorFor(i.isOverdue ? 'overdue' : i.paymentStatus),
@@ -173,7 +176,7 @@ class _ClientPageState extends State<ClientPage> {
                     },
                   ),
                   child: d.activities.isEmpty
-                      ? const EmptyState('No activity logged for this client.')
+                      ? const EmptyState('No activity logged for this client yet.', icon: Icons.sticky_note_2_outlined)
                       : Column(
                           children: [
                             for (final a in d.activities)
@@ -203,7 +206,7 @@ class _ClientPageState extends State<ClientPage> {
                     },
                   ),
                   child: d.contacts.isEmpty
-                      ? const EmptyState('No contacts.')
+                      ? const EmptyState('No contacts yet. Add the person you speak to.', icon: Icons.people_outline)
                       : Column(
                           children: [
                             for (final k in d.contacts)
@@ -252,7 +255,7 @@ class _ClientPageState extends State<ClientPage> {
                     },
                   ),
                   child: d.assessments.isEmpty
-                      ? const EmptyState('No assessments.')
+                      ? const EmptyState('No assessments booked.', icon: Icons.event_available_outlined)
                       : Column(children: [for (final a in d.assessments) AssessmentTile(a, onChanged: _reload)]),
                 ),
               ],

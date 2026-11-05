@@ -58,6 +58,7 @@ class _QuotePageState extends State<QuotePage> {
     return Loader<_QuoteData>(
       key: _key,
       load: _load,
+      placeholder: const DetailSkeleton(stacked: true, leftSections: 2, rightSections: 0, showChips: true),
       builder: (context, d, _) {
         final q = d.quote;
         final threshold = (d.settings['quote_approval_amount'] as num?) ?? 0;
@@ -165,43 +166,28 @@ class _QuotePageState extends State<QuotePage> {
                   : null,
               child: Column(
                 children: [
-                  if (q.lines.isEmpty) const EmptyState('Add packages from the price list, or custom lines.'),
+                  if (q.lines.isEmpty)
+                    const EmptyState(
+                      'No lines yet. Add a package from the price list, or a custom line.',
+                      icon: Icons.playlist_add_outlined,
+                    ),
                   for (final l in q.lines)
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: Text(l.description),
-                      subtitle: Text(
-                        '${l.quantity} × ${money(l.unitPrice)}${l.billing == 'monthly' ? ' per month' : ''}',
-                      ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(money(l.lineTotal), style: const TextStyle(fontWeight: FontWeight.w500)),
-                          if (q.editable) ...[
-                            IconButton(
-                              tooltip: 'Edit line',
-                              icon: const Icon(Icons.edit_outlined),
-                              onPressed: () async {
-                                if (await showDialog<bool>(
-                                      context: context,
-                                      builder: (_) => QuoteLineDialog(quoteId: q.id, line: l),
-                                    ) ==
-                                    true) {
-                                  _reload();
-                                }
-                              },
-                            ),
-                            IconButton(
-                              tooltip: 'Remove line',
-                              icon: const Icon(Icons.delete_outline),
-                              onPressed: () async {
-                                await run(context, () => repo.deleteQuoteLine(l.id));
-                                _reload();
-                              },
-                            ),
-                          ],
-                        ],
-                      ),
+                    _QuoteLineTile(
+                      line: l,
+                      editable: q.editable,
+                      onEdit: () async {
+                        if (await showDialog<bool>(
+                              context: context,
+                              builder: (_) => QuoteLineDialog(quoteId: q.id, line: l),
+                            ) ==
+                            true) {
+                          _reload();
+                        }
+                      },
+                      onDelete: () async {
+                        await run(context, () => repo.deleteQuoteLine(l.id));
+                        _reload();
+                      },
                     ),
                   const Divider(),
                   _TotalRow('Once-off total', money(q.total)),
@@ -229,9 +215,55 @@ class _QuotePageState extends State<QuotePage> {
                       },
                     )
                   : null,
-              child: Text(q.notes ?? 'None.'),
+              child: Text(q.notes ?? 'No notes on this quote.'),
             ),
           ],
+        );
+      },
+    );
+  }
+}
+
+class _QuoteLineTile extends StatelessWidget {
+  const _QuoteLineTile({required this.line, required this.editable, required this.onEdit, required this.onDelete});
+  final QuoteLine line;
+  final bool editable;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    final subtitle = '${line.quantity} × ${money(line.unitPrice)}${line.billing == 'monthly' ? ' per month' : ''}';
+    final amount = Text(money(line.lineTotal), style: const TextStyle(fontWeight: FontWeight.w500));
+    final List<Widget> actions = editable
+        ? [
+            IconButton(tooltip: 'Edit line', icon: const Icon(Icons.edit_outlined), onPressed: onEdit),
+            IconButton(tooltip: 'Remove line', icon: const Icon(Icons.delete_outline), onPressed: onDelete),
+          ]
+        : const [];
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final narrow = constraints.maxWidth < 560;
+        if (!narrow) {
+          return ListTile(
+            contentPadding: EdgeInsets.zero,
+            title: Text(line.description),
+            subtitle: Text(subtitle),
+            trailing: Row(mainAxisSize: MainAxisSize.min, children: [amount, ...actions]),
+          );
+        }
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(line.description),
+              const SizedBox(height: 2),
+              Text(subtitle, style: const TextStyle(color: Colors.black54)),
+              const SizedBox(height: 4),
+              Row(children: [amount, const Spacer(), ...actions]),
+            ],
+          ),
         );
       },
     );
