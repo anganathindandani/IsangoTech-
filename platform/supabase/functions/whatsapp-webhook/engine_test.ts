@@ -1,7 +1,7 @@
 import { assert, assertEquals } from "jsr:@std/assert@1";
 import type { Ai, ChatMessage, ChatResult } from "./ai.ts";
-import { type Db, type EngineDeps, handleMessage } from "./engine.ts";
-import type { Context } from "./prompt.ts";
+import { type Db, type EngineDeps, handleMessage, MAX_REPLY_CHARS, newCustomerNotice } from "./engine.ts";
+import { ALREADY_GREETED, type Context } from "./prompt.ts";
 import type { Incoming } from "./whatsapp.ts";
 
 const message: Incoming = { phoneNumberId: "pn-1", from: "27825550001", profileName: "Nomsa", id: "w1", body: "Hi" };
@@ -168,11 +168,117 @@ Deno.test("if the customer wrote again meanwhile, only the newer run replies", a
   assertEquals(log.sent, []);
 });
 
-Deno.test("a new customer's first reply links to the business's privacy notice", async () => {
+Deno.test("newCustomerNotice without a privacy URL", () => {
+  assertEquals(
+    newCustomerNotice("Salon A", null),
+    "Hi! I'm the automated assistant for Salon A on WhatsApp. " +
+      "If I can't help, just ask and I'll pass your message on to the team.\n" +
+      "Salon A only uses your details to help with your enquiry or booking.",
+  );
+});
+
+Deno.test("newCustomerNotice with a privacy URL puts the link on its own line", () => {
+  const notice = newCustomerNotice("Salon A", "https://salon-a.example/privacy");
+  assertEquals(
+    notice,
+    "Hi! I'm the automated assistant for Salon A on WhatsApp. " +
+      "If I can't help, just ask and I'll pass your message on to the team.\n" +
+      "How Salon A looks after your information:\n" +
+      "https://salon-a.example/privacy",
+  );
+  const lines = notice.split("\n");
+  assertEquals(lines.at(-1), "https://salon-a.example/privacy");
+  assert(!lines.at(-1)!.includes(" "), "nothing after the URL on its line");
+});
+
+Deno.test("newCustomerNotice falls back when the business name is empty or whitespace", () => {
+  const expected = "Hi! I'm the automated assistant for this business on WhatsApp. " +
+    "If I can't help, just ask and I'll pass your message on to the team.\n" +
+    "This business only uses your details to help with your enquiry or booking.";
+  assertEquals(newCustomerNotice("", null), expected);
+  assertEquals(newCustomerNotice("   ", null), expected);
+  assertEquals(
+    newCustomerNotice("  ", "https://example.test/privacy"),
+    "Hi! I'm the automated assistant for this business on WhatsApp. " +
+      "If I can't help, just ask and I'll pass your message on to the team.\n" +
+      "How this business looks after your information:\n" +
+      "https://example.test/privacy",
+  );
+});
+
+Deno.test("a new customer's first reply starts with the notice, then the AI reply", async () => {
+  const { deps, log } = harness({ replies: [text("We have 09:00 or 11:00.")], newCustomer: true });
+  await handleMessage(message, deps);
+  assertEquals(
+    log.sent[0],
+    newCustomerNotice("Salon A", null) + "\n\nWe have 09:00 or 11:00.",
+  );
+});
+
+Deno.test("a new customer's first reply includes the privacy link when set", async () => {
   const ctx = context();
   ctx.settings.privacy_notice_url = "https://salon-a.example/privacy";
-  const { deps, log } = harness({ replies: [text("Hello!")], ctx, newCustomer: true });
+  const { deps, log } = harness({ replies: [text("We have 09:00 or 11:00.")], ctx, newCustomer: true });
   await handleMessage(message, deps);
-  assert(log.sent[0].startsWith("Hello!"));
-  assert(log.sent[0].endsWith("https://salon-a.example/privacy"));
+  assertEquals(
+    log.sent[0],
+    newCustomerNotice("Salon A", "https://salon-a.example/privacy") + "\n\nWe have 09:00 or 11:00.",
+  );
+});
+
+Deno.test("an existing customer does not get the first-reply notice again", async () => {
+  const ctx = context();
+  ctx.settings.privacy_notice_url = "https://salon-a.example/privacy";
+  const { deps, log } = harness({ replies: [text("Hello again!")], ctx, newCustomer: false });
+  await handleMessage(message, deps);
+  assertEquals(log.sent, ["Hello again!"]);
+});
+
+Deno.test("a long AI reply is trimmed so the full notice still fits in 1500 characters", async () => {
+  const ctx = context();
+  ctx.settings.privacy_notice_url = "https://salon-a.example/privacy";
+  const long = "A".repeat(2000);
+  const { deps, log } = harness({ replies: [text(long)], ctx, newCustomer: true });
+  await handleMessage(message, deps);
+  const notice = newCustomerNotice("Salon A", "https://salon-a.example/privacy");
+  assert(log.sent[0].startsWith(notice + "\n\n"));
+  assertEquals(log.sent[0].length, MAX_REPLY_CHARS);
+  assert(log.sent[0].includes("https://salon-a.example/privacy"));
+  assertEquals(log.recorded[0], log.sent[0]);
+});
+
+Deno.test("when the model calls hand_over (e.g. asked for a person), the tool runs and the customer is told", async () => {
+  // Proves the engine runs hand_over and replies; the prompt tells the model to
+  // call it when the customer asks for a person. Does not prove the LLM always chooses to.
+  const { deps, log } = harness({
+    replies: [
+      calls(["hand_over", { reason: "asked for a person", question: "Can I speak to someone?" }]),
+      text("Someone from the team will reply shortly."),
+    ],
+  });
+  await handleMessage(message, deps);
+  assertEquals(log.tools, [["hand_over", { reason: "asked for a person", question: "Can I speak to someone?" }]]);
+  assertEquals(log.sent, ["Someone from the team will reply shortly."]);
+});
+
+Deno.test("new customer: the AI prompt includes the already-greeted instruction", async () => {
+  const { deps, seen } = harness({ replies: [text("We have 09:00.")], newCustomer: true });
+  await handleMessage(message, deps);
+  const system = seen[0][0];
+  assertEquals(system.role, "system");
+  assert(
+    Array.isArray(system.content) && system.content.some((p) => p.type === "text" && p.text === ALREADY_GREETED),
+    "already-greeted line must be in the system prompt for a new customer",
+  );
+});
+
+Deno.test("existing customer: the AI prompt omits the already-greeted instruction", async () => {
+  const { deps, seen } = harness({ replies: [text("We have 09:00.")], newCustomer: false });
+  await handleMessage(message, deps);
+  const system = seen[0][0];
+  assertEquals(system.role, "system");
+  assert(
+    !(Array.isArray(system.content) && system.content.some((p) => p.type === "text" && p.text === ALREADY_GREETED)),
+    "already-greeted line must not appear for an existing customer",
+  );
 });
