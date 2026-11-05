@@ -31,6 +31,9 @@ export interface EngineDeps {
 const MAX_ROUNDS = 6;
 const MAX_REPLY_CHARS = 1500;
 
+/** First reply to a new customer always includes this plain disclosure. */
+export const NEW_CUSTOMER_ASSISTANT_NOTICE = "I'm this business's automated assistant on WhatsApp.";
+
 export async function handleMessage(m: Incoming, deps: EngineDeps): Promise<void> {
   const received = await deps.db.receive(m);
   if (received.status !== "reply" || !received.conversation_id) return;
@@ -49,8 +52,11 @@ export async function handleMessage(m: Incoming, deps: EngineDeps): Promise<void
   const latest = await deps.db.context(conversationId);
   if (latest.last_inbound && latest.last_inbound !== m.id) return;
 
-  if (received.new_customer && latest.settings.privacy_notice_url) {
-    reply += `\n\nHow ${latest.business.name} looks after your information: ${latest.settings.privacy_notice_url}`;
+  if (received.new_customer) {
+    reply += `\n\n${NEW_CUSTOMER_ASSISTANT_NOTICE}`;
+    if (latest.settings.privacy_notice_url) {
+      reply += `\n\nHow ${latest.business.name} looks after your information: ${latest.settings.privacy_notice_url}`;
+    }
   }
   const sentId = await deps.send(m.phoneNumberId, m.from, reply.slice(0, MAX_REPLY_CHARS));
   await deps.db.recordReply(conversationId, reply, sentId);

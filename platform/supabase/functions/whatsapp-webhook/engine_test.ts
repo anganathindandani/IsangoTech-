@@ -1,6 +1,6 @@
 import { assert, assertEquals } from "jsr:@std/assert@1";
 import type { Ai, ChatMessage, ChatResult } from "./ai.ts";
-import { type Db, type EngineDeps, handleMessage } from "./engine.ts";
+import { type Db, type EngineDeps, handleMessage, NEW_CUSTOMER_ASSISTANT_NOTICE } from "./engine.ts";
 import type { Context } from "./prompt.ts";
 import type { Incoming } from "./whatsapp.ts";
 
@@ -168,11 +168,28 @@ Deno.test("if the customer wrote again meanwhile, only the newer run replies", a
   assertEquals(log.sent, []);
 });
 
-Deno.test("a new customer's first reply links to the business's privacy notice", async () => {
+Deno.test("a new customer's first reply always names the automated assistant", async () => {
+  const { deps, log } = harness({ replies: [text("Hello!")], newCustomer: true });
+  await handleMessage(message, deps);
+  assert(log.sent[0].startsWith("Hello!"));
+  assert(log.sent[0].includes(NEW_CUSTOMER_ASSISTANT_NOTICE), "assistant disclosure is included");
+  assert(!log.sent[0].includes("looks after your information"), "no privacy link when none is set");
+});
+
+Deno.test("a new customer's first reply links to the business's privacy notice when set", async () => {
   const ctx = context();
   ctx.settings.privacy_notice_url = "https://salon-a.example/privacy";
   const { deps, log } = harness({ replies: [text("Hello!")], ctx, newCustomer: true });
   await handleMessage(message, deps);
   assert(log.sent[0].startsWith("Hello!"));
+  assert(log.sent[0].includes(NEW_CUSTOMER_ASSISTANT_NOTICE), "assistant disclosure is included");
   assert(log.sent[0].endsWith("https://salon-a.example/privacy"));
+});
+
+Deno.test("an existing customer does not get the first-reply notice again", async () => {
+  const ctx = context();
+  ctx.settings.privacy_notice_url = "https://salon-a.example/privacy";
+  const { deps, log } = harness({ replies: [text("Hello again!")], ctx, newCustomer: false });
+  await handleMessage(message, deps);
+  assertEquals(log.sent, ["Hello again!"]);
 });

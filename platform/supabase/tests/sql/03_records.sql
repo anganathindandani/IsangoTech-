@@ -90,18 +90,37 @@ set local role authenticated;
 select tests.expect_error('select private.delete_expired_messages()', 'permission denied');
 reset role;
 
+-- Another customer at the same business keeps their own unanswered question
+-- when the first customer is forgotten.
+insert into public.customers (business_id, full_name, whatsapp_number)
+values (:'bid', 'Other Customer', '27829990001') returning id as other_customer \gset
+insert into public.conversations (business_id, customer_id)
+values (:'bid', :'other_customer') returning id as other_conversation \gset
+insert into public.unanswered_questions (business_id, conversation_id, question)
+values (:'bid', :'other_conversation', 'Do you have gift vouchers?');
+
 -- A customer asks to be forgotten: the owner deletes them, and their bookings
 -- and chats go with them. The audit log keeps only that it happened.
+select set_config('t.customer', :'customer_id', true),
+       set_config('t.conversation', :'conversation_id', true),
+       set_config('t.other_conversation', :'other_conversation', true);
 select tests.sign_in((:'a'::jsonb ->> 'owner')::uuid);
 set local role authenticated;
 delete from public.customers where id = :'customer_id';
 reset role;
 do $$ begin
   assert (select count(*) from public.bookings) = 0, 'their bookings are gone';
-  assert (select count(*) from public.conversations) = 0, 'their chat is gone';
-  assert (select count(*) from public.messages) = 0, 'their messages are gone';
-  assert (select count(*) from public.unanswered_questions where conversation_id is not null) = 0,
-    'unanswered questions no longer point at the chat';
+  assert (select count(*) from public.conversations
+          where customer_id = current_setting('t.customer')::uuid) = 0, 'their chat is gone';
+  assert (select count(*) from public.messages
+          where conversation_id = current_setting('t.conversation')::uuid) = 0, 'their messages are gone';
+  assert not exists (select 1 from public.unanswered_questions where question = 'Do you do nails?'),
+    'no leftover question text from the deleted customer';
+  assert (select count(*) from public.unanswered_questions) = 1
+     and exists (select 1 from public.unanswered_questions
+                 where conversation_id = current_setting('t.other_conversation')::uuid
+                   and question = 'Do you have gift vouchers?'),
+    'the other customer''s unanswered question remains';
   assert exists (select 1 from public.audit_log where table_name = 'customers' and action = 'delete'),
     'the deletion is in the audit log';
   assert not exists (select 1 from public.audit_log where changed_fields && array['full_name', 'whatsapp_number']

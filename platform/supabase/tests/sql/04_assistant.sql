@@ -6,7 +6,8 @@ begin;
 select tests.seed_business('Salon A') as a \gset
 select tests.seed_business('Salon B') as b \gset
 select (:'a'::jsonb ->> 'business') as bid, (:'a'::jsonb ->> 'service') as service_id,
-       (:'a'::jsonb ->> 'staff_id') as stylist, (:'b'::jsonb ->> 'service') as b_service,
+       (:'a'::jsonb ->> 'staff_id') as stylist, (:'a'::jsonb ->> 'booking') as a_other_booking,
+       (:'b'::jsonb ->> 'service') as b_service,
        (:'b'::jsonb ->> 'booking') as b_booking \gset
 
 -- Open 08:00 to 17:00 every day; 2 hours' notice to book, 24 to change.
@@ -76,7 +77,8 @@ end $$;
 
 -- check_availability: braids take 2 hours, only "Stylist" does them, 08:00 to 17:00.
 select set_config('t.day', :'day', true), set_config('t.service', :'service_id', true),
-       set_config('t.b_service', :'b_service', true), set_config('t.b_booking', :'b_booking', true);
+       set_config('t.b_service', :'b_service', true), set_config('t.b_booking', :'b_booking', true),
+       set_config('t.a_other_booking', :'a_other_booking', true);
 do $$
 declare r jsonb := public.assistant_tool(current_setting('t.conv')::uuid, 'check_availability',
   jsonb_build_object('service_id', current_setting('t.service'), 'date', current_setting('t.day')));
@@ -135,9 +137,23 @@ end $$;
 
 -- my_bookings shows only this customer's bookings; others can't be changed or cancelled.
 do $$
-declare r jsonb := public.assistant_tool(current_setting('t.conv')::uuid, 'my_bookings', '{}');
+declare
+  r jsonb := public.assistant_tool(current_setting('t.conv')::uuid, 'my_bookings', '{}');
+  other uuid := current_setting('t.a_other_booking')::uuid;
+  other_status text;
+  other_starts timestamptz;
 begin
   assert jsonb_array_length(r -> 'bookings') = 1, 'only their own booking';
+  select status, starts_at into other_status, other_starts from public.bookings where id = other;
+  assert public.assistant_tool(current_setting('t.conv')::uuid, 'cancel_booking',
+    jsonb_build_object('booking_id', other)) ->> 'ok' = 'false',
+    'cannot cancel another customer''s booking at the same business';
+  assert public.assistant_tool(current_setting('t.conv')::uuid, 'change_booking',
+    jsonb_build_object('booking_id', other, 'starts_at', current_setting('t.day') || 'T14:00')) ->> 'ok' = 'false',
+    'cannot change another customer''s booking at the same business';
+  assert (select status from public.bookings where id = other) = other_status
+     and (select starts_at from public.bookings where id = other) = other_starts,
+    'the other customer''s booking is unchanged';
   assert public.assistant_tool(current_setting('t.conv')::uuid, 'cancel_booking',
     jsonb_build_object('booking_id', current_setting('t.b_booking'))) ->> 'ok' = 'false',
     'cannot cancel another business''s booking';
