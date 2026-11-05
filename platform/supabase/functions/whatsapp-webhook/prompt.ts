@@ -1,7 +1,7 @@
 // What the AI is told: fixed rules for every business, then this business's
 // details, then the chat. The rules and business details come first and stay
 // the same from message to message, so they're cached.
-import type { ChatMessage, ToolDefinition } from "./ai.ts";
+import type { ChatMessage, ContentPart, ToolDefinition } from "./ai.ts";
 
 export interface Context {
   business: { name: string; industry: string; time_zone: string };
@@ -42,6 +42,10 @@ How to write
 - Reply in the language the customer writes in when the business allows it; otherwise reply in English.
 - Prices like R450, times like 13:30, days like Saturday 17 October.`;
 
+/** Extra system instruction when the first-reply notice will greet the customer. */
+export const ALREADY_GREETED =
+  "The customer has already been greeted. Don't say hi again; go straight to answering their message.";
+
 const LANGUAGES: Record<string, string> = { en: "English", xh: "isiXhosa", af: "Afrikaans", zu: "isiZulu" };
 const DAYS: [string, string][] = [
   ["mon", "Monday"],
@@ -74,14 +78,16 @@ export function businessDetails(ctx: Context): string {
 }
 
 /** The full message list for the model. */
-export function buildMessages(ctx: Context): ChatMessage[] {
-  const messages: ChatMessage[] = [{
-    role: "system",
-    content: [
-      { type: "text", text: RULES },
-      { type: "text", text: businessDetails(ctx), cache_control: { type: "ephemeral" } },
-    ],
-  }];
+export function buildMessages(ctx: Context, opts: { newCustomer?: boolean } = {}): ChatMessage[] {
+  const systemContent: ContentPart[] = [
+    { type: "text", text: RULES },
+    { type: "text", text: businessDetails(ctx), cache_control: { type: "ephemeral" } },
+  ];
+  // Only on the first reply: the customer-facing notice already says hi.
+  if (opts.newCustomer) {
+    systemContent.push({ type: "text", text: ALREADY_GREETED });
+  }
+  const messages: ChatMessage[] = [{ role: "system", content: systemContent }];
 
   // The chat so far, with consecutive messages from one side joined, starting
   // from the customer.

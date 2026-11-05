@@ -38,7 +38,7 @@ export const MAX_REPLY_CHARS = 1500;
  */
 export function newCustomerNotice(businessName: string, privacyNoticeUrl: string | null): string {
   const name = businessName.trim() || "this business";
-  const intro = `Hi! I'm ${name}'s automated assistant on WhatsApp. ` +
+  const intro = `Hi! I'm the automated assistant for ${name} on WhatsApp. ` +
     `If I can't help, just ask and I'll pass your message on to the team.`;
   if (privacyNoticeUrl) {
     // Link alone on the next line so nothing sits after the URL.
@@ -56,7 +56,8 @@ export async function handleMessage(m: Incoming, deps: EngineDeps): Promise<void
 
   let reply: string;
   try {
-    reply = await think(conversationId, deps) ?? await handOver(conversationId, deps, "no answer");
+    reply = await think(conversationId, deps, received.new_customer) ??
+      await handOver(conversationId, deps, "no answer");
   } catch (err) {
     deps.log?.(`assistant error in ${conversationId}: ${err instanceof Error ? err.message : err}`);
     reply = await handOver(conversationId, deps, "assistant error");
@@ -83,8 +84,12 @@ export async function handleMessage(m: Incoming, deps: EngineDeps): Promise<void
 }
 
 /** Runs the model and its tools; returns the reply text, or null if it never settled on one. */
-async function think(conversationId: string, deps: EngineDeps): Promise<string | null> {
-  const messages: ChatMessage[] = buildMessages(await deps.db.context(conversationId));
+async function think(
+  conversationId: string,
+  deps: EngineDeps,
+  newCustomer?: boolean,
+): Promise<string | null> {
+  const messages: ChatMessage[] = buildMessages(await deps.db.context(conversationId), { newCustomer });
   for (let round = 0; round < MAX_ROUNDS; round++) {
     const result = await deps.ai.chat(messages, TOOLS);
     await deps.db.recordAiCall(conversationId, {

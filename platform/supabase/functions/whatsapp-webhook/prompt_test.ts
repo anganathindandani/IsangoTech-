@@ -1,5 +1,5 @@
 import { assert, assertEquals } from "jsr:@std/assert@1";
-import { buildMessages, businessDetails, type Context, RULES, TOOLS } from "./prompt.ts";
+import { ALREADY_GREETED, buildMessages, businessDetails, type Context, RULES, TOOLS } from "./prompt.ts";
 
 const ctx: Context = {
   business: { name: "Salon A", industry: "salon", time_zone: "Africa/Johannesburg" },
@@ -57,4 +57,17 @@ Deno.test("every tool the prompt mentions exists, and every tool is mentioned", 
   const names = TOOLS.map((t) => t.function.name);
   for (const name of names) assert(RULES.includes(name), `${name} should be explained in the rules`);
   for (const t of TOOLS) assertEquals(t.function.parameters.additionalProperties, false);
+});
+
+Deno.test("buildMessages includes the already-greeted line only for a new customer", () => {
+  const fresh = buildMessages(ctx, { newCustomer: true })[0];
+  const returning = buildMessages(ctx)[0];
+  assert(Array.isArray(fresh.content));
+  assert(Array.isArray(returning.content));
+  assert(
+    fresh.content.some((p) => typeof p === "object" && p.type === "text" && p.text === ALREADY_GREETED),
+  );
+  assert(
+    !returning.content.some((p) => typeof p === "object" && p.type === "text" && p.text === ALREADY_GREETED),
+  );
 });
