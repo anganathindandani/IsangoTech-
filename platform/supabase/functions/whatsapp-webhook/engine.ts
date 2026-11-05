@@ -29,10 +29,25 @@ export interface EngineDeps {
 
 /** Enough rounds to look up services, check a day and book, with room to spare. */
 const MAX_ROUNDS = 6;
-const MAX_REPLY_CHARS = 1500;
+export const MAX_REPLY_CHARS = 1500;
 
-/** First reply to a new customer always includes this plain disclosure. */
-export const NEW_CUSTOMER_ASSISTANT_NOTICE = "I'm this business's automated assistant on WhatsApp.";
+/**
+ * First-reply notice for a new customer. Always names the automated assistant,
+ * offers to pass the chat on, and includes a privacy line (link or plain).
+ * The business name falls back to "this business" when empty.
+ */
+export function newCustomerNotice(businessName: string, privacyNoticeUrl: string | null): string {
+  const name = businessName.trim() || "this business";
+  const intro = `Hi! I'm ${name}'s automated assistant on WhatsApp. ` +
+    `If I can't help, just ask and I'll pass your message on to the team.`;
+  if (privacyNoticeUrl) {
+    // Link alone on the next line so nothing sits after the URL.
+    return `${intro}\nHow ${name} looks after your information:\n${privacyNoticeUrl}`;
+  }
+  // Capitalise when the fallback starts the privacy sentence.
+  const who = name === "this business" ? "This business" : name;
+  return `${intro}\n${who} only uses your details to help with your enquiry or booking.`;
+}
 
 export async function handleMessage(m: Incoming, deps: EngineDeps): Promise<void> {
   const received = await deps.db.receive(m);
@@ -52,14 +67,19 @@ export async function handleMessage(m: Incoming, deps: EngineDeps): Promise<void
   const latest = await deps.db.context(conversationId);
   if (latest.last_inbound && latest.last_inbound !== m.id) return;
 
+  // Notice first so the 1500-char cap can't cut the disclosure off; the AI
+  // reply is trimmed to whatever room is left after the notice and blank line.
+  let outbound: string;
   if (received.new_customer) {
-    reply += `\n\n${NEW_CUSTOMER_ASSISTANT_NOTICE}`;
-    if (latest.settings.privacy_notice_url) {
-      reply += `\n\nHow ${latest.business.name} looks after your information: ${latest.settings.privacy_notice_url}`;
-    }
+    const notice = newCustomerNotice(latest.business.name, latest.settings.privacy_notice_url);
+    const room = Math.max(0, MAX_REPLY_CHARS - notice.length - 2);
+    outbound = `${notice}\n\n${reply.slice(0, room)}`;
+  } else {
+    outbound = reply.slice(0, MAX_REPLY_CHARS);
   }
-  const sentId = await deps.send(m.phoneNumberId, m.from, reply.slice(0, MAX_REPLY_CHARS));
-  await deps.db.recordReply(conversationId, reply, sentId);
+
+  const sentId = await deps.send(m.phoneNumberId, m.from, outbound);
+  await deps.db.recordReply(conversationId, outbound, sentId);
 }
 
 /** Runs the model and its tools; returns the reply text, or null if it never settled on one. */
