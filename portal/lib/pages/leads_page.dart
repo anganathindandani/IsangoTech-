@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../app.dart';
 import '../data/models.dart';
 import '../format.dart';
+import '../theme.dart';
 import '../widgets/ui.dart';
 
 class LeadsPage extends StatefulWidget {
@@ -37,9 +38,8 @@ class _LeadsPageState extends State<LeadsPage> {
             FilledButton.icon(onPressed: _quickAdd, icon: const Icon(Icons.add), label: const Text('Quick add')),
           ],
         ),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
+        FilterBar(
+          label: 'Pipeline',
           children: [
             ChoiceChip(
               label: const Text('Open'),
@@ -54,11 +54,9 @@ class _LeadsPageState extends State<LeadsPage> {
               ),
           ],
         ),
-        TextField(
-          decoration: const InputDecoration(
-            prefixIcon: Icon(Icons.search),
-            hintText: 'Search name, business, phone or email',
-          ),
+        SearchField(
+          label: 'Search leads',
+          hint: 'Name, business, phone or email',
           onSubmitted: (v) => setState(() => _search = v),
         ),
         Card(
@@ -67,9 +65,11 @@ class _LeadsPageState extends State<LeadsPage> {
           child: Loader<List<Lead>>(
             key: ValueKey('$_listKey$_stage$_search'),
             load: () => repo.leads(pipelineStage: _stage, openOnly: _stage == null, search: _search),
+            placeholder: const SkeletonList(rows: 6, trailing: true),
             builder: (context, leads, _) => leads.isEmpty
                 ? const EmptyState(
-                    'No leads here yet. Website enquiries appear automatically; use Quick add for WhatsApp, walk-in and phone enquiries.',
+                    'No leads in this view. Website enquiries appear automatically. Use Quick add for WhatsApp, walk-in and phone enquiries.',
+                    icon: Icons.person_search_outlined,
                   )
                 : Column(children: [for (final l in leads) LeadTile(l, onReturn: _reload)]),
           ),
@@ -80,24 +80,24 @@ class _LeadsPageState extends State<LeadsPage> {
 }
 
 class LeadTile extends StatelessWidget {
-  const LeadTile(this.lead, {super.key, this.onReturn});
+  const LeadTile(this.lead, {super.key, this.onReturn, this.contentPadding});
   final Lead lead;
   final VoidCallback? onReturn;
+  final EdgeInsetsGeometry? contentPadding;
 
   @override
   Widget build(BuildContext context) {
     final followUp = lead.nextFollowUp;
     final due = followUp != null && !followUp.isAfter(DateTime.now());
-    return ListTile(
-      title: Text(lead.displayName),
-      subtitle: Text(
-        [
-          leadSources[lead.source] ?? lead.source,
-          if (lead.stageNeeded != null) stageLabel(lead.stageNeeded),
-          if (followUp != null) 'Follow up ${date(followUp)}',
-        ].join(' · '),
-        style: TextStyle(color: due ? const Color(0xFFB5523B) : null),
-      ),
+    return DataTile(
+      contentPadding: contentPadding,
+      title: lead.displayName,
+      subtitle: [
+        leadSources[lead.source] ?? lead.source,
+        if (lead.stageNeeded != null) stageLabel(lead.stageNeeded),
+        if (followUp != null) 'Follow up ${date(followUp)}',
+      ].join(' · '),
+      subtitleColor: due ? Brand.terracotta : null,
       trailing: StatusChip(
         pipelineStages[lead.pipelineStage] ?? lead.pipelineStage,
         color: StatusChip.colorFor(lead.pipelineStage),

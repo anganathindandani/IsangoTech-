@@ -41,6 +41,7 @@ class _InvoicePageState extends State<InvoicePage> {
     return Loader<Invoice>(
       key: _key,
       load: () => repo.invoice(widget.id),
+      placeholder: const DetailSkeleton(leftSections: 1, rightSections: 1, maxWidth: 900, showChips: true),
       builder: (context, i, _) {
         final canPay = i.status == 'sent' && i.balance > 0;
         return PageBody(
@@ -129,6 +130,7 @@ class _InvoicePageState extends State<InvoicePage> {
             ),
             Wrap(
               spacing: 12,
+              runSpacing: 8,
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 StatusChip(
@@ -146,7 +148,8 @@ class _InvoicePageState extends State<InvoicePage> {
                   title: 'Payments',
                   child: Column(
                     children: [
-                      if (i.payments.isEmpty) const EmptyState('No payments recorded.'),
+                      if (i.payments.isEmpty)
+                        const EmptyState('No payments recorded yet.', icon: Icons.payments_outlined),
                       for (final p in i.payments)
                         ListTile(
                           contentPadding: EdgeInsets.zero,

@@ -207,6 +207,7 @@ class AppShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final wide = MediaQuery.sizeOf(context).width >= 900;
+    final name = me?.fullName ?? '';
     final signOut = IconButton(
       tooltip: 'Sign out',
       icon: const Icon(Icons.logout),
@@ -231,9 +232,15 @@ class AppShell extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(12),
                     child: Row(
-                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(me?.fullName ?? '', style: const TextStyle(color: Brand.sand)),
+                        Expanded(
+                          child: Text(
+                            name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(color: Brand.sand),
+                          ),
+                        ),
                         IconButton(
                           tooltip: 'Sign out',
                           color: Brand.sand,
@@ -257,23 +264,36 @@ class AppShell extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(_destinations[_selected].label), actions: [signOut]),
       drawer: Drawer(
-        child: ListView(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Image.asset('assets/brand/logo.png', height: 30, alignment: Alignment.centerLeft),
-            ),
-            for (final (i, d) in _destinations.indexed)
-              ListTile(
-                leading: Icon(d.icon),
-                title: Text(d.label),
-                selected: i == _selected,
-                onTap: () {
-                  Navigator.pop(context);
-                  context.go(d.path);
-                },
+        child: SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.only(bottom: 16),
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Image.asset('assets/brand/logo.png', height: 30, alignment: Alignment.centerLeft),
+                    if (name.isNotEmpty) ...[
+                      const SizedBox(height: 12),
+                      Text(name, style: const TextStyle(fontWeight: FontWeight.w500)),
+                    ],
+                  ],
+                ),
               ),
-          ],
+              for (final (i, d) in _destinations.indexed)
+                ListTile(
+                  leading: Icon(d.icon),
+                  title: Text(d.label),
+                  selected: i == _selected,
+                  selectedTileColor: Brand.sand,
+                  onTap: () {
+                    Navigator.pop(context);
+                    context.go(d.path);
+                  },
+                ),
+            ],
+          ),
         ),
       ),
       body: child,
@@ -290,22 +310,39 @@ class PageHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 12,
-      runSpacing: 8,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      alignment: WrapAlignment.spaceBetween,
+    final titleBlock = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(title, style: Theme.of(context).textTheme.headlineSmall),
-            if (subtitle != null) Text(subtitle!, style: const TextStyle(color: Colors.black54)),
-          ],
-        ),
-        Wrap(spacing: 8, runSpacing: 8, children: actions),
+        Text(title, style: Theme.of(context).textTheme.headlineSmall),
+        if (subtitle != null) ...[
+          const SizedBox(height: 4),
+          Text(subtitle!, style: const TextStyle(color: Colors.black54, height: 1.35)),
+        ],
       ],
+    );
+    if (actions.isEmpty) return titleBlock;
+    final actionWrap = Wrap(spacing: 8, runSpacing: 8, children: actions);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Buttons sit under the title on a phone so a long name and several actions can both wrap.
+        if (!constraints.maxWidth.isFinite || constraints.maxWidth < 720) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [titleBlock, const SizedBox(height: 12), actionWrap],
+          );
+        }
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(child: titleBlock),
+            const SizedBox(width: 16),
+            Flexible(
+              child: Align(alignment: Alignment.topRight, child: actionWrap),
+            ),
+          ],
+        );
+      },
     );
   }
 }

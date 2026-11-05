@@ -38,9 +38,8 @@ class _AuditPageState extends State<AuditPage> {
           subtitle:
               'Who added, changed, deleted or exported records, and when. Written by the database; nobody can edit it.',
         ),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
+        FilterBar(
+          label: 'Record type',
           children: [
             ChoiceChip(
               label: const Text('Everything'),
@@ -61,12 +60,16 @@ class _AuditPageState extends State<AuditPage> {
           child: Loader<List<AuditEntry>>(
             key: ValueKey(_table),
             load: () => repo.auditLog(table: _table),
+            placeholder: const SkeletonList(rows: 8, leading: true),
             builder: (context, list, _) => list.isEmpty
-                ? const EmptyState('Nothing recorded yet.')
+                ? EmptyState(
+                    _table == null ? 'Nothing recorded yet.' : 'Nothing recorded for this record type yet.',
+                    icon: Icons.history,
+                  )
                 : Column(
                     children: [
                       for (final a in list)
-                        ListTile(
+                        DataTile(
                           dense: true,
                           leading: Icon(switch (a.action) {
                             'insert' => Icons.add_circle_outline,
@@ -74,15 +77,14 @@ class _AuditPageState extends State<AuditPage> {
                             'export' => Icons.download_outlined,
                             _ => Icons.edit_outlined,
                           }),
-                          title: Text(
-                            '${_tables[a.tableName] ?? a.tableName}: ${switch (a.action) {
-                              'insert' => 'added',
-                              'delete' => 'deleted',
-                              'export' => 'exported',
-                              _ => 'changed ${a.changedFields?.map((f) => f.replaceAll('_', ' ')).join(', ') ?? ''}',
-                            }}',
-                          ),
-                          subtitle: Text('${dateTime(a.changedAt)} · ${a.byName ?? 'Website or system'}'),
+                          title:
+                              '${_tables[a.tableName] ?? a.tableName}: ${switch (a.action) {
+                                'insert' => 'added',
+                                'delete' => 'deleted',
+                                'export' => 'exported',
+                                _ => 'changed ${a.changedFields?.map((f) => f.replaceAll('_', ' ')).join(', ') ?? ''}',
+                              }}',
+                          subtitle: '${dateTime(a.changedAt)} · ${a.byName ?? 'Website or system'}',
                         ),
                     ],
                   ),

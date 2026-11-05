@@ -22,9 +22,8 @@ class _QuotesPageState extends State<QuotesPage> {
     return PageBody(
       children: [
         const PageHeader('Quotes', subtitle: 'Start a quote from a lead or a client.'),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
+        FilterBar(
+          label: 'Status',
           children: [
             ChoiceChip(
               label: const Text('All'),
@@ -45,16 +44,21 @@ class _QuotesPageState extends State<QuotesPage> {
           child: Loader<List<Quote>>(
             key: ValueKey('$_key$_status'),
             load: () => repo.quotes(status: _status),
+            placeholder: const SkeletonList(rows: 6, trailing: true),
             builder: (context, list, _) => list.isEmpty
-                ? const EmptyState('No quotes here.')
+                ? EmptyState(
+                    _status == null
+                        ? 'No quotes yet. Start one from a lead or a client.'
+                        : 'No quotes with this status.',
+                    icon: Icons.request_quote_outlined,
+                  )
                 : Column(
                     children: [
                       for (final q in list)
-                        ListTile(
-                          title: Text('${q.number} · ${q.clientName}'),
-                          subtitle: Text(
-                            '${money(q.total)}${q.monthlyTotal > 0 ? ' + ${money(q.monthlyTotal)} / month' : ''} · ${date(q.createdAt)}',
-                          ),
+                        DataTile(
+                          title: '${q.number} · ${q.clientName}',
+                          subtitle:
+                              '${money(q.total)}${q.monthlyTotal > 0 ? ' + ${money(q.monthlyTotal)} / month' : ''} · ${date(q.createdAt)}',
                           trailing: StatusChip(
                             quoteStatuses[q.status] ?? q.status,
                             color: StatusChip.colorFor(q.status),

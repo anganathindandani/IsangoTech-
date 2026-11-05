@@ -66,7 +66,11 @@ void main() {
     final passwordOnly = SupabaseClient(url!, anonKey!, authOptions: const AuthClientOptions(autoRefreshToken: false));
     await passwordOnly.auth.signInWithPassword(email: email, password: password);
     expect(passwordOnly.auth.mfa.getAuthenticatorAssuranceLevel().nextLevel, AuthenticatorAssuranceLevels.aal2);
-    expect(await Repository(passwordOnly).me(), isNull, reason: 'once 2FA is on, the password alone must not be enough');
+    expect(
+      await Repository(passwordOnly).me(),
+      isNull,
+      reason: 'once 2FA is on, the password alone must not be enough',
+    );
     await passwordOnly.dispose();
   });
 

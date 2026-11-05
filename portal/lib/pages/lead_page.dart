@@ -62,6 +62,7 @@ class _LeadPageState extends State<LeadPage> {
     return Loader<_LeadData>(
       key: _key,
       load: _load,
+      placeholder: const DetailSkeleton(leftSections: 3, rightSections: 3),
       builder: (context, d, reload) {
         final lead = d.lead;
         return PageBody(
@@ -117,7 +118,7 @@ class _LeadPageState extends State<LeadPage> {
                     },
                   ),
                   child: d.activities.isEmpty
-                      ? const EmptyState('No calls, messages or notes yet.')
+                      ? const EmptyState('No calls, messages or notes yet.', icon: Icons.sticky_note_2_outlined)
                       : Column(
                           children: [
                             for (final a in d.activities)
@@ -148,7 +149,10 @@ class _LeadPageState extends State<LeadPage> {
                     },
                   ),
                   child: d.assessments.isEmpty
-                      ? const EmptyState('No assessment booked. Most stage 1–2 leads go straight to a quote.')
+                      ? const EmptyState(
+                          'No assessment booked. Most stage 1–2 leads go straight to a quote.',
+                          icon: Icons.event_available_outlined,
+                        )
                       : Column(children: [for (final a in d.assessments) AssessmentTile(a, onChanged: _reload)]),
                 ),
               ],
@@ -183,9 +187,12 @@ class _LeadPageState extends State<LeadPage> {
                 ),
                 Section(
                   title: 'Next follow-up',
-                  child: Row(
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 4,
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
-                      Expanded(child: Text(lead.nextFollowUp == null ? 'None set' : date(lead.nextFollowUp))),
+                      Text(lead.nextFollowUp == null ? 'None set' : date(lead.nextFollowUp)),
                       TextButton(
                         onPressed: () async {
                           final picked = await pickDate(context, initial: lead.nextFollowUp);
@@ -233,18 +240,16 @@ class ConsentsSection extends StatelessWidget {
     return Section(
       title: 'Consent',
       child: consents.isEmpty
-          ? const EmptyState('No consent recorded.')
+          ? const EmptyState('No consent recorded yet.', icon: Icons.verified_user_outlined)
           : Column(
               children: [
                 for (final c in consents)
-                  ListTile(
+                  DataTile(
                     contentPadding: EdgeInsets.zero,
-                    title: Text(consentPurposes[c.purpose] ?? c.purpose),
-                    subtitle: Text(
-                      c.withdrawnAt == null
-                          ? 'Given ${date(c.givenAt)} · policy v${c.policyVersion} · ${consentSources[c.source] ?? c.source}'
-                          : 'Withdrawn ${date(c.withdrawnAt)}',
-                    ),
+                    title: consentPurposes[c.purpose] ?? c.purpose,
+                    subtitle: c.withdrawnAt == null
+                        ? 'Given ${date(c.givenAt)} · policy v${c.policyVersion} · ${consentSources[c.source] ?? c.source}'
+                        : 'Withdrawn ${date(c.withdrawnAt)}',
                     trailing: c.withdrawnAt == null
                         ? TextButton(
                             onPressed: () async {

@@ -513,12 +513,14 @@ class AssessmentTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final a = assessment;
-    return ListTile(
+    final subtitle = [
+      a.location ?? '',
+      if (a.findings != null) 'Findings recorded',
+    ].where((s) => s.isNotEmpty).join(' · ');
+    return DataTile(
       contentPadding: EdgeInsets.zero,
-      title: Text([if (showWho) a.whoName ?? 'Unknown', dateTime(a.scheduledAt)].join(' · ')),
-      subtitle: Text(
-        [a.location ?? '', if (a.findings != null) 'Findings recorded'].where((s) => s.isNotEmpty).join(' · '),
-      ),
+      title: [if (showWho) a.whoName ?? 'Unknown', dateTime(a.scheduledAt)].join(' · '),
+      subtitle: subtitle.isEmpty ? null : subtitle,
       trailing: StatusChip(assessmentStatuses[a.status] ?? a.status, color: StatusChip.colorFor(a.status)),
       onTap: () async {
         if (await showDialog<bool>(

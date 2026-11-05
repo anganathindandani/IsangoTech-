@@ -111,26 +111,48 @@ class _SettingsPageState extends State<SettingsPage> {
           subtitle: 'Business rules the portal and website follow. Every change is recorded in the audit log.',
         ),
         const TwoStepSection(),
-        const SizedBox(height: 16),
         Card(
           semanticContainer: false,
 
           child: Loader<List<Setting>>(
             key: _key,
             load: repo.settings,
-            builder: (context, list, _) => Column(
-              children: [
-                for (final s in list)
-                  ListTile(
-                    title: Text(_labels[s.key] ?? s.key),
-                    subtitle: s.updatedAt == null ? null : Text('Changed ${date(s.updatedAt)}'),
-                    trailing: Text(_display(s.value), style: const TextStyle(fontWeight: FontWeight.w500)),
-                    onTap: () => _edit(s),
+            placeholder: const SkeletonList(rows: 8, trailing: true),
+            builder: (context, list, _) => list.isEmpty
+                ? const EmptyState('No settings to show.', icon: Icons.tune)
+                : Column(
+                    children: [
+                      for (final s in list)
+                        DataTile(
+                          title: _labels[s.key] ?? s.key,
+                          subtitle: s.updatedAt == null ? null : 'Changed ${date(s.updatedAt)}',
+                          trailing: Text(_display(s.value), style: const TextStyle(fontWeight: FontWeight.w500)),
+                          onTap: () => _edit(s),
+                        ),
+                    ],
                   ),
-              ],
-            ),
           ),
         ),
+      ],
+    );
+  }
+}
+
+class _TwoStepSkeleton extends StatelessWidget {
+  const _TwoStepSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SkeletonBox(width: 72, height: 16),
+        SizedBox(height: 12),
+        SkeletonBox(width: 460, height: 14),
+        SizedBox(height: 8),
+        SkeletonBox(width: 320, height: 14),
+        SizedBox(height: 16),
+        SkeletonBox(width: 96, height: 36, radius: 18),
       ],
     );
   }
@@ -179,6 +201,7 @@ class _TwoStepSectionState extends State<TwoStepSection> {
       child: Loader<List<Factor>>(
         key: _key,
         load: _load,
+        placeholder: const _TwoStepSkeleton(),
         builder: (context, factors, _) {
           final on = factors.isNotEmpty;
           return Column(
