@@ -98,6 +98,7 @@ Newest first.
 
 | Date | What happened | Next step |
 |------|---------------|-----------|
+| 6 Nov 2026 | Weekly review: wins on bot setup and lead pipeline (9 total, 0 founding slots used); stuck on unsent outreach and first client. Top focus next week: send openers, call Nox, advance product/Meta. | Execute first outreach and call. |
 | 6 Nov 2026 | Lead Hunter first batch of 5 reviewed by Quality Reviewer (Goulden Street wording fix needed; others approved). Held-lead scripts ready for Busa, Breezi’s (corrected to first touch) and Buffalo View. HQ Log updated. | Anga to do fact-checks and send openers. Call Nox when ready. Redeploy portal UI polish when on computer. |
 | 6 Nov 2026 | Lead Hunter started first job (5 East London leads). Call script for Touch by Nox approved and saved. HQ Log markdown added to repo so bots can read it. | Review Lead Hunter drafts; call Nox when ready; redeploy portal UI polish when on computer. |
 | 5 Nov 2026 | Sales and Client Manager set up; wrote first-chat discovery questions; asked Lead Hunter for leads. Added 4 existing leads to pipeline. | Send the 4 leads to Sales and Client Manager; Lead Hunter finds a fresh batch. |
