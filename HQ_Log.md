@@ -41,24 +41,33 @@ Land the first founding client. Started 5 November 2026.
 ## The team
 | Bot | Role | Current task | Status |
 |-----|------|--------------|--------|
-| Lead Hunter | Finds local businesses with weak online presence and drafts openers | First batch of 5 East London leads | In progress |
+| Lead Hunter | Finds local businesses with weak online presence and drafts openers | First batch of 5 East London leads reviewed | Drafts ready for Anga |
 | Sales and Client Manager | Replies, quotes, onboarding, billing, aftercare | Touch by Nox follow-up (call script ready) | Active |
 | Web Builder | Site plans, copy, local SEO, launch checklist | None yet | Ready |
 | Social Media Manager | IsangoTech posts and client playbooks | None yet | Ready |
-| Product Developer | WhatsApp Assistant and Business Portal | Assistant hardening deployed; portal UI polish on main | Active |
-| Quality Reviewer | Checks everything before it goes out | Ready for next review | Ready |
+| Product Developer | WhatsApp Assistant and Business Portal | Assistant hardening on main; portal UI polish on main | Active |
+| Quality Reviewer | Checks everything before it goes out | Reviewed 5 new leads + 3 held leads | Ready |
 
 ## Client pipeline
 Statuses: New lead, Talking, Quote sent, Won, Onboarding, Building, Live, Upsell, Lost.
 
 | Business | Type and area | Status | Stage offered | Founding offer? | Next step | Notes |
 |----------|---------------|--------|---------------|-----------------|-----------|-------|
-| Busa Guest House Group | Guesthouses, Beacon Bay | New lead | Not yet | Not confirmed | Hold until consent | Several guesthouses. Hold for POPIA consent before loading into portal. |
+| Busa Guest House Group | Guesthouses, Beacon Bay | New lead | Not yet | Not confirmed | One soft enquiry (script ready) | Several guesthouses. Hold for POPIA consent before loading into portal. |
 | Touch By Nox | Hair salon, East London | Talking | Not yet | Not confirmed | Call with approved script | Said yes 3 Nov, quiet after 4 Nov. In portal with consent. No nails; sells L'Oréal products. |
-| Breezi's Driving School | Driving school, East London | Talking | Not yet | Not confirmed | Hold until consent | Approached in person; has Wix site and Google profile. Hold for POPIA consent. |
-| Buffalo View Lodge | Guesthouse, East London | Talking | Not yet | Not confirmed | Hold until consent | Emailed with website concept, no reply yet. Hold for POPIA consent. |
+| Breezi's Driving School | Driving school, East London | New lead | Not yet | Not confirmed | One soft enquiry (script ready) | Correction: Anga did not go in person. Has Wix site and Google profile. Hold for POPIA consent. |
+| Buffalo View Lodge | Guesthouse, East London | Talking | Not yet | Not confirmed | One soft enquiry (script ready) | Emailed with website concept, no reply yet. Hold for POPIA consent. |
 
 Founding offer slots used: 0 of 5.
+
+**Lead Hunter first batch (6 Nov, reviewed, not contacted):**
+- Goulden Street Guest House (Quigney)
+- Style up studio S.A (Mdantsane)
+- Little Blooms Catering
+- East London Panelbeaters (Woodbrook)
+- KB Fitness centre (Kidd’s Beach)
+
+All Stage 1. Quality Reviewer approved with one wording fix on Goulden Street. Anga to send after fact-checks. No portal entry until consent.
 
 ## Decisions log
 | Date | Decision |
@@ -72,6 +81,8 @@ Founding offer slots used: 0 of 5.
 | 5 Nov 2026 | POPIA consent checkbox required before adding any lead to the portal. Hold Busa, Breezi’s and Buffalo View until consent is secured. Touch by Nox already in with consent. |
 | 5 Nov 2026 | Harden and polish WhatsApp Assistant for first founding client before starting client Portal modules. Move to Supabase Pro before real customer data. Prefer waiting for Meta verification on main number. |
 | 6 Nov 2026 | Any work or HQ Log notes done in the Cursor chat on the morning of 6 Nov are disregarded. Re-synced from the project chat. Last night’s portal polish (PR #7) remains on main. |
+| 6 Nov 2026 | First-touch openers do not need website concepts attached. Concepts come after a reply. Anga handles sending after approving scripts. |
+| 6 Nov 2026 | Breezi’s Driving School: Anga did not go in person. Treat as new lead for first contact. |
 
 ## Open questions
 - Raise the number of founding clients above five?
@@ -87,6 +98,7 @@ Newest first.
 
 | Date | What happened | Next step |
 |------|---------------|-----------|
+| 6 Nov 2026 | Lead Hunter first batch of 5 reviewed by Quality Reviewer (Goulden Street wording fix needed; others approved). Held-lead scripts ready for Busa, Breezi’s (corrected to first touch) and Buffalo View. HQ Log updated. | Anga to do fact-checks and send openers. Call Nox when ready. Redeploy portal UI polish when on computer. |
 | 6 Nov 2026 | Lead Hunter started first job (5 East London leads). Call script for Touch by Nox approved and saved. HQ Log markdown added to repo so bots can read it. | Review Lead Hunter drafts; call Nox when ready; redeploy portal UI polish when on computer. |
 | 5 Nov 2026 | Sales and Client Manager set up; wrote first-chat discovery questions; asked Lead Hunter for leads. Added 4 existing leads to pipeline. | Send the 4 leads to Sales and Client Manager; Lead Hunter finds a fresh batch. |
 | 5 Nov 2026 | Reviewed first role cards; wrote v2 cards for six bots with full price list from the business plan; created this HQ log. | Paste cards into six Grok chats, then set the first goal. |
