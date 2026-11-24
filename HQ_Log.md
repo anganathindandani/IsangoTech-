@@ -1,7 +1,7 @@
 # IsangoTech HQ Log
 
 The one place to check before any task: what IsangoTech is aiming for, where the business stands, and what each bot is doing.  
-Last updated: 23 November 2026 (EOD)
+Last updated: 24 November 2026 (EOD)
 
 ## How to use this log
 - Start of every session: the manager reads this log first.
@@ -21,10 +21,10 @@ Last updated: 23 November 2026 (EOD)
 | Area | Where it stands |
 |------|-----------------|
 | Company | IsangoTech (Pty) Ltd, registered as Isango Tech (Pty) Ltd, 2026/817716/07 |
-| Website | isangotech.co.za live (Astro, Cloudflare); Phase 1 pages built |
+| Website | isangotech.co.za live (Astro, Cloudflare); repositioned 24 Nov as web design studio focused on current sellables (Starter website from R3 500, GBP setup, care plans, free first chat) |
 | Socials | WhatsApp Business, Facebook, Instagram, TikTok live; LinkedIn pending verification |
 | WhatsApp number | 075 345 8192 |
-| Products | Shared foundation and WhatsApp Assistant first, then Business Portal; client Portal modules not started |
+| Products | Shared foundation and WhatsApp Assistant first (now "Coming soon" on site), then Business Portal; client Portal modules not started |
 | Clients | 0 founding clients signed (target 5) |
 | Roadmap phase | Phase 1, Launch (months 1 to 3): gate is 3 live clients |
 | Internal ops portal | portal.isangotech.co.za live (separate from client Business Portal) |
@@ -83,6 +83,7 @@ All Stage 1. Quality Reviewer approved with one wording fix on Goulden Street. A
 | 6 Nov 2026 | Any work or HQ Log notes done in the Cursor chat on the morning of 6 Nov are disregarded. Re-synced from the project chat. Last night’s portal polish (PR #7) remains on main. |
 | 6 Nov 2026 | First-touch openers do not need website concepts attached. Concepts come after a reply. Anga handles sending after approving scripts. |
 | 6 Nov 2026 | Breezi’s Driving School: Anga did not go in person. Treat as new lead for first contact. |
+| 24 Nov 2026 | Public website repositioned as a web design studio selling what is available today (Starter website from R3 500, Google Business Profile setup, optional care plans, free first chat). Advanced offerings (Business Portal, AI assessment, full WhatsApp Assistant features/pricing, 4-stage path) removed from public site or marked Coming soon; enquiries default to stage 1. |
 
 ## Open questions
 - Raise the number of founding clients above five?
@@ -98,6 +99,7 @@ Newest first.
 
 | Date | What happened | Next step |
 |------|---------------|-----------|
+| 24 Nov 2026 (EOD) | End-of-day close: website repositioned as web design studio focused on current sellables (Starter site from R3 500, GBP setup, care plans, free chat; message "We get your business found online"). Removed or deferred advanced features (Business Portal, AI assessment, WhatsApp Assistant pricing/features now Coming soon, 4-stage path). Pipeline unchanged (9 leads, 0 founding slots used); Lead Hunter drafts and held-lead scripts remain ready and unsent. No outreach or product advances beyond the site update. Touch by Nox call still outstanding. | Tomorrow: fact-check and send openers (5 new + held leads); call Touch by Nox; advance WhatsApp Assistant/Meta verification; confirm website deploy reflects the new positioning. |
 | 23 Nov 2026 (EOD) | End-of-day close: no further changes to pipeline (still 9 leads, 0 founding slots used) or decisions. Lead Hunter drafts and held-lead scripts remain ready and unsent. No outreach or product advances recorded today. Touch by Nox call still outstanding. | Tomorrow: fact-check and send openers (5 new + held leads); call Touch by Nox; advance WhatsApp Assistant/Meta verification; redeploy portal UI polish if needed. |
 | 22 Nov 2026 (EOD) | End-of-day close: no further changes to pipeline (still 9 leads, 0 founding slots used) or decisions. Lead Hunter drafts and held-lead scripts remain ready and unsent. No outreach or product advances recorded today. Touch by Nox call still outstanding. | Tomorrow: fact-check and send openers (5 new + held leads); call Touch by Nox; advance WhatsApp Assistant/Meta verification; redeploy portal UI polish if needed. |
 | 19 Nov 2026 (EOD) | End-of-day close: no further changes to pipeline (still 9 leads, 0 founding slots used) or decisions. Lead Hunter drafts and held-lead scripts remain ready and unsent. No outreach or product advances recorded today. Touch by Nox call still outstanding. | Tomorrow: fact-check and send openers (5 new + held leads); call Touch by Nox; advance WhatsApp Assistant/Meta verification; redeploy portal UI polish if needed. |
