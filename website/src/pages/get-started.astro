@@ -1,32 +1,34 @@
 ---
 import Base from "../layouts/Base.astro";
-import { stagesFor } from "../data/stages";
 import { formConfig, site } from "../site";
 import { langOf, localize, pick } from "../i18n";
 
 const lang = langOf(Astro.url);
 const L = (path: string) => localize(path, lang);
-const stages = stagesFor(lang);
 const whatsappLink = site.whatsappNumber ? `https://wa.me/${site.whatsappNumber}` : null;
 
 // Quick picks for step 2. The ones ticked are sent in the "biggest headache"
 // text, always in English so the portal's leads read the same.
 const painsEn = [
-  "Missed calls and messages",
-  "No-shows and late cancellations",
-  "People can't find us online",
-  "Quotes and invoices take too long",
-  "Too much paperwork and spreadsheets",
-  "Juggling staff, stock or bookings",
+  "People can't find us on Google",
+  "We don't have a website",
+  "Our website is old or hard to update",
+  "Our Google Business Profile needs fixing",
+  "Customers can't reach us quickly",
+  "We want to look more professional",
 ];
 const painsXh = [
-  "Iminxeba nemiyalezo ephosiweyo",
-  "Abangafikiyo nabarhoxisa emva kwexesha",
-  "Abantu abasifumani kwi-intanethi",
-  "Iikowuti nee-invoyisi zithatha ixesha elide",
-  "Amaphepha amaninzi nee-spreadsheet",
-  "Ukulawula abasebenzi, isitokhwe okanye ii-booking",
+  "Abantu abasifumani kwi-Google",
+  "Asinayo i-website",
+  "I-website yethu indala okanye kunzima ukuyihlaziya",
+  "I-Google Business Profile yethu ifuna ukulungiswa",
+  "Abathengi abasifikeleli ngokukhawuleza",
+  "Sifuna ukubonakala sinobuchule ngakumbi",
 ];
+// "Do you have a website now?" The answer goes in the note, in English.
+const websiteNowEn = ["No, not yet", "Yes, but it needs work", "I'm not sure"];
+const websiteNowXh = ["Hayi, okwangoku", "Ewe, kodwa ifuna ukulungiswa", "Andiqinisekanga"];
+const websiteNow = websiteNowEn.map((value, i) => ({ value, label: lang === "xh" ? websiteNowXh.at(i)! : value }));
 const pains = painsEn.map((value, i) => ({ value, label: lang === "xh" ? painsXh.at(i)! : value }));
 
 const w = pick(lang, {
@@ -36,22 +38,17 @@ const w = pick(lang, {
     lead: "Tell us a little about your business. We'll get back to you with honest advice on where to start, in plain language.",
     chat: "Prefer to chat?",
     chatLink: "Message us on WhatsApp",
-    founding: "You're asking about the <strong>founding client offer</strong>: up to 40% off setup for our first five clients.",
+    founding: "You're asking about the <strong>founding client offer</strong>: up to 40% off your website for our first five clients.",
+    interest: "You're asking to hear when the <strong>WhatsApp Assistant</strong> is ready. Leave your details and we'll let you know.",
     stepBusiness: "Your business",
-    whereNow: "Where is your business now?",
-    pickOne: "Pick the one that sounds most like you.",
-    notSure: "I'm not sure yet",
-    notSureHelp: "We'll help you work it out",
+    whereNow: "Do you have a website now?",
+    pickOne: "Pick the one that fits best.",
+    notify: "Tell me when the WhatsApp Assistant is ready",
     industry: "What kind of business is it?",
     stepHeadache: "Your headache",
     headache: "What's giving you the biggest headache?",
     tapAny: "Tap any that sound familiar.",
     anythingElse: "Anything else? Tell us in your own words (optional)",
-    stepAssessment: "Assessment",
-    assessment: "Want an AI Readiness Assessment?",
-    assessmentHint: "For businesses already running on a website or system that want to automate. R1 500, credited against your project if you go ahead. Pick a time and we'll come to you, or meet online.",
-    notNow: "Not now, thanks",
-    later: "You can always book one later",
     stepDetails: "Your details",
     reach: "How can we reach you?",
     name: "Your name",
@@ -79,22 +76,17 @@ const w = pick(lang, {
     lead: "Sixelele kancinci ngeshishini lakho. Siza kukuphendula ngengcebiso ethembekileyo malunga nendawo yokuqala, ngolwimi olucacileyo.",
     chat: "Ukhetha ukuncokola?",
     chatLink: "Sithumelele umyalezo kwi-WhatsApp",
-    founding: "Ubuza <strong>ngesaphulelo sabathengi bokuqala</strong>: ukuya kwi-40% kwintlawulo yokuseta kubathengi bethu abahlanu bokuqala.",
+    founding: "Ubuza <strong>ngesaphulelo sabathengi bokuqala</strong>: ukuya kwi-40% kwi-website yakho kubathengi bethu abahlanu bokuqala.",
+    interest: "Ucela ukwaziswa xa i-<strong>WhatsApp Assistant</strong> ilungile. Shiya iinkcukacha zakho kwaye siza kukwazisa.",
     stepBusiness: "Ishishini lakho",
-    whereNow: "Likweyiphi inqanaba ishishini lakho ngoku?",
-    pickOne: "Khetha elivakala ngathi lelakho.",
-    notSure: "Andiqinisekanga okwangoku",
-    notSureHelp: "Siza kukunceda ufumanise",
+    whereNow: "Unayo i-website ngoku?",
+    pickOne: "Khetha efanelekileyo.",
+    notify: "Ndazise xa i-WhatsApp Assistant ilungile",
     industry: "Lishishini lohlobo luni?",
     stepHeadache: "Ingxaki yakho",
     headache: "Yeyiphi eyona ngxaki ikukhathazayo?",
     tapAny: "Cofa nayiphi na evakala iqhelekile kuwe.",
     anythingElse: "Ikhona enye into? Sixelele ngamazwi akho (ukuba uyathanda)",
-    stepAssessment: "Uvavanyo",
-    assessment: "Ufuna i-AI Readiness Assessment?",
-    assessmentHint: "Yamashishini asele esebenzisa i-website okanye inkqubo afuna i-automation. Yi-R1 500, ibalelwa kwiprojekthi yakho ukuba uyaqhubeka. Khetha ixesha kwaye siza kuza kuwe, okanye sidibane kwi-intanethi.",
-    notNow: "Hayi okwangoku, enkosi",
-    later: "Ungabhukisha kamva nanini na",
     stepDetails: "Iinkcukacha zakho",
     reach: "Singakufumana njani?",
     name: "Igama lakho",
@@ -141,6 +133,7 @@ const w = pick(lang, {
       data-turnstile-site-key={formConfig.turnstileSiteKey}
     >
       <p class="founding-note" id="founding-note" hidden set:html={w.founding} />
+      <p class="founding-note" id="interest-note" hidden set:html={w.interest} />
       <!-- Filled in by the script; without JavaScript every step shows at once. -->
       <ol class="progress" id="progress" hidden></ol>
       <p class="visually-hidden" id="step-status" aria-live="polite"></p>
@@ -148,29 +141,27 @@ const w = pick(lang, {
       <fieldset class="step" data-step={w.stepBusiness}>
         <legend tabindex="-1"><span class="step-num"></span>{w.whereNow}</legend>
         <p class="hint">{w.pickOne}</p>
-        <div class="choices stages">
+        <div class="pills" role="radiogroup" aria-label={w.whereNow}>
           {
-            stages.map((s) => (
-              <label class="choice">
-                <input type="radio" name="stage_needed" value={s.number} />
-                <span class="choice-num" aria-hidden="true">{s.number}</span>
-                <span>
-                  <strong>{s.name}</strong>
-                  <small>"{s.whereYouAre}"</small>
-                </span>
+            websiteNow.map((o, i) => (
+              <label class="pill">
+                <input type="radio" name="website_now" value={o.value} checked={i === websiteNow.length - 1} />
+                <span>{o.label}</span>
               </label>
             ))
           }
-          <label class="choice">
-            <input type="radio" name="stage_needed" value="" checked />
-            <span class="choice-num" aria-hidden="true">?</span>
-            <span><strong>{w.notSure}</strong><small>{w.notSureHelp}</small></span>
-          </label>
         </div>
 
         <div class="field" id="industry-field" hidden>
           <p class="label" id="industry-label">{w.industry}</p>
           <div class="pills" role="radiogroup" aria-labelledby="industry-label" id="industries"></div>
+        </div>
+
+        <div class="field checks">
+          <label class="check">
+            <input type="checkbox" name="notify_assistant" id="notify_assistant" />
+            <span>{w.notify}</span>
+          </label>
         </div>
       </fieldset>
 
@@ -193,16 +184,6 @@ const w = pick(lang, {
         </div>
       </fieldset>
 
-      <fieldset class="step" data-step={w.stepAssessment} id="slots-field" hidden data-skip>
-        <legend tabindex="-1"><span class="step-num"></span>{w.assessment}</legend>
-        <p class="hint">{w.assessmentHint}</p>
-        <div class="choices slots" id="slots">
-          <label class="choice">
-            <input type="radio" name="booking_slot_id" value="" checked />
-            <span><strong>{w.notNow}</strong><small>{w.later}</small></span>
-          </label>
-        </div>
-      </fieldset>
 
       <fieldset class="step" data-step={w.stepDetails}>
         <legend tabindex="-1"><span class="step-num"></span>{w.reach}</legend>
@@ -276,8 +257,7 @@ const w = pick(lang, {
 </Base>
 
 <script>
-  type Slot = { id: string; starts_at: string; ends_at: string; mode: "in_person" | "online" };
-  type Options = { industries: { id: string; name: string }[]; slots: Slot[]; privacy_policy_version: string };
+  type Options = { industries: { id: string; name: string }[]; privacy_policy_version: string };
 
   declare global {
     interface Window {
@@ -305,8 +285,6 @@ const w = pick(lang, {
   const t = xh
     ? {
         step: (i: number, n: number) => `Inyathelo ${i}/${n}`,
-        online: "Kwi-intanethi",
-        inPerson: "Ebusweni",
         noName: "Nceda usixelele igama lakho.",
         noPhone: "Nceda unike inombolo yefowuni esinokukufumana kuyo.",
         badEmail: "Le dilesi ye-imeyile ayibonakali ichanekile.",
@@ -314,14 +292,11 @@ const w = pick(lang, {
         noSpamCheck: "Nceda ugqibe uvavanyo lwe-spam.",
         sending: "Iyathumela…",
         send: "Thumela",
-        booked: (when: string) => `I-AI Readiness Assessment yakho ibhukishelwe ${when}. Siza kuqinisekisa iinkcukacha nawe ngaphambi koko.`,
         failed: "Kukho into engahambanga kakuhle. Nceda uzame kwakhona.",
         offline: "Asikwazanga ukuthumela iinkcukacha zakho. Nceda ujonge uqhagamshelwano lwakho uzame kwakhona.",
       }
     : {
         step: (i: number, n: number) => `Step ${i} of ${n}`,
-        online: "Online",
-        inPerson: "In person",
         noName: "Please tell us your name.",
         noPhone: "Please give a phone number we can reach you on.",
         badEmail: "That email address doesn't look right.",
@@ -329,7 +304,6 @@ const w = pick(lang, {
         noSpamCheck: "Please complete the spam check.",
         sending: "Sending…",
         send: "Send",
-        booked: (when: string) => `Your AI Readiness Assessment is booked for ${when}. We'll confirm the details with you before then.`,
         failed: "Something went wrong. Please try again.",
         offline: "We couldn't send your details. Please check your connection and try again.",
       };
@@ -350,24 +324,6 @@ const w = pick(lang, {
     "Other small business": "Elinye ishishini elincinci",
   };
 
-  // Browsers have no isiXhosa dates built in, so isiXhosa times are written here,
-  // in South African time (UTC+2, no daylight saving): "ngoLwesithathu, 14 kweyeDwarha ngo-10:00".
-  const xhDays = ["ngeCawe", "ngoMvulo", "ngoLwesibini", "ngoLwesithathu", "ngoLwesine", "ngoLwesihlanu", "ngoMgqibelo"];
-  const xhMonths = ["kweyoMqungu", "kweyoMdumba", "kweyoKwindla", "kweyoTshazimpuzi", "kweyoCanzibe", "kweyeSilimela", "kweyeKhala", "kweyeThupha", "kweyoMsintsi", "kweyeDwarha", "kweyeNkanga", "kweyoMnga"];
-  const xhTime = (d: Date) => {
-    const sa = new Date(d.getTime() + 2 * 3600e3);
-    const hh = String(sa.getUTCHours()).padStart(2, "0"), mm = String(sa.getUTCMinutes()).padStart(2, "0");
-    return `${xhDays.at(sa.getUTCDay())}, ${sa.getUTCDate()} ${xhMonths.at(sa.getUTCMonth())} ngo-${hh}:${mm}`;
-  };
-  const enFormat = new Intl.DateTimeFormat("en-ZA", {
-    timeZone: "Africa/Johannesburg",
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-  const timeFormat = { format: (d: Date) => (xh ? xhTime(d) : enFormat.format(d)) };
 
   function showError(message: string) {
     errorBox.textContent = message;
@@ -382,8 +338,7 @@ const w = pick(lang, {
 
   // ---- Steps -------------------------------------------------------------
   // The form is one long page without JavaScript. With it, one step shows at
-  // a time. Steps marked data-skip (the assessment, when there are no times
-  // to book) are left out.
+  // a time. Steps marked data-skip are left out.
   const allSteps = [...form.querySelectorAll<HTMLFieldSetElement>(".step")];
   let current = 0;
 
@@ -443,21 +398,11 @@ const w = pick(lang, {
   form.addEventListener("input", () => (errorBox.hidden = true));
   back.addEventListener("click", () => show(current - 1));
 
-  // Picking a stage card is a natural "next": nudge the button so people see it.
-  form.addEventListener("change", (e) => {
-    const t = e.target as HTMLInputElement;
-    if (t.type === "radio" && !reduceMotion) {
-      next.classList.remove("nudge");
-      void next.offsetWidth;
-      next.classList.add("nudge");
-    }
-  });
-
-  // Pre-select the stage chosen on the home page (/get-started?stage=2).
-  const stageParam = new URLSearchParams(location.search).get("stage");
-  if (stageParam) {
-    const radio = form.querySelector<HTMLInputElement>(`input[name="stage_needed"][value="${CSS.escape(stageParam)}"]`);
-    if (radio) radio.checked = true;
+  // Came from "Get notified" (/get-started?interest=assistant).
+  const assistantInterest = new URLSearchParams(location.search).get("interest") === "assistant";
+  if (assistantInterest) {
+    $("interest-note").hidden = false;
+    $<HTMLInputElement>("notify_assistant").checked = true;
   }
 
   // ---- Options from the database -------------------------------------------
@@ -493,25 +438,6 @@ const w = pick(lang, {
     }
     $("industry-field").hidden = options.industries.length === 0;
 
-    const slots = $("slots");
-    slots.querySelectorAll(".slot").forEach((el) => el.remove());
-    const none = slots.querySelector<HTMLInputElement>("input")!;
-    none.checked = true;
-    for (const s of options.slots) {
-      const where = s.mode === "online" ? t.online : t.inPerson;
-      slots.append(choice("booking_slot_id", s.id, timeFormat.format(new Date(s.starts_at)), where, "choice slot"));
-    }
-    const slotStep = $("slots-field");
-    const wasOn = !("skip" in slotStep.dataset);
-    if (options.slots.length) delete slotStep.dataset.skip;
-    else slotStep.dataset.skip = "";
-    // Keep the person on the step they're on if the step list changed.
-    if (form.classList.contains("stepped") && wasOn !== !("skip" in slotStep.dataset)) {
-      const on = allSteps.find((s) => !s.hidden);
-      show(Math.max(0, steps().indexOf(on!)), { focus: false });
-    } else if (!form.classList.contains("stepped")) {
-      slotStep.hidden = options.slots.length === 0;
-    }
   }
 
   function loadTurnstile() {
@@ -550,8 +476,17 @@ const w = pick(lang, {
   function biggestPain(data: FormData) {
     const picks = data.getAll("pain").map(String);
     const own = String(data.get("biggest_pain") ?? "").trim();
+    const websiteNow = String(data.get("website_now") ?? "");
+    const notify = data.get("notify_assistant") === "on";
     // Notes for the team, in English: an isiXhosa form means reply in isiXhosa.
-    return [xh ? "Filled in in isiXhosa." : "", founding ? "Interested in the founding client offer." : "", picks.length ? picks.join("; ") + "." : "", own]
+    return [
+      xh ? "Filled in in isiXhosa." : "",
+      founding ? "Interested in the founding client offer." : "",
+      notify ? "Wants to hear when the WhatsApp Assistant is ready." : "",
+      websiteNow ? `Has a website now: ${websiteNow}.` : "",
+      picks.length ? picks.join("; ") + "." : "",
+      own,
+    ]
       .filter(Boolean)
       .join(" ")
       .slice(0, 2000);
@@ -566,16 +501,17 @@ const w = pick(lang, {
     if (problem) return showError(problem);
 
     const data = new FormData(form);
-    const stage = String(data.get("stage_needed") ?? "");
     const body = {
       full_name: String(data.get("full_name")).trim(),
       business_name: String(data.get("business_name") ?? "").trim(),
       industry_id: String(data.get("industry_id") ?? ""),
       phone: String(data.get("phone")).trim(),
       email: String(data.get("email") ?? "").trim(),
-      stage_needed: stage ? Number(stage) : null,
+      // Stage 1 of the ops portal's pipeline: get found. Left empty for people
+      // who only asked to hear about the WhatsApp Assistant.
+      stage_needed: assistantInterest ? null : 1,
       biggest_pain: biggestPain(data),
-      booking_slot_id: String(data.get("booking_slot_id") ?? ""),
+      booking_slot_id: "",
       consent: data.get("consent") === "on",
       whatsapp_opt_in: data.get("whatsapp_opt_in") === "on",
       website: String(data.get("website") ?? ""),
@@ -594,20 +530,10 @@ const w = pick(lang, {
       if (res.ok) {
         form.hidden = true;
         const success = $("success");
-        if (result.assessment_starts_at) {
-          $("success-text").textContent =
-            t.booked(timeFormat.format(new Date(result.assessment_starts_at)));
-        }
         success.hidden = false;
         success.focus({ preventScroll: true });
         success.scrollIntoView({ block: "center", behavior: reduceMotion ? "auto" : "smooth" });
         return;
-      }
-      if (res.status === 409) {
-        // That time was just taken: refresh the times and go back to pick another.
-        await loadOptions().catch(() => {});
-        const slotStep = steps().indexOf($("slots-field") as HTMLFieldSetElement);
-        if (slotStep >= 0) show(slotStep);
       }
       showError(result.error ?? t.failed);
     } catch {
@@ -648,7 +574,7 @@ const w = pick(lang, {
     startSteps();
     showSkeletons();
     loadOptions().catch(() => {
-      // The form still works without industries and slots.
+      // The form still works without the industry list.
       clearSkeletons();
       $("industry-field").hidden = true;
     });
@@ -714,88 +640,15 @@ const w = pick(lang, {
     gap: 0 1rem;
     grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
   }
-  .choices {
-    display: grid;
-    gap: 0.6rem;
-    margin-bottom: 1.5rem;
-  }
-  @media (min-width: 40rem) {
-    .stages,
-    .slots {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-  #enquiry :global(.choice) {
-    position: relative;
-    display: flex;
-    gap: 0.85rem;
-    align-items: flex-start;
-    padding: 0.9rem 1rem;
-    border: 1.5px solid rgb(27 42 74 / 0.15);
-    border-radius: 0.75rem;
-    font-weight: 400;
-    cursor: pointer;
-    transition:
-      border-color 0.2s var(--ease-out),
-      background 0.2s var(--ease-out),
-      transform 0.2s var(--ease-out),
-      box-shadow 0.2s var(--ease-out);
-  }
-  #enquiry :global(.choice:hover) {
-    border-color: rgb(43 168 160 / 0.6);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 18px -10px rgb(27 42 74 / 0.35);
-  }
-  #enquiry :global(.choice:has(input:checked)) {
-    border-color: var(--turquoise);
-    background: rgb(43 168 160 / 0.08);
-    box-shadow: 0 0 0 1px var(--turquoise);
-  }
-  #enquiry :global(.choice:has(input:focus-visible)),
   #enquiry :global(.pill:has(input:focus-visible)) {
     outline: 3px solid var(--turquoise);
     outline-offset: 2px;
   }
-  /* The real radio stays in the page for keyboards and screen readers. */
-  #enquiry :global(.choice input),
+  /* The real radio or checkbox stays in the page for keyboards and screen readers. */
   #enquiry :global(.pill input) {
     position: absolute;
     opacity: 0;
     pointer-events: none;
-  }
-  #enquiry :global(.choice-num) {
-    flex: none;
-    display: grid;
-    place-items: center;
-    width: 2.1rem;
-    height: 2.1rem;
-    border-radius: 50%;
-    font: 700 1rem/1 var(--font-heading);
-    background: var(--sand);
-    color: var(--indigo);
-    transition:
-      background 0.2s var(--ease-out),
-      color 0.2s var(--ease-out),
-      transform 0.3s var(--ease-out);
-  }
-  #enquiry :global(.choice:has(input:checked) .choice-num) {
-    background: var(--ochre);
-    color: var(--white);
-    transform: scale(1.1);
-  }
-  #enquiry :global(.choice span:not(.choice-num)) {
-    display: grid;
-    gap: 0.15rem;
-  }
-  #enquiry :global(.choice strong) {
-    font-weight: 500;
-  }
-  #enquiry :global(.choice small) {
-    font-size: 0.9rem;
-    opacity: 0.85;
-  }
-  #enquiry :global(.slot strong) {
-    font-weight: 500;
   }
   .pills {
     display: flex;
@@ -1014,15 +867,6 @@ const w = pick(lang, {
   }
   .back:hover {
     text-decoration: underline;
-  }
-  .nudge {
-    animation: nudge 0.5s var(--ease-out);
-  }
-  @keyframes nudge {
-    40% {
-      transform: translateY(-3px) scale(1.04);
-      box-shadow: 0 8px 20px rgb(224 122 31 / 0.35);
-    }
   }
   .visually-hidden {
     position: absolute;

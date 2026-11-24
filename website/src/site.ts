@@ -4,7 +4,7 @@ export const site = {
   name: "IsangoTech",
   tagline: "Your gateway to smarter business",
   description:
-    "IsangoTech helps small businesses in East London and beyond get found, capture customers, run their operations and automate repetitive work.",
+    "IsangoTech builds websites and sets up Google Business Profiles so small businesses in East London and beyond get found online.",
   // International format without "+" or spaces, e.g. "27821234567".
   whatsappNumber: "27753458192",
   phone: "075 345 8192",
@@ -47,7 +47,7 @@ export const site = {
   },
 };
 
-// Website form and slot booking go through these Supabase edge functions.
+// The Get started form goes through these Supabase edge functions.
 // Set PUBLIC_SUPABASE_FUNCTIONS_URL (e.g. https://<ref>.supabase.co/functions/v1)
 // and PUBLIC_TURNSTILE_SITE_KEY when building for production.
 export const formConfig = {
@@ -76,7 +76,7 @@ export const siteText = {
   xh: {
     tagline: "Isango lakho eliya kwishishini elikrelekrele",
     description:
-      "I-IsangoTech incedisa amashishini amancinci eMonti nangaphaya ukuba afumaneke, afumane abathengi, aqhube imisebenzi yawo, kwaye imisebenzi ephindaphindwayo yenzeke ngokuzenzekelayo.",
+      "I-IsangoTech yakha ii-website kwaye iseta ii-Google Business Profile ukuze amashishini amancinci eMonti nangaphaya afumaneke kwi-intanethi.",
     areaServed: "EMonti, eMpuma Koloni nakwiindawo ezisele zoMzantsi Afrika",
     founderRole: "Umseki",
     founderIntro:

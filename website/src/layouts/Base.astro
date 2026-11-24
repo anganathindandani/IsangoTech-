@@ -29,6 +29,8 @@ const pageTitle = searchTitle
     : `${site.name} · ${words.tagline}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 // The same page in each language, for the switcher and for search engines.
+// The other language's version of this page; the 404 page has none, so it links home.
+const switchHref = noindex ? counterpart("/", other) : counterpart(Astro.url.pathname, other);
 const alternates = { en: new URL(counterpart(Astro.url.pathname, "en"), Astro.site), xh: new URL(counterpart(Astro.url.pathname, "xh"), Astro.site) };
 const ui = pick(lang, {
   en: { skip: "Skip to content", home: `${site.name} home`, menu: "Menu", main: "Main", footer: "Footer", getStarted: "Get started", privacy: "Privacy policy", terms: "Terms", reg: "Reg. no.", whatsapp: "WhatsApp us", call: "Call", whatsappLabel: "Chat with us on WhatsApp", switchLabel: "Read this page in isiXhosa", language: "Language", explore: "Explore", contact: "Get in touch", follow: "Follow IsangoTech" },
@@ -57,7 +59,7 @@ const business = {
     { "@type": "State", name: "Eastern Cape" },
     { "@type": "Country", name: "South Africa" },
   ],
-  knowsAbout: ["Website design", "Online booking systems", "Business process automation", "AI automation", "Small business software"],
+  knowsAbout: ["Website design", "Small business websites", "Google Business Profile", "Local search"],
   ...(site.email && { email: site.email }),
   ...(site.phone && { telephone: `+27${site.phone.replace(/\s/g, "").replace(/^0/, "")}` }),
   ...(site.founder.name && { founder: { "@type": "Person", name: site.founder.name, jobTitle: site.founder.role } }),
@@ -141,7 +143,7 @@ const year = new Date().getFullYear();
             ))
           }
         </nav>
-        <a class="lang-switch" href={counterpart(Astro.url.pathname, other)} hreflang={other === "xh" ? "xh-ZA" : "en-ZA"} lang={other === "xh" ? "xh-ZA" : "en-ZA"} aria-label={ui.switchLabel}>
+        <a class="lang-switch" href={switchHref} hreflang={other === "xh" ? "xh-ZA" : "en-ZA"} lang={other === "xh" ? "xh-ZA" : "en-ZA"} aria-label={ui.switchLabel}>
           {langNames[other]}
         </a>
         <a class="button header-cta" href={L("/get-started")}>{ui.getStarted}</a>
@@ -189,7 +191,7 @@ const year = new Date().getFullYear();
           <h2 class="footer-heading">{ui.explore}</h2>
           {nav.map((item) => <a href={L(item.href)}>{item.label[lang]}</a>)}
           <a href={L("/get-started")}>{ui.getStarted}</a>
-          <a href={counterpart(Astro.url.pathname, other)} hreflang={other === "xh" ? "xh-ZA" : "en-ZA"} lang={other === "xh" ? "xh-ZA" : "en-ZA"}>
+          <a href={switchHref} hreflang={other === "xh" ? "xh-ZA" : "en-ZA"} lang={other === "xh" ? "xh-ZA" : "en-ZA"}>
             {ui.language}: {langNames[other]}
           </a>
         </nav>

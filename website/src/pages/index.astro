@@ -4,69 +4,73 @@ import Beadwork from "../components/Beadwork.astro";
 import DoorHero from "../components/DoorHero.astro";
 import CallToAction from "../components/CallToAction.astro";
 import IndustryTiles from "../components/IndustryTiles.astro";
-import StagePicker from "../components/StagePicker.astro";
-import WhatsAppDemo from "../components/WhatsAppDemo.astro";
 import FoundingOffer from "../components/FoundingOffer.astro";
 import FounderIntro from "../components/FounderIntro.astro";
 import { testimonials } from "../data/testimonials";
-import { siteText } from "../site";
+import { formatPrice, packagesFor } from "../data/packages";
 import { langOf, localize, pick } from "../i18n";
 
 const lang = langOf(Astro.url);
 const L = (path: string) => localize(path, lang);
+const starter = packagesFor(lang).find((p) => p.group === "website")!;
 const w = pick(lang, {
   en: {
-    searchTitle: "WhatsApp AI assistants and websites in East London",
-    description: "IsangoTech sets up WhatsApp AI assistants, bookings, reminders and websites for small businesses in East London and the Eastern Cape. Answer every enquiry, cut no-shows and spend less time on admin.",
+    searchTitle: "Websites for small businesses in East London",
+    description: "IsangoTech builds websites and sets up Google Business Profiles for small businesses in East London and the Eastern Cape. From R3 500 once-off, no monthly fee, and the website is yours.",
     eyebrow: "Proudly African · East London and beyond",
-    offer: "WhatsApp AI assistants, bookings, reminders and websites for small businesses, so you get found, never miss a customer and spend less time on admin.",
+    headline: "We get your business found online.",
+    offer: "Websites and Google Business Profiles for small businesses in East London and the Eastern Cape, so customers find you, trust you and reach you in one tap.",
     start: "Get started",
-    prices: "See packages and prices",
+    prices: "See what's included",
     outcomesLabel: "What you get",
     outcomes: [
-      ["Time saved", "Bookings, reminders and follow-ups happen without you chasing them."],
-      ["More customers", "People find you online and every enquiry gets an answer."],
-      ["Less admin", "Your daily work lives in one place, not in spreadsheets and chat threads."],
+      ["Found on Google", "Your business shows up when people nearby search for what you do."],
+      ["Easy to trust", "A clear, professional website with your prices, photos and hours."],
+      ["One tap to reach you", "A WhatsApp button on every page, so customers message you straight away."],
     ],
+    starterHeading: "A website that's yours",
+    allPrices: "All prices",
     industries: "Built for businesses like yours",
-    industriesLead: "We specialise in a few industries so we can reuse what works, and we help any small business on the same path.",
+    industriesLead: "We know what customers look for in these businesses, and we help any small business get found the same way.",
+    soonEyebrow: "Coming soon",
+    soonHeading: "WhatsApp Assistant",
+    soonText: "We're building an assistant that answers your customers on WhatsApp while you work. Want to hear when it's ready?",
+    soonButton: "Get notified",
     testimonials: "What our clients say",
   },
   xh: {
-    searchTitle: "Ii-WhatsApp AI assistant nee-website eMonti",
-    description: "I-IsangoTech iseta ii-WhatsApp AI assistant, ii-booking, izikhumbuzo nee-website zamashishini amancinci eMonti naseMpuma Koloni. Phendula wonke umbuzo, nciphisa abangafikiyo kwaye uchithe ixesha elincinci kwi-admin.",
+    searchTitle: "Ii-website zamashishini amancinci eMonti",
+    description: "I-IsangoTech yakha ii-website kwaye iseta ii-Google Business Profile zamashishini amancinci eMonti naseMpuma Koloni. Ukusuka ku-R3 500 kanye kuphela, akukho ntlawulo yenyanga, kwaye i-website yeyakho.",
     eyebrow: "Simi ngobu-Afrika · EMonti nangaphaya",
-    offer: "Ii-WhatsApp AI assistant, ii-booking, izikhumbuzo nee-website zamashishini amancinci, ukuze ufumaneke, ungaphoswa ngumthengi, kwaye uchithe ixesha elincinci kwi-admin.",
+    headline: "Senza ishishini lakho lifumaneke kwi-intanethi.",
+    offer: "Ii-website nee-Google Business Profile zamashishini amancinci eMonti naseMpuma Koloni, ukuze abathengi bakufumane, bakuthembe, kwaye bakufikelele ngokucofa kanye.",
     start: "Qalisa",
-    prices: "Jonga iiphakheji namaxabiso",
+    prices: "Bona okubandakanyiweyo",
     outcomesLabel: "Oko ukufumanayo",
     outcomes: [
-      ["Ixesha elongiweyo", "Ii-booking, izikhumbuzo nokulandelela kwenzeka ungakhange ubaleke emva kwazo."],
-      ["Abathengi abaninzi", "Abantu bakufumana kwi-intanethi kwaye wonke umbuzo uyaphendulwa."],
-      ["I-admin encinci", "Umsebenzi wakho wemihla ngemihla ukwindawo enye, kungekhona kwii-spreadsheet nakwimicu yeengxoxo."],
+      ["Ufumaneka kwi-Google", "Ishishini lakho liyavela xa abantu abakufutshane bekhangela oko ukwenzayo."],
+      ["Kulula ukukuthemba", "I-website ecacileyo nenobuchule, enamaxabiso akho, iifoto neeyure."],
+      ["Bakufikelela ngokucofa kanye", "Iqhosha le-WhatsApp kulo lonke iphepha, ukuze abathengi bakuthumelele umyalezo kwangoko."],
     ],
+    starterHeading: "I-website eyeyakho",
+    allPrices: "Onke amaxabiso",
     industries: "Yakhelwe amashishini afana nelakho",
-    industriesLead: "Sigxila kumashishini ambalwa ukuze sisebenzise kwakhona oko kusebenzayo, kwaye sinceda nawuphi na ishishini elincinci kule ndlela inye.",
+    industriesLead: "Siyazi ukuba abathengi bakhangela ntoni kula mashishini, kwaye sinceda nawuphi na ishishini elincinci ukuba lifumaneke ngendlela efanayo.",
+    soonEyebrow: "Iyeza kungekudala",
+    soonHeading: "I-WhatsApp Assistant",
+    soonText: "Sakha i-assistant ephendula abathengi bakho kwi-WhatsApp ngoxa usebenza. Ufuna ukwazi xa ilungile?",
+    soonButton: "Ndazise",
     testimonials: "Abathengi bethu bathini",
   },
 });
 
-const outcomes = [
-  {
-    title: "Time saved",
-    text: "Bookings, reminders and follow-ups happen without you chasing them.",
-    icon: '<circle cx="24" cy="26" r="15" fill="none" stroke="currentColor" stroke-width="3"/><path d="M24 17v9l6 4" fill="none" stroke="#E07A1F" stroke-width="3" stroke-linecap="round"/><path d="M19 6h10" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>',
-  },
-  {
-    title: "More customers",
-    text: "People find you online and every enquiry gets an answer.",
-    icon: '<circle cx="17" cy="17" r="6" fill="none" stroke="currentColor" stroke-width="3"/><path d="M6 38c1-7 5-11 11-11s10 4 11 11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="33" cy="15" r="5" fill="#E07A1F"/><path d="M28 27c6-2 13 2 14 10" fill="none" stroke="#E07A1F" stroke-width="3" stroke-linecap="round"/>',
-  },
-  {
-    title: "Less admin",
-    text: "Your daily work lives in one place, not in spreadsheets and chat threads.",
-    icon: '<rect x="9" y="8" width="30" height="34" rx="4" fill="none" stroke="currentColor" stroke-width="3"/><path d="M16 20l4 4 8-9" fill="none" stroke="#E07A1F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 33h16" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>',
-  },
+const icons = [
+  // Magnifier over a map pin
+  '<circle cx="21" cy="21" r="13" fill="none" stroke="currentColor" stroke-width="3"/><path d="M31 31l10 10" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M21 13a6 6 0 0 1 6 6c0 5-6 10-6 10s-6-5-6-10a6 6 0 0 1 6-6z" fill="#E07A1F"/>',
+  // Browser window with a tick
+  '<rect x="6" y="9" width="36" height="30" rx="4" fill="none" stroke="currentColor" stroke-width="3"/><path d="M6 17h36" stroke="currentColor" stroke-width="3"/><path d="M17 28l5 5 9-10" fill="none" stroke="#E07A1F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>',
+  // Chat bubble
+  '<path d="M8 12a4 4 0 0 1 4-4h24a4 4 0 0 1 4 4v16a4 4 0 0 1-4 4H20l-8 7v-7h0a4 4 0 0 1-4-4z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><circle cx="17" cy="20" r="2.5" fill="#E07A1F"/><circle cx="24" cy="20" r="2.5" fill="#E07A1F"/><circle cx="31" cy="20" r="2.5" fill="#E07A1F"/>',
 ];
 ---
 
@@ -78,7 +82,7 @@ const outcomes = [
     <div class="container hero-inner">
       <div class="hero-text">
         <p class="eyebrow hero-in" style="--d: 0">{w.eyebrow}</p>
-        <h1 class="hero-in" style="--d: 1">{siteText[lang].tagline}</h1>
+        <h1 class="hero-in" style="--d: 1">{w.headline}</h1>
         <p class="offer hero-in" style="--d: 2">{w.offer}</p>
         <div class="actions hero-in" style="--d: 3">
           <a class="button" href={L("/get-started")}>{w.start} <span class="arrow" aria-hidden="true">→</span></a>
@@ -94,9 +98,9 @@ const outcomes = [
 
   <section class="container outcomes" aria-label={w.outcomesLabel}>
     {
-      outcomes.map((o, i) => (
+      icons.map((icon, i) => (
         <div class="outcome">
-          <svg viewBox="0 0 48 48" width="48" height="48" aria-hidden="true" set:html={o.icon} />
+          <svg viewBox="0 0 48 48" width="48" height="48" aria-hidden="true" set:html={icon} />
           <h2>{w.outcomes.at(i)?.[0]}</h2>
           <p>{w.outcomes.at(i)?.[1]}</p>
         </div>
@@ -104,9 +108,25 @@ const outcomes = [
     }
   </section>
 
-  <WhatsAppDemo />
-
-  <StagePicker />
+  <section class="container starter" aria-labelledby="starter-heading">
+    <div class="starter-card">
+      <div>
+        <p class="eyebrow">{starter.name}</p>
+        <h2 id="starter-heading">{w.starterHeading}</h2>
+        <p class="starter-price">{formatPrice(starter, lang)}</p>
+        <p>{starter.priceDetail}</p>
+      </div>
+      <div>
+        <ul>
+          {starter.includes.map((i) => <li>{i}</li>)}
+        </ul>
+        <div class="actions">
+          <a class="button" href={L("/get-started")}>{w.start} <span class="arrow" aria-hidden="true">→</span></a>
+          <a class="secondary" href={L("/services")}>{w.allPrices}</a>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <section class="container industries" aria-labelledby="industries-heading">
     <h2 id="industries-heading">{w.industries}</h2>
@@ -117,6 +137,17 @@ const outcomes = [
   <FounderIntro />
 
   <FoundingOffer />
+
+  <section class="container soon" aria-labelledby="soon-heading">
+    <div class="soon-card">
+      <div>
+        <p class="eyebrow">{w.soonEyebrow}</p>
+        <h2 id="soon-heading">{w.soonHeading}</h2>
+        <p>{w.soonText}</p>
+      </div>
+      <a class="button" href={`${L("/get-started")}?interest=assistant`}>{w.soonButton}</a>
+    </div>
+  </section>
 
   {
     testimonials.length > 0 && (
@@ -254,5 +285,67 @@ const outcomes = [
   }
   figcaption {
     font-weight: 500;
+  }
+  .starter {
+    padding-block: 1rem 3rem;
+  }
+  .starter-card {
+    display: grid;
+    gap: 0 2.5rem;
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    background: var(--white);
+    border-radius: var(--radius);
+    border-top: 6px solid var(--turquoise);
+  }
+  @media (min-width: 52rem) {
+    .starter-card {
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+    }
+  }
+  .starter-card .eyebrow {
+    color: var(--terracotta);
+  }
+  .starter-price {
+    margin: 0;
+    font: 600 1.5rem/1.3 var(--font-heading);
+    color: var(--turquoise-text);
+  }
+  .starter-card ul {
+    padding-left: 1.2rem;
+    margin-top: 0;
+  }
+  .starter-card li {
+    margin-bottom: 0.4rem;
+  }
+  .starter-card .actions {
+    margin-top: 1.25rem;
+  }
+  .soon {
+    padding-block: 0 3.5rem;
+  }
+  .soon-card {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    padding: 1.25rem 1.5rem;
+    border-radius: var(--radius);
+    background: rgb(43 168 160 / 0.1);
+    border-left: 4px solid var(--turquoise);
+  }
+  .soon-card > div {
+    max-width: 40rem;
+  }
+  .soon-card h2 {
+    font-size: 1.4rem;
+    margin-bottom: 0.25rem;
+  }
+  .soon-card p {
+    margin: 0;
+  }
+  .soon-card .eyebrow {
+    margin-bottom: 0.25rem;
   }
 </style>
