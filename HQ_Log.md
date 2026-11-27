@@ -1,7 +1,7 @@
 # IsangoTech HQ Log
 
 The one place to check before any task: what IsangoTech is aiming for, where the business stands, and what each bot is doing.  
-Last updated: 27 November 2026 (weekly review)
+Last updated: 27 November 2026 (EOD)
 
 ## How to use this log
 - Start of every session: the manager reads this log first.
@@ -99,6 +99,7 @@ Newest first.
 
 | Date | What happened | Next step |
 |------|---------------|-----------|
+| 27 Nov 2026 (EOD) | End-of-day close: weekly review completed earlier today (website repositioned as key win; pipeline unchanged at 9 leads, 0/5 founding slots). No further changes to pipeline, decisions, or product/website activity after the review. Lead Hunter drafts and held-lead scripts remain ready and unsent. Touch by Nox call still outstanding. | Tomorrow: fact-check and send openers (5 new + held leads); call Touch by Nox; advance WhatsApp Assistant/Meta verification; confirm website deploy reflects the new positioning. |
 | 27 Nov 2026 | Weekly review: website repositioned as key win; pipeline unchanged (9 leads, 0/5 founding slots); stuck on unsent outreach and Meta verification due to pending fact-checks, POPIA holds, and founder execution. Next week focus: send openers + call Nox, complete Meta verification, confirm live site positioning. | Execute first outreach and call; advance Meta/Assistant. |
 | 26 Nov 2026 (EOD) | End-of-day close: no further changes to pipeline (still 9 leads, 0 founding slots used) or decisions. Lead Hunter drafts and held-lead scripts remain ready and unsent. No outreach or product advances recorded today. Touch by Nox call still outstanding. | Tomorrow: fact-check and send openers (5 new + held leads); call Touch by Nox; advance WhatsApp Assistant/Meta verification; confirm website deploy reflects the new positioning. |
 | 24 Nov 2026 (EOD) | End-of-day close: website repositioned as web design studio focused on current sellables (Starter site from R3 500, GBP setup, care plans, free chat; message "We get your business found online"). Removed or deferred advanced features (Business Portal, AI assessment, WhatsApp Assistant pricing/features now Coming soon, 4-stage path). Pipeline unchanged (9 leads, 0 founding slots used); Lead Hunter drafts and held-lead scripts remain ready and unsent. No outreach or product advances beyond the site update. Touch by Nox call still outstanding. | Tomorrow: fact-check and send openers (5 new + held leads); call Touch by Nox; advance WhatsApp Assistant/Meta verification; confirm website deploy reflects the new positioning. |
